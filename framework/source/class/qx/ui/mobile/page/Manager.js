@@ -118,6 +118,14 @@ qx.Class.define("qx.ui.mobile.page.Manager",
       apply : "_applyMasterTitle"
     },
 
+    /**
+     * Hide the MasterContainer
+     */
+    hideMaster : {
+      init : false,
+      check : "Boolean",
+      apply : "__updateMasterVisibility"
+    },
 
     /**
      * This flag indicates whether the masterContainer is hidden or not.
@@ -540,7 +548,31 @@ qx.Class.define("qx.ui.mobile.page.Manager",
       if(this.__isTablet) {
         this.__masterButton.setLabel(value);
       }
-    }
+    },
+
+    /**
+    * Called on property changes of hideMaster.
+    * @param value {Boolean} new value
+    * @param old {Boolean} previous value
+    */
+    __updateMasterVisibility : function(value, old) {
+      //show master container
+      if(value == true) {
+        this.__masterContainer.hide();
+        if (qx.bom.Viewport.isLandscape()) {
+          //this.__masterButton.show();
+          this.setMasterContainerHidden(true);
+          this._removeDetailContainerGap();
+        } 
+      } else {
+        this.__masterContainer.show();
+        if (qx.bom.Viewport.isLandscape()) {
+          this.setMasterContainerHidden(false);
+          this._createDetailContainerGap();
+          this.__masterButton.exclude();
+        } 
+      }
+    }   
   },
 
 
