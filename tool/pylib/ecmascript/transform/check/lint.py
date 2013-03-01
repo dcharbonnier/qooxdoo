@@ -509,6 +509,9 @@ def defaultOptions():
     opts.ignore_undefined_globals = False
     opts.ignore_unused_parameter = True
     opts.ignore_unused_variables = False
+    opts.warn_unknown_jsdoc_keys = False
+    opts.warn_jsdoc_key_syntax   = True
+ 
 
     return opts
 
@@ -545,5 +548,6 @@ def extension_match_in(name, name_list, name_spaces):
 # - ---------------------------------------------------------------------------
 
 def lint_check(node, file_name, opts):
+    node = scopes.create_scopes(node)  # update scopes
     lint = LintChecker(node, file_name, opts)
     lint.visit(node)
