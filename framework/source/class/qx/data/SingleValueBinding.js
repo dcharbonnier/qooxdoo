@@ -665,7 +665,12 @@ qx.Class.define("qx.data.SingleValueBinding",
             index = targetArray.length - 1;
           }
           if (targetArray != null) {
-            targetArray.setItem(index, value);
+            if (value === null) // oxys ==>
+            {
+                targetArray.removeAll();
+            } else {
+                targetArray.setItem(index, value);
+            } // <== oxys
           }
 
         } else {
