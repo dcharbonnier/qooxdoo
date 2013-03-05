@@ -444,6 +444,19 @@ qx.Class.define("qx.data.controller.List",
         return;
       }
 
+
+      // oxys ==>
+      var setSelection = true;
+      var list = this.getTarget(), modelSelection;
+
+       if (list.getModelSelection().length === 0 || list.getModelSelection().getItem(0).isDisposed()) {
+           setSelection = false;
+       }
+       else {
+           modelSelection = [list.getModelSelection().getItem(0)];
+       }
+       // <== oxys
+
       // build up the look up table
       this.__buildUpLookupTable();
 
@@ -464,6 +477,12 @@ qx.Class.define("qx.data.controller.List",
           this.__removeItem();
         }
       }
+
+      // oxys ==>
+      if (setSelection === true && this.getModel() !== null && this.getModel().indexOf(modelSelection[0]) !== -1) {
+        list.setModelSelection(modelSelection);
+      }
+      // <== oxys
 
       // sync the target selection in case someone deleted a item in
       // selection mode "one" [BUG #4839]
