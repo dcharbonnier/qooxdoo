@@ -48,12 +48,6 @@ qx.Class.define("qx.ui.form.AbstractField",
      * Adds the CSS rules needed to style the native placeholder element.
      */
     __addPlaceholderRules : function() {
-      if (this.__stylesheet) {
-        return;
-      }
-
-      this.__stylesheet = qx.bom.Stylesheet.createElement();
-
       var colorManager = qx.theme.manager.Color.getInstance();
       var color = colorManager.resolve("text-placeholder");
 
@@ -65,13 +59,13 @@ qx.Class.define("qx.ui.form.AbstractField",
         } else {
           selector = "input:-moz-placeholder, textarea:-moz-placeholder";
         }
-        qx.bom.Stylesheet.addRule(this.__stylesheet, selector, "color: " + color + " !important");
+        qx.ui.style.Stylesheet.getInstance().addRule(selector, "color: " + color + " !important");
       } else if (qx.core.Environment.get("engine.name") == "webkit") {
         selector = "input.qx-placeholder-color::-webkit-input-placeholder, textarea.qx-placeholder-color::-webkit-input-placeholder";
-        qx.bom.Stylesheet.addRule(this.__stylesheet, selector, "color: " + color);
+        qx.ui.style.Stylesheet.getInstance().addRule(selector, "color: " + color);
       } else if (qx.core.Environment.get("engine.name") == "mshtml") {
         selector = "input.qx-placeholder-color:-ms-input-placeholder, textarea.qx-placeholder-color:-ms-input-placeholder";
-        qx.bom.Stylesheet.addRule(this.__stylesheet, selector, "color: " + color + " !important");
+        qx.ui.style.Stylesheet.getInstance().addRule(selector, "color: " + color + " !important");
       }
     }
   },
@@ -305,14 +299,9 @@ qx.Class.define("qx.ui.form.AbstractField",
       var inner = changes.size || updateInsets;
       var pixel = "px";
 
-      if (inner || changes.local || changes.margin)
-      {
-        var insets = this.getInsets();
-        var innerWidth = width - insets.left - insets.right;
-        var innerHeight = height - insets.top - insets.bottom;
-        // ensure that the width and height never get negative
-        innerWidth = innerWidth < 0 ? 0 : innerWidth;
-        innerHeight = innerHeight < 0 ? 0 : innerHeight;
+      if (inner || changes.local || changes.margin) {
+        var innerWidth = width;
+        var innerHeight = height;
       }
 
       var input = this.getContentElement();
@@ -320,20 +309,23 @@ qx.Class.define("qx.ui.form.AbstractField",
       // we don't need to update positions on native placeholders
       if (updateInsets && this.__useQxPlaceholder)
       {
-        // render the placeholder
+        var insets = this.getInsets();
         this.__getPlaceholderElement().setStyles({
-          "left": insets.left + pixel,
-          "top": insets.top + pixel
+          paddingTop : insets.top + pixel,
+          paddingRight : insets.right + pixel,
+          paddingBottom : insets.bottom + pixel,
+          paddingLeft : insets.left + pixel
         });
       }
 
-      if (inner)
+      if (inner || changes.margin)
       {
         // we don't need to update dimensions on native placeholders
         if (this.__useQxPlaceholder) {
+          var insets = this.getInsets();
           this.__getPlaceholderElement().setStyles({
-            "width": innerWidth + pixel,
-            "height": innerHeight + pixel
+            "width": (innerWidth - insets.left - insets.right) + pixel,
+            "height": (innerHeight - insets.top - insets.bottom) + pixel
           });
         }
 
@@ -344,6 +336,15 @@ qx.Class.define("qx.ui.form.AbstractField",
 
         this._renderContentElement(innerHeight, input);
 
+      }
+
+      if (changes.position) {
+        if (this.__useQxPlaceholder) {
+          this.__getPlaceholderElement().setStyles({
+            "left": left + pixel,
+            "top": top + pixel
+          });
+        }
       }
     },
 
@@ -368,20 +369,6 @@ qx.Class.define("qx.ui.form.AbstractField",
       // create and add the input element
       var el = this._createInputElement();
 
-      // Apply styles
-      el.setStyles(
-      {
-        "border": "none",
-        "padding": 0,
-        "margin": 0,
-        "display" : "block",
-        "background" : "transparent",
-        "outline": "none",
-        "appearance": "none",
-        "position": "absolute",
-        "autoComplete": "off"
-      });
-
       // initialize the html input
       el.setSelectable(this.getSelectable());
       el.setEnabled(this.getEnabled());
@@ -391,9 +378,6 @@ qx.Class.define("qx.ui.form.AbstractField",
 
       // Disable HTML5 spell checking
       el.setAttribute("spellcheck", "false");
-
-      // Block resize handle
-      el.setStyle("resize", "none");
 
       // IE8 in standard mode needs some extra love here to receive events.
       if ((qx.core.Environment.get("engine.name") == "mshtml"))
@@ -803,9 +787,19 @@ qx.Class.define("qx.ui.form.AbstractField",
 
     /*
     ---------------------------------------------------------------------------
-      PLACEHOLDER HELPER
+      PLACEHOLDER HELPERS
     ---------------------------------------------------------------------------
     */
+
+    // overridden
+    setLayoutParent : function(parent)
+    {
+      this.base(arguments, parent);
+      if (parent) {
+        this.getLayoutParent().getContentElement().add(this.__getPlaceholderElement());
+      }
+    },
+
 
     /**
      * Helper to show the placeholder text in the field. It checks for all
@@ -832,6 +826,16 @@ qx.Class.define("qx.ui.form.AbstractField",
           this.addState("showingPlaceholder");
         }
       }
+    },
+
+
+    /**
+     * Remove the fake placeholder
+     */
+    _onMouseDownPlaceholder : function() {
+      window.setTimeout(function() {
+        this.focus();
+      }.bind(this), 0);
     },
 
 
@@ -868,14 +872,14 @@ qx.Class.define("qx.ui.form.AbstractField",
         this._placeholder = new qx.html.Label();
         var colorManager = qx.theme.manager.Color.getInstance();
         this._placeholder.setStyles({
-          "visibility" : "hidden",
-          "zIndex" : 6,
+          "zIndex" : 11,
           "position" : "absolute",
           "color" : colorManager.resolve("text-placeholder"),
-          "whiteSpace": "normal" // enable wrap by default
+          "whiteSpace": "normal", // enable wrap by default
+          "cursor": "text"
         });
 
-        this.getContainerElement().add(this._placeholder);
+        this._placeholder.addListener("mousedown", this._onMouseDownPlaceholder, this);
       }
       return this._placeholder;
     },
@@ -974,6 +978,24 @@ qx.Class.define("qx.ui.form.AbstractField",
   },
 
 
+  defer : function(statics)
+  {
+    var css = "border: none;" +
+      "padding: 0;" +
+      "margin: 0;" +
+      "display : block;" +
+      "background : transparent;" +
+      "outline: none;" +
+      "appearance: none;" +
+      "position: absolute;" +
+      "autoComplete: off;" +
+      "resize: none;" +
+      "border-radius: 0;";
+
+    qx.ui.style.Stylesheet.getInstance().addRule("input, textarea", css);
+  },
+
+
   /*
   *****************************************************************************
      DESTRUCTOR
@@ -989,6 +1011,12 @@ qx.Class.define("qx.ui.form.AbstractField",
 
     if (this.__font && this.__webfontListenerId) {
       this.__font.removeListenerById(this.__webfontListenerId);
+    }
+
+    if (this._placeholder) {
+      this._placeholder.removeListener("mousedown", this._onMouseDownPlaceholder, this);
+      qx.core.Init.getApplication().getRoot().getContentElement().remove(this._placeholder);
+      this._placeholder.dispose();
     }
   }
 });

@@ -115,7 +115,7 @@ qx.Class.define("qx.ui.root.Application",
      * @lint ignoreDeprecated(alert)
      * @return {qx.html.Element} The container HTML element
      */
-    _createContainerElement : function()
+    _createContentElement : function()
     {
       var doc = this.__doc;
 
@@ -195,21 +195,6 @@ qx.Class.define("qx.ui.root.Application",
         throw new Error("The root widget does not support 'left', or 'top' paddings!");
       }
       this.base(arguments, value, old, name);
-    },
-
-
-    // overridden
-    _applyDecorator : function(value, old)
-    {
-      this.base(arguments, value, old);
-      if (!value) {
-        return;
-      }
-
-      var insets = this.getDecoratorElement().getInsets();
-      if (insets.left || insets.top) {
-        throw new Error("The root widget does not support decorators with 'left', or 'top' insets!");
-      }
     }
   },
 

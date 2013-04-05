@@ -187,6 +187,7 @@ qx.Class.define("qx.ui.basic.Image",
     __height : null,
     __mode : null,
     __contentElements : null,
+    __wrapper : null,
 
 
     //overridden
@@ -223,6 +224,39 @@ qx.Class.define("qx.ui.basic.Image",
       };
     },
 
+
+    // overridden
+    _applyPadding : function(value, old, name)
+    {
+      this.base(arguments, value, old, name);
+
+      var element = this.getContentElement();
+      if (this.__wrapper) {
+        element.getChild(0).setStyles({
+          top: this.getPaddingTop() || 0,
+          left: this.getPaddingLeft() || 0
+        });
+      } else {
+        element.setPadding(
+          this.getPaddingLeft() || 0, this.getPaddingTop() || 0
+        );
+      }
+
+    },
+
+    renderLayout : function(left, top, width, height) {
+      this.base(arguments, left, top, width, height);
+
+      var element = this.getContentElement();
+      if (this.__wrapper) {
+        element.getChild(0).setStyles({
+          width: width - (this.getPaddingLeft() || 0) - (this.getPaddingRight() || 0),
+          height: height - (this.getPaddingTop() || 0) - (this.getPaddingBottom() || 0),
+          top: this.getPaddingTop() || 0,
+          left: this.getPaddingLeft() || 0
+        });
+      }
+    },
 
 
 
@@ -281,7 +315,7 @@ qx.Class.define("qx.ui.basic.Image",
           isPng = qx.lang.String.endsWith(source, ".png");
         }
 
-        if (this.getScale() && isPng && qx.bom.element.Decoration.isAlphaImageLoaderEnabled()) {
+        if (this.getScale() && isPng && qx.core.Environment.get("css.alphaimageloaderneeded")) {
           this.__mode = "alphaScaled";
         } else if (this.getScale()) {
           this.__mode = "scaled";
@@ -324,8 +358,15 @@ qx.Class.define("qx.ui.basic.Image",
       element.setScale(scale);
       element.setStyles({
         "overflowX": "hidden",
-        "overflowY": "hidden"
+        "overflowY": "hidden",
+        "boxSizing": "border-box"
       });
+
+      if (qx.core.Environment.get("css.alphaimageloaderneeded")) {
+        var wrapper = this.__wrapper = new qx.html.Element("div");
+        wrapper.add(element);
+        return wrapper;
+      }
 
       return element;
     },
@@ -338,13 +379,23 @@ qx.Class.define("qx.ui.basic.Image",
      */
     __getSuitableContentElement : function()
     {
+      if (this.$$disposed) {
+        return null;
+      }
+
       var mode = this.__getMode();
 
       if (this.__contentElements[mode] == null) {
         this.__contentElements[mode] = this.__createSuitableContentElement(mode);
       }
 
-      return this.__contentElements[mode];
+      var element = this.__contentElements[mode];
+
+      if (!this.__currentContentElement) {
+        this.__currentContentElement = element;
+      }
+
+      return element;
     },
 
 
@@ -357,9 +408,14 @@ qx.Class.define("qx.ui.basic.Image",
     {
       var source = qx.util.AliasManager.getInstance().resolve(this.getSource());
 
+      var element = this.getContentElement();
+      if (this.__wrapper) {
+        element = element.getChild(0);
+      }
+
       if (!source)
       {
-        this.getContentElement().resetSource();
+        element.resetSource();
         return;
       }
 
@@ -369,16 +425,20 @@ qx.Class.define("qx.ui.basic.Image",
         parseInt(qx.core.Environment.get("engine.version"), 10) < 9)
       {
         var repeat = this.getScale() ? "scale" : "no-repeat";
-        this.getContentElement().tagNameHint = qx.bom.element.Decoration.getTagName(repeat, source);
+        element.tagNameHint = qx.bom.element.Decoration.getTagName(repeat, source);
       }
 
+      var contentEl = this.__currentContentElement;
+      if (this.__wrapper) {
+        contentEl = contentEl.getChild(0);
+      }
       // Detect if the image registry knows this image
       if (qx.util.ResourceManager.getInstance().has(source)) {
-        this.__setManagedImage(this.getContentElement(), source);
+        this.__setManagedImage(contentEl, source);
       } else if (qx.io.ImageLoader.isLoaded(source)) {
-        this.__setUnmanagedImage(this.getContentElement(), source);
+        this.__setUnmanagedImage(contentEl, source);
       } else {
-        this.__loadUnmanagedImage(this.getContentElement(), source);
+        this.__loadUnmanagedImage(contentEl, source);
       }
     },
 
@@ -393,7 +453,7 @@ qx.Class.define("qx.ui.basic.Image",
     {
       "mshtml" : function(source)
       {
-        var alphaImageLoader = qx.bom.element.Decoration.isAlphaImageLoaderEnabled();
+        var alphaImageLoader = qx.core.Environment.get("css.alphaimageloaderneeded");
         var isPng = qx.lang.String.endsWith(source, ".png");
 
         if (alphaImageLoader && isPng)
@@ -436,8 +496,8 @@ qx.Class.define("qx.ui.basic.Image",
      */
     __checkForContentElementReplacement : function(elementToAdd)
     {
-      var container = this.getContainerElement();
-      var currentContentElement = container.getChild(0);
+      //debugger;
+      var currentContentElement = this.__currentContentElement;
 
       if (currentContentElement != elementToAdd)
       {
@@ -462,11 +522,17 @@ qx.Class.define("qx.ui.basic.Image",
           // since these would otherwise cover the content element
           styles.zIndex = 10;
 
-          elementToAdd.setStyles(styles, true);
-          elementToAdd.setSelectable(this.getSelectable());
+          var el = this.__wrapper ? elementToAdd.getChild(0) : elementToAdd;
+          el.setStyles(styles, true);
+          el.setSelectable(this.getSelectable());
 
-          container.removeAt(0);
-          container.addAt(elementToAdd, 0);
+          var container = currentContentElement.getParent();
+          if (container) {
+            var index = container.getChildren().indexOf(currentContentElement);
+            container.removeAt(index);
+            container.addAt(elementToAdd, index);
+            this.__currentContentElement = elementToAdd;
+          }
         }
       }
     },
@@ -503,6 +569,7 @@ qx.Class.define("qx.ui.basic.Image",
       }
 
       // Apply source
+
       el.setSource(source);
 
       // Compare with old sizes and relayout if necessary

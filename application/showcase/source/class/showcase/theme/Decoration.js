@@ -27,5 +27,14 @@ qx.Theme.define("showcase.theme.Decoration",
 
   decorations :
   {
+    "previewlist-scrollbar-knob" :
+    {
+      style :
+      {
+        borderImage : "showcase/images/tag-hor.png",
+        borderImageMode : "horizontal",
+        backgroundColor: "#1C1C1C"
+      }
+    }
   }
 });

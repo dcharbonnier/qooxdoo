@@ -1,9 +1,9 @@
-body.docs {
+body#docs {
 
   #main #content {
     position: relative;
-    .columns(24);
-    .first();
+    @include columns(24);
+    @include first();
   }
 
   code {
@@ -27,41 +27,15 @@ body.docs {
 
   #boxes {
     position: relative;
-    padding-top: @line * 1;
-    .columns(20);
-    .first();
-
-    #versions-hint {
-      position: absolute;
-      top: -(@line * 0.5);
-      right: 0;
-
-      a {
-        display: inline-block;
-        cursor: pointer;
-
-        &:hover {
-          color: @spot;
-        }
-
-        &.active {
-          cursor: default;
-          text-decoration: none;
-        }
-      }
-    }
+    @include columns(24);
+    @include first();
 
     .versions {
       display: none;
-      color: @mediumShade;
+      color: $mediumShade;
 
       &:hover {
-        color: @fg;
         cursor: pointer;
-
-        a {
-          color: @fg;
-        }
       }
 
       &.show {
@@ -69,20 +43,20 @@ body.docs {
       }
 
       a {
-        color: @mediumShade;
+        color: $mediumShade;
         padding: 0 1px;
 
         &:hover {
-          color: @spot;
+          color: $spot;
         }
       }
     }
 
     .teaser {
-      .columns(10);
-      background-color: @lightShade;
-      margin-bottom: @gridGutterWidth;
-      height: @line * 10;
+      @include columns(12);
+      background-color: $lightShade;
+      margin-bottom: $gridGutterWidth;
+      height: $line * 10;
 
       & > div {
         padding: 10px;
@@ -94,7 +68,7 @@ body.docs {
 
       &.row {
         clear: both;
-        .first();
+        @include first();
       }
 
       p {
