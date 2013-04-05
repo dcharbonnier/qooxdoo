@@ -217,6 +217,14 @@ qx.Class.define("qx.bom.Font",
       apply : "_applyBold"
     },
 
+    /** Whether the font is bold */
+    fontWeight :
+    {
+      check : "Number",
+      nullable : true,
+      apply : "_applyFontWeight"
+    },
+
     /** Whether the font is italic */
     italic :
     {
@@ -304,7 +312,18 @@ qx.Class.define("qx.bom.Font",
 
     // property apply
     _applyBold : function(value, old) {
-      this.__lookupMap.fontWeight = value == null ? null : value ? "bold" : "normal";
+      if (this.getFontWeight() === null ) {
+        this._applyFontWeight(value, old);
+      }
+    },
+    
+    // property apply
+    _applyFontWeight : function(value, old) {
+      if (typeof(value) === "boolean") {
+        this.__lookupMap.fontWeight = value == null ? null : value ? "bold" : "normal";  
+      } else {
+        this.__lookupMap.fontWeight = value;  
+      }      
     },
 
 
