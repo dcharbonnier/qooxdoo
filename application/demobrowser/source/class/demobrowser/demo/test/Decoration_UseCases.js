@@ -19,16 +19,18 @@
 
 /* ************************************************************************
 
-#asset(demobrowser/demo/test/*)
-#asset(qx/decoration/Modern/form/checkbox-focused.png)
-#asset(qx/decoration/Modern/app-header.png)
-#require(qx.module.Core)
 
 ************************************************************************ */
 
 /**
+ *
+ * @asset(demobrowser/demo/test/*)
+ * @asset(qx/decoration/Modern/form/checkbox-focused.png)
+ * @asset(qx/decoration/Modern/app-header.png)
  * @tag test
  * @tag noPlayground
+ *
+ * @require(qx.module.Core)
  */
 qx.Class.define("demobrowser.demo.test.Decoration_UseCases",
 {

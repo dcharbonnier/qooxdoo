@@ -43,10 +43,10 @@ from operator import attrgetter
 import graph
 
 from misc.ExtMap                import ExtMap
-from misc                       import util
 from ecmascript.frontend        import lang
-from generator.code.Class       import Class, DependencyError, CompileOptions
+from generator.code.Class       import DependencyError
 from generator.code.DependencyItem  import DependencyItem
+from generator.action           import CodeMaintenance
 
 class DependencyLoader(object):
 
@@ -147,8 +147,14 @@ class DependencyLoader(object):
             # reading dependencies
             self._console.debug("Gathering dependencies: %s" % depsItem.name)
             self._console.indent()
-            classObj = self._classesObj[depsItem.name] # get class from depsItem
-            deps, cached = classObj.getCombinedDeps(self._classesObj, variants, self._jobconf, genProxy=genProxyIter.next())
+            classObj = self._classesObj[depsItem.name] # get class from depsItem - throws KeyError
+            deps, cached = classObj.getCombinedDeps(self._classesObj, variants, self._jobconf)
+            # lint-check
+            if lint_check and is_app_code(classObj): # opt: and not cached
+                warns = classObj.lint_warnings(lint_opts)
+                for warn in warns:
+                    self._console.warn("%s (%d, %d): %s" % (classObj.id, warn.line, warn.column, 
+                        warn.msg % tuple(warn.args)))
             self._console.outdent()
             if logInfos: self._console.dot("%s" % "." if cached else "*")
 
@@ -196,8 +202,8 @@ class DependencyLoader(object):
             except DependencyError, detail:
                 raise ValueError("Attempt to block load-time dependency of class %s to %s" % (depsItem.name, subitem.name))
 
-            except NameError, detail:
-                raise NameError("Could not resolve dependencies of class: %s \n%s" % (depsItem.name, detail))
+            except KeyError, detail:
+                raise NameError("Could not resolve dependencies of class '%s': %s" % (depsItem.name, detail))
 
             return
 
@@ -214,7 +220,7 @@ class DependencyLoader(object):
                 return node
 
             def getNodeChildren(depsItem):
-                deps, cached = self._classesObj[depsItem.name].getCombinedDeps(self._classesObj, variants, self._jobconf, genProxy=genProxyIter.next())
+                deps, cached = self._classesObj[depsItem.name].getCombinedDeps(self._classesObj, variants, self._jobconf)
 
                 # and evaluate them
                 deps["warn"] = self._checkDepsAreKnown(deps)  # add 'warn' key to deps
@@ -239,29 +245,18 @@ class DependencyLoader(object):
 
             return
 
+        def is_app_code(classObj):
+            return classObj.library.namespace == app_namespace
         # -------------------------------------------
 
-        buildType = script.buildType  # source/build, for classlistFromClassRecursive
         result = []
         warn_deps = []
         logInfos = self._console.getLevel() == "info"
         ignored_names = set()
-        firstTime = [True]
+        app_namespace = self._jobconf.get("let/APPLICATION", u'')
 
-        # Pyro servers
-        #import Pyro.core
-        #genProxies = [
-        #    Pyro.core.getProxyForURI("PYRONAME://genworker0"),
-        #    Pyro.core.getProxyForURI("PYRONAME://genworker1"),
-        #    Pyro.core.getProxyForURI("PYRONAME://genworker2"),
-        #    Pyro.core.getProxyForURI("PYRONAME://genworker3"),
-        #    Pyro.core.getProxyForURI("PYRONAME://genworker4"),
-        #    Pyro.core.getProxyForURI("PYRONAME://genworker5"),
-        #]
-        import itertools
-        #genProxyIter = itertools.cycle(genProxies)
-        genProxyIter = itertools.repeat(None)
-
+        # Lint stuff
+        lint_check, lint_opts = CodeMaintenance.lint_comptime_opts()
 
         # No dependency calculation
         if len(includeWithDeps) == 0:
@@ -273,43 +268,34 @@ class DependencyLoader(object):
             for classId in excludeWithDeps:
                 result.remove(classId)
 
+            # TODO: use lint_check
+
         # Calculate dependencies
         else:
-            #self._console.info(" ", feed=False)
-
-            # Multiple loop over class list calculation
-            processedEnvironment = False
-            result      = []          # reset any previous results for this iteration
+            result = []  # reset any previous results for this iteration
             resultNames = []
 
             # calculate class list recursively
             for item in includeWithDeps:
                 depsItem = DependencyItem(item, '', '|config|')
-                # calculate dependencies and add required classes
                 classlistFromClassRecursive(depsItem, excludeWithDeps, variants, result, warn_deps, [], allowBlockLoaddeps)
-                #classlistFromClassIterative(depsItem, excludeWithDeps, variants, result, warn_deps, [], allowBlockLoaddeps)
 
             self._console.dotclear()
                     
-            if self._console.getLevel() is "info":
-                #self._console.nl()
-                pass
-
             # extract names of depsItems
             result = [x.name for x in result]
 
         # warn about unknown references
-        # add the list of name spaces of the selected classes
+        # - late, because adding the list of name spaces of the selected classes
         for classid in result:
             nsindex = classid.rfind(".")
             if nsindex == -1:
                 continue # not interested in bare class names
             classnamespace = classid[:nsindex]
             ignored_names.add(classnamespace)
-        #for dep in warn_deps:
-        #    if dep.name not in ignored_names:
-        #        self._console.warn("Hint: Unknown global symbol referenced: %s (%s:%s)" % (dep.name, dep.requestor, dep.line))
-
+        for dep in warn_deps:
+            if dep.name not in ignored_names:
+                self._console.warn("%s (%s): Unknown global symbol used: %s" % (dep.requestor, dep.line, dep.assembled()))
 
         return result
 

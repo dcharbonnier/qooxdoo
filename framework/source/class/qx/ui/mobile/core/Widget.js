@@ -17,14 +17,10 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#use(qx.ui.mobile.core.EventHandler)
-
-************************************************************************ */
-
 /**
  * This is the base class for all mobile widgets.
+ *
+ * @use(qx.ui.mobile.core.EventHandler)
  */
 qx.Class.define("qx.ui.mobile.core.Widget",
 {
@@ -390,16 +386,16 @@ qx.Class.define("qx.ui.mobile.core.Widget",
 
   statics :
   {
-    /** {String} Prefix for the auto id */
+    /** @type {String} Prefix for the auto id */
     ID_PREFIX : "qx_id_",
 
-    /** {Map} Internal data structure to store widgets */
+    /** @type {Map} Internal data structure to store widgets */
     __registry : {},
 
-    /** {Integer} Incremental counter of the current id */
+    /** @type {Integer} Incremental counter of the current id */
     __idCounter : 0,
 
-    /** {Integer} ID of the timeout for the DOM update */
+    /** @type {Integer} ID of the timeout for the DOM update */
     __domUpdatedScheduleId : null,
 
     /**
@@ -904,6 +900,7 @@ qx.Class.define("qx.ui.mobile.core.Widget",
 
     /**
      * Removes all children from the widget.
+     * @return {Array} An Array including the removed children.
      */
     _removeAll : function()
     {
@@ -912,6 +909,7 @@ qx.Class.define("qx.ui.mobile.core.Widget",
       for (var i = 0, l=children.length; i < l; i++) {
         this._remove(children[i]);
       }
+      return children;
     },
 
 

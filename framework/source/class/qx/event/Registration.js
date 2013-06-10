@@ -18,20 +18,15 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#require(qx.event.Manager)
-#require(qx.dom.Node)
-#require(qx.lang.Function)
-
-************************************************************************ */
-
 /**
  * Wrapper for browser generic event handling.
  *
  * Supported events differ from target to target. Generally the handlers
  * in {@link qx.event.handler} defines the available features.
  *
+ * @require(qx.event.Manager)
+ * @require(qx.dom.Node)
+ * @require(qx.lang.Function)
  */
 qx.Class.define("qx.event.Registration",
 {
@@ -351,13 +346,13 @@ qx.Class.define("qx.event.Registration",
     ---------------------------------------------------------------------------
     */
 
-    /** {Integer} Highest priority. Used by handlers and dispatchers. */
+    /** @type {Integer} Highest priority. Used by handlers and dispatchers. */
     PRIORITY_FIRST : -32000,
 
-    /** {Integer} Default priority. Used by handlers and dispatchers. */
+    /** @type {Integer} Default priority. Used by handlers and dispatchers. */
     PRIORITY_NORMAL : 0,
 
-    /** {Integer} Lowest priority. Used by handlers and dispatchers. */
+    /** @type {Integer} Lowest priority. Used by handlers and dispatchers. */
     PRIORITY_LAST : 32000,
 
 
@@ -369,7 +364,7 @@ qx.Class.define("qx.event.Registration",
     ---------------------------------------------------------------------------
     */
 
-    /** {Array} Contains all known event handlers */
+    /** @type {Array} Contains all known event handlers */
     __handlers : [],
 
 
@@ -413,7 +408,7 @@ qx.Class.define("qx.event.Registration",
     ---------------------------------------------------------------------------
     */
 
-    /** {Array} Contains all known event dispatchers */
+    /** @type {Array} Contains all known event dispatchers */
     __dispatchers : [],
 
 

@@ -24,7 +24,6 @@
 
 /* ************************************************************************
 
-#asset(qx/static/blank.html)
 
 ************************************************************************ */
 
@@ -32,8 +31,9 @@
  * Rich text editor widget which encapsulates the low-level {@link qx.bom.htmlarea.HtmlArea}
  * component to offer editing features.
  *
+ * Optimized for the use in a RIA.
  *
- * Optimized for the use at a RIA.
+ * @asset(qx/static/blank.html)
  */
 qx.Class.define("qx.ui.embed.HtmlArea",
 {
@@ -181,22 +181,6 @@ qx.Class.define("qx.ui.embed.HtmlArea",
 
   statics :
   {
-    /**
-     * Checks if the given node is a block node
-     *
-     * @param node {Node} Node
-     * @return {Boolean} whether it is a block node
-     */
-    isBlockNode : function(node)
-    {
-      var deprecatedFunction = qx.ui.embed.HtmlArea.isBlockNode;
-      var deprecationMessage = "Please use the method 'qx.dom.Node.isBlockNode' instead.";
-      qx.log.Logger.deprecatedMethodWarning(deprecatedFunction, deprecationMessage);
-
-      return qx.dom.Node.isBlockNode(node);
-    },
-
-
     /**
      * Checks if one element is in the list of elements that are allowed to contain a paragraph in HTML
      *

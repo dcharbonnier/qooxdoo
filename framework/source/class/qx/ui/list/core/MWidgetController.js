@@ -112,7 +112,7 @@ qx.Mixin.define("qx.ui.list.core.MWidgetController",
 
   members :
   {
-    /** {Array} which contains the bounded items */
+    /** @type {Array} which contains the bounded items */
     __boundItems : null,
 
 
@@ -178,6 +178,10 @@ qx.Mixin.define("qx.ui.list.core.MWidgetController",
     {
       var type = targetWidget.getUserData("cell.type")
       var bindPath = this.__getBindPath(index, sourcePath, type);
+
+      if (options) {
+        options.ignoreConverter = "model";
+      }
 
       var id = this._list.bind(bindPath, targetWidget, targetProperty, options);
       this.__addBinding(targetWidget, id);

@@ -16,9 +16,7 @@
      * Martin Wittemann (wittemann)
 
 ************************************************************************ */
-/* ************************************************************************
-#ignore(q)
-************************************************************************ */
+
 /**
  * The Core module's responsibility is to query the DOM for elements and offer
  * these elements as a collection. The Core module itself does not offer any methods to
@@ -203,12 +201,11 @@ qx.Bootstrap.define("qxWeb", {
      */
     slice : function(begin, end) {
       // Old IEs return an empty array if the second argument is undefined
-      if (end) {
+      // check 'end' explicit for "undefined" [BUG #7322]
+      if (end !== undefined) {
         return qxWeb.$init(Array.prototype.slice.call(this, begin, end));
       }
-      else {
-        return qxWeb.$init(Array.prototype.slice.call(this, begin));
-      }
+      return qxWeb.$init(Array.prototype.slice.call(this, begin));
     },
 
 
@@ -260,7 +257,7 @@ qx.Bootstrap.define("qxWeb", {
   },
 
   /**
-   * @lint ignoreUndefined(q)
+   * @ignore(q)
    */
   defer : function(statics) {
     if (window.q == undefined) {

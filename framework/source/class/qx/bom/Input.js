@@ -32,12 +32,10 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-#require(qx.lang.Array#contains)
-************************************************************************ */
-
 /**
  * Cross browser abstractions to work with input elements.
+ *
+ * @require(qx.lang.Array#contains)
  */
 qx.Bootstrap.define("qx.bom.Input",
 {
@@ -49,7 +47,7 @@ qx.Bootstrap.define("qx.bom.Input",
 
   statics :
   {
-    /** {Map} Internal data structures with all supported input types */
+    /** @type {Map} Internal data structures with all supported input types */
     __types :
     {
       text : 1,

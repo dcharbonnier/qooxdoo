@@ -18,14 +18,15 @@
 ************************************************************************ */
 
 /* ************************************************************************
-#asset(tutorial/*)
-#require(qx.module.Manipulating)
-#require(qx.module.Attribute)
-#require(qx.module.Traversing)
 ************************************************************************ */
 
 /**
  * This is the main application class of your custom application "tutorial"
+ *
+ * @asset(tutorial/*)
+ * @require(qx.module.Manipulating)
+ * @require(qx.module.Attribute)
+ * @require(qx.module.Traversing)
  */
 qx.Class.define("tutorial.Application",
 {

@@ -19,10 +19,6 @@
 
 /* ************************************************************************
 
-#asset(qx/icon/${qx.icontheme}/22/actions/list-add.png)
-#asset(qx/icon/${qx.icontheme}/22/actions/list-remove.png)
-#asset(qx/icon/${qx.icontheme}/22/actions/edit-undo.png)
-#asset(qx/icon/${qx.icontheme}/22/status/dialog-information.png)
 
 ************************************************************************ */
 
@@ -31,6 +27,11 @@
  * editing, sorting, column resizing, column reordering,
  * column hiding.
  * @tag noPlayground
+ *
+ * @asset(qx/icon/${qx.icontheme}/22/actions/list-add.png)
+ * @asset(qx/icon/${qx.icontheme}/22/actions/list-remove.png)
+ * @asset(qx/icon/${qx.icontheme}/22/actions/edit-undo.png)
+ * @asset(qx/icon/${qx.icontheme}/22/status/dialog-information.png)
  */
 qx.Class.define("demobrowser.demo.table.Table_Context_Menu",
 {
@@ -112,7 +113,7 @@ qx.Class.define("demobrowser.demo.table.Table_Context_Menu",
      * @param dataModel {qx.ui.table.model.Simple}
      *   Complete data model of the table
      *
-     * @param contextMenu
+     * @param contextMenu {qx.ui.menu.Menu}
      *   Menu in which buttons can be added to implement this context menu.
      */
     _contextMenuHandlerBoolean : function(col,
@@ -156,7 +157,7 @@ qx.Class.define("demobrowser.demo.table.Table_Context_Menu",
      * @param dataModel {qx.ui.table.model.Simple}
      *   Complete data model of the table
      *
-     * @param contextMenu
+     * @param contextMenu {qx.ui.menu.Menu}
      *   Menu in which buttons can be added to implement this context menu.
      */
     _contextMenuHandlerNull : function(col,

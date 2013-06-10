@@ -187,6 +187,7 @@ qx.Class.define("qx.ui.basic.Image",
     __height : null,
     __mode : null,
     __contentElements : null,
+    __currentContentElement : null,
     __wrapper : null,
 
 
@@ -222,6 +223,19 @@ qx.Class.define("qx.ui.basic.Image",
         width : this.__width || 0,
         height : this.__height || 0
       };
+    },
+
+    // overridden
+    _applyDecorator : function(value, old) {
+      this.base(arguments, value, old);
+
+      var source = this.getSource();
+      source = qx.util.AliasManager.getInstance().resolve(source);
+      var el = this.getContentElement();
+      if (this.__wrapper) {
+        el = el.getChild(0);
+      }
+      this.__setSource(el, source);
     },
 
 
@@ -422,7 +436,8 @@ qx.Class.define("qx.ui.basic.Image",
       this.__checkForContentElementSwitch(source);
 
       if ((qx.core.Environment.get("engine.name") == "mshtml") &&
-        parseInt(qx.core.Environment.get("engine.version"), 10) < 9)
+        (parseInt(qx.core.Environment.get("engine.version"), 10) < 9 ||
+         qx.core.Environment.get("browser.documentmode") < 9))
       {
         var repeat = this.getScale() ? "scale" : "no-repeat";
         element.tagNameHint = qx.bom.element.Decoration.getTagName(repeat, source);
@@ -432,6 +447,7 @@ qx.Class.define("qx.ui.basic.Image",
       if (this.__wrapper) {
         contentEl = contentEl.getChild(0);
       }
+
       // Detect if the image registry knows this image
       if (qx.util.ResourceManager.getInstance().has(source)) {
         this.__setManagedImage(contentEl, source);
@@ -496,7 +512,6 @@ qx.Class.define("qx.ui.basic.Image",
      */
     __checkForContentElementReplacement : function(elementToAdd)
     {
-      //debugger;
       var currentContentElement = this.__currentContentElement;
 
       if (currentContentElement != elementToAdd)
@@ -507,19 +522,17 @@ qx.Class.define("qx.ui.basic.Image",
           var styles = {};
 
           // Copy dimension and location of the current content element
-          var innerSize = this.getInnerSize();
-          if (innerSize != null)
+          var bounds = this.getBounds();
+          if (bounds != null)
           {
-            styles.width = innerSize.width + pixel;
-            styles.height = innerSize.height + pixel;
+            styles.width = bounds.width + pixel;
+            styles.height = bounds.height + pixel;
           }
 
           var insets = this.getInsets();
-          styles.left = insets.left + pixel;
-          styles.top = insets.top + pixel;
+          styles.left = parseInt(currentContentElement.getStyle("left") || insets.left) + pixel;
+          styles.top = parseInt(currentContentElement.getStyle("top") || insets.top) + pixel;
 
-          // Set the default zIndex to avoid any issues with decorators
-          // since these would otherwise cover the content element
           styles.zIndex = 10;
 
           var el = this.__wrapper ? elementToAdd.getChild(0) : elementToAdd;
@@ -527,12 +540,16 @@ qx.Class.define("qx.ui.basic.Image",
           el.setSelectable(this.getSelectable());
 
           var container = currentContentElement.getParent();
+
           if (container) {
             var index = container.getChildren().indexOf(currentContentElement);
             container.removeAt(index);
             container.addAt(elementToAdd, index);
-            this.__currentContentElement = elementToAdd;
           }
+          // force re-application of source so __setSource is called again
+          el.setSource(null);
+          el.setAttribute("class", this.__currentContentElement.getAttribute("class"));
+          this.__currentContentElement = elementToAdd;
         }
       }
     },
@@ -569,8 +586,7 @@ qx.Class.define("qx.ui.basic.Image",
       }
 
       // Apply source
-
-      el.setSource(source);
+      this.__setSource(el, source);
 
       // Compare with old sizes and relayout if necessary
       this.__updateContentHint(ResourceManager.getImageWidth(source),
@@ -589,7 +605,7 @@ qx.Class.define("qx.ui.basic.Image",
       var ImageLoader = qx.io.ImageLoader;
 
       // Apply source
-      el.setSource(source);
+      this.__setSource(el, source);
 
       // Compare with old sizes and relayout if necessary
       var width = ImageLoader.getWidth(source);
@@ -639,6 +655,61 @@ qx.Class.define("qx.ui.basic.Image",
           el.resetSource();
         }
       }
+    },
+
+
+    /**
+     * Combines the decorator's image styles with our own image to make sure
+     * gradient and backgroundImage decorators work on Images.
+     *
+     * @param el {Element} image DOM element
+     * @param source {String} source path
+     */
+    __setSource : function(el, source) {
+      if (el.getNodeName() == "div") {
+        var dec = qx.theme.manager.Decoration.getInstance().resolve(this.getDecorator());
+        // if the decorator defines any CSS background-image
+        if (dec) {
+          var hasGradient = (dec.getStartColor() && dec.getEndColor());
+          var hasBackground = dec.getBackgroundImage();
+          if (hasGradient || hasBackground) {
+            var repeat = this.getScale() ? "scale" : "no-repeat";
+
+            // get the style attributes for the given source
+            var attr = qx.bom.element.Decoration.getAttributes(source, repeat);
+            // get the background image(s) defined by the decorator
+            var decStyle = dec.getStyles(true);
+
+            var combinedStyles = {
+              "backgroundImage":  attr.style.backgroundImage,
+              "backgroundPosition": (attr.style.backgroundPosition || "0 0"),
+              "backgroundRepeat": (attr.style.backgroundRepeat || "no-repeat")
+            };
+
+            if (hasBackground) {
+              combinedStyles["backgroundPosition"] += "," + decStyle["background-position"] || "0 0";
+              combinedStyles["backgroundRepeat"] += ", " + dec.getBackgroundRepeat();
+            }
+
+            if (hasGradient) {
+              combinedStyles["backgroundPosition"] += ", 0 0";
+              combinedStyles["backgroundRepeat"] += ", no-repeat";
+            }
+
+            combinedStyles["backgroundImage"] += "," + decStyle["background-image"];
+
+            // apply combined background images
+            el.setStyles(combinedStyles);
+
+            return;
+          }
+        } else {
+          // force re-apply to remove old decorator styles
+          el.setSource(null);
+        }
+      }
+
+      el.setSource(source);
     },
 
 
@@ -703,6 +774,7 @@ qx.Class.define("qx.ui.basic.Image",
   */
 
   destruct : function() {
+    delete this.__currentContentElement;
     this._disposeMap("__contentElements");
   }
 });

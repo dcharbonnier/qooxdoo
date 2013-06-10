@@ -18,14 +18,15 @@
 ************************************************************************ */
 
 /* ************************************************************************
-#require(qx.module.Manipulating)
-#require(qx.module.Css)
-#require(qx.module.Attribute)
-#require(qx.module.Traversing)
 ************************************************************************ */
 
 /**
  * Widget which displays the test results as a formatted list.
+ *
+ * @require(qx.module.Manipulating)
+ * @require(qx.module.Css)
+ * @require(qx.module.Attribute)
+ * @require(qx.module.Traversing)
  */
 qx.Class.define("testrunner.view.widget.TestResultView",
 {
@@ -37,7 +38,8 @@ qx.Class.define("testrunner.view.widget.TestResultView",
     this.base(arguments);
     this.set({
       overflowX : "auto",
-      overflowY : "auto"
+      overflowY : "auto",
+      selectable: true
     });
   },
 

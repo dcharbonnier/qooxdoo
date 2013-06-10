@@ -20,15 +20,11 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#asset(qx/icon/${qx.icontheme}/*)
-
-************************************************************************ */
-
 /**
  * Playground application, which allows for source code editing and live
  * previews of a simple custom application.
+ *
+ * @asset(qx/icon/${qx.icontheme}/*)
  */
 qx.Class.define("playground.Application",
 {
@@ -110,8 +106,6 @@ qx.Class.define("playground.Application",
     /**
      * This method contains the initial application code and gets called
      * during startup of the application.
-     *
-     * @lint ignoreUndefined(qxc)
      */
     main : function()
     {
@@ -949,7 +943,6 @@ qx.Class.define("playground.Application",
       }
     }
   },
-
 
 
   /*

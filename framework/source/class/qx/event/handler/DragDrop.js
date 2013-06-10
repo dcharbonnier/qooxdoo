@@ -18,16 +18,12 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#require(qx.event.handler.Mouse)
-#require(qx.event.handler.Keyboard)
-#require(qx.event.handler.Capture)
-
-************************************************************************ */
-
 /**
  * Event handler, which supports drag events on DOM elements.
+ *
+ * @require(qx.event.handler.Mouse)
+ * @require(qx.event.handler.Keyboard)
+ * @require(qx.event.handler.Capture)
  */
 qx.Class.define("qx.event.handler.DragDrop",
 {
@@ -71,10 +67,10 @@ qx.Class.define("qx.event.handler.DragDrop",
 
   statics :
   {
-    /** {Integer} Priority of this handler */
+    /** @type {Integer} Priority of this handler */
     PRIORITY : qx.event.Registration.PRIORITY_NORMAL,
 
-    /** {Map} Supported event types */
+    /** @type {Map} Supported event types */
     SUPPORTED_TYPES :
     {
       dragstart : 1,
@@ -87,7 +83,7 @@ qx.Class.define("qx.event.handler.DragDrop",
       droprequest : 1
     },
 
-    /** {Integer} Whether the method "canHandleEvent" must be called */
+    /** @type {Integer} Whether the method "canHandleEvent" must be called */
     IGNORE_CAN_HANDLE : true
   },
 
@@ -461,7 +457,7 @@ qx.Class.define("qx.event.handler.DragDrop",
     },
 
 
-    /** {Boolean} Whether a valid drop object / action exists */
+    /** @type {Boolean} Whether a valid drop object / action exists */
     __validDrop : false,
     __validAction : false,
 
@@ -591,7 +587,7 @@ qx.Class.define("qx.event.handler.DragDrop",
       }
 
       // Stop event
-      if (this.__sessionActive) {
+      if (this.__sessionActive && e.getTarget() == this.__dragTarget) {
         e.stopPropagation();
         this.__preventNextClick();
       }
@@ -730,6 +726,8 @@ qx.Class.define("qx.event.handler.DragDrop",
   */
 
   defer : function(statics) {
-    qx.event.Registration.addHandler(statics);
+    if (!qx.core.Environment.get("qx.emulatemouse")) {
+      qx.event.Registration.addHandler(statics);
+    }
   }
 });

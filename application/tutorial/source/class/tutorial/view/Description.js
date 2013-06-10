@@ -17,13 +17,17 @@
 
 ************************************************************************ */
 /* ************************************************************************
-#asset(qx/icon/Tango/22/actions/media-skip-backward.png)
-#asset(qx/icon/Tango/22/actions/media-playback-start.png)
-#asset(qx/icon/Tango/22/actions/media-skip-forward.png)
-#asset(tutorial/default.highlight.css)
-#asset(tutorial/highlight.pack.js)
 ************************************************************************ */
 
+/**
+ * @ignore(hljs.*)
+ *
+ * @asset(qx/icon/Tango/22/actions/media-skip-backward.png)
+ * @asset(qx/icon/Tango/22/actions/media-playback-start.png)
+ * @asset(qx/icon/Tango/22/actions/media-skip-forward.png)
+ * @asset(tutorial/default.highlight.css)
+ * @asset(tutorial/highlight.pack.js)
+ */
 qx.Class.define("tutorial.view.Description",
 {
   extend : qx.ui.container.Composite,
@@ -34,9 +38,6 @@ qx.Class.define("tutorial.view.Description",
   *****************************************************************************
   */
 
-  /**
-   * @lint ignoreUndefined(qxc, hljs)
-   */
   construct : function()
   {
     this.base(arguments);
@@ -121,9 +122,6 @@ qx.Class.define("tutorial.view.Description",
       qx.bom.Stylesheet.includeFile(uri);
     },
 
-    /**
-     * @lint ignoreUndefined(hljs)
-     */
     updateView : function() {
       if (!this.getTutorial()) {
         return;

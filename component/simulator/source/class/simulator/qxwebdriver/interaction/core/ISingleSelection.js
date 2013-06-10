@@ -18,7 +18,6 @@
 ************************************************************************ */
 
 /* ************************************************************************
-#ignore(ITEM)
 ************************************************************************ */
 
 /**
@@ -47,7 +46,7 @@ qx.Class.define("simulator.qxwebdriver.interaction.core.ISingleSelection", {
      * @return {Element|null} DOM element or <code>null</code> if no matching
      * item can be found
      * @internal
-     * @lint ignoreUndefined(ITEM)
+     * @ignore(ITEM)
      */
     getItemFromSelectables : function()
     {

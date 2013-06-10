@@ -52,6 +52,9 @@ testrunner.define({
 
     this.assertTrue(this.sandbox.slice(0).testInit);
     this.assertEquals(2, this.sandbox.slice(0).length);
+    this.assertEquals(1, this.sandbox.slice(1).length);
+    this.assertEquals(0, this.sandbox.slice(0,0).length);
+    this.assertEquals(1, this.sandbox.slice(0,1).length);
 
     var clone = this.sandbox.clone().splice(0, 2);
     this.assertTrue(clone.testInit);
@@ -192,6 +195,18 @@ testrunner.define({
     this.assertEquals(1, called);
   },
 
+
+  testCloneWithNestedDomStructure : function() {
+    var orig = q.create("<span id='container'><span id='subcontainer'><a href='#' title='test' class='foo'></a></span></span>");
+
+    var clone = orig.getChildren().clone();
+    var secondClone = orig.getChildren().clone(true);
+
+    this.assertEquals(1, clone.length, "Cloning without events failed!");
+    this.assertEquals(1, secondClone.length, "Cloning with events failed!");
+  },
+
+
   testAppendToRemove : function() {
     var test = q.create("<div/>");
     test.appendTo(this.sandbox[0]);
@@ -218,10 +233,26 @@ testrunner.define({
     this.assertEquals(2, q("#sandbox .child").length);
   },
 
-  testEmpty : function() {
+  "test empty" : function() {
     var test = q.create("<div><p>test</p></div>");
     test.empty();
     this.assertEquals("", test[0].innerHTML);
+  },
+
+  "test empty and don't destroy children in IE" : function() {
+    // see [BUG #7323]
+
+    var el = q.create("<div>foo<p>bar</p></div>");
+    var ieSpecialTreatment = function(html) {
+      // IE uses uppercase tag names and inserts whitespace
+      return html.toLowerCase().replace(/\s+/, "");
+    };
+
+    q('#sandbox').empty().append(el);
+    this.assertEquals("foo<p>bar</p>", ieSpecialTreatment(el.getHtml()));
+    q('#sandbox').empty().append(el);
+    this.assertEquals("foo<p>bar</p>", ieSpecialTreatment(el.getHtml()));
+    this.assertEquals("<div>foo<p>bar</p></div>", ieSpecialTreatment(q('#sandbox').getHtml()));
   },
 
   testAppendHtmlString : function() {
@@ -497,10 +528,18 @@ testrunner.define({
     this.assertFalse(q.create("<div>").isRendered());
   },
 
-  testAdd : function() {
+  testAddElement : function() {
     var test = q.create("<div id='testdiv'/>");
     this.assertEquals(1, test.length);
     test.add(document.body);
+    this.assertEquals(2, test.length);
+  },
+
+  testAddCollection : function() {
+    var test = q.create("<div id='testdiv'/>");
+    var toAdd = q.create("<h2>Foo</h2>");
+    this.assertEquals(1, test.length);
+    test.add(toAdd);
     this.assertEquals(2, test.length);
   },
 
@@ -1173,7 +1212,7 @@ testrunner.define({
 
   testIncludeStylesheet : function()
   {
-    var styleSheet = "../../../../framework/source/resource/qx/test/style2.css";
+    var styleSheet = "./style2.css";
     q.includeStylesheet(styleSheet);
     q.create('<div id="affe"></div>').appendTo(this.sandbox[0]);
 
@@ -1555,8 +1594,7 @@ testrunner.define({
   tearDown : testrunner.globalTeardown,
 
     __registerNormalization : function(type, normalizer) {
-    var now = new Date().getTime();
-    q.define("EventNormalize" + now.toString(), {
+    q.define("EventNormalize" + Math.random().toString().substr(2), {
       statics :
       {
         normalize : normalizer
@@ -1933,6 +1971,18 @@ testrunner.define({
   testRender : function() {
     var result = q.template.render("{{affe}}", {affe: "george"});
     this.assertEquals("george", result);
+  },
+
+  testRenderToNodeTmplTextOnly : function() {
+    var result = q.template.renderToNode("{{affe}}", {affe: "george"});
+    this.assertEquals(1, result.length);
+    this.assertEquals("george", result[0].data);
+  },
+
+  testRenderToNodeTmplWithNodes : function() {
+    var result = q.template.renderToNode("<div><span>{{affe}}</span></div>", {affe: "george"});
+    this.assertEquals(1, result.length);
+    this.assertEquals("george", result[0].firstChild.firstChild.data);
   },
 
   testGet : function() {
@@ -2425,6 +2475,17 @@ testrunner.define({
       }, this);
     }, this).send();
     this.wait();
+  },
+
+
+  testAutomatedJsonPCallback : function() {
+    var jsonp = q.io.jsonp("jsonpload");
+
+    var checkForReserverdURLChars = /[\!#\$%&'\(\)\*\+,\/\:;\=\?@\[\]]/;
+    var url = jsonp.getGeneratedUrl();
+    var callbackPart = url.substr(url.indexOf("=") + 1);
+
+    this.assertFalse(checkForReserverdURLChars.test(callbackPart), "Generated URL is not valid");
   }
 });
 
@@ -2595,6 +2656,230 @@ testrunner.define({
   }
 });
 
+
+testrunner.define({
+
+  classname : "MatchMedia",
+
+  setUp : function(){
+    testrunner.globalSetup.call(this);
+    this.__iframe = q.create('<iframe src="media.html" width="500" height="400" name="Testframe"></iframe>');
+    this.__iframe.appendTo(this.sandbox[0]);
+  },
+
+  tearDown : testrunner.globalTeardown,
+
+  testLandscape : function(){
+
+    var iframe = this.__iframe[0];
+
+    iframe.width = "500px";
+    iframe.height = "400px";
+
+    qxWeb(window).once('message',function(e){
+      this.resume(function() {
+        this.assertEquals(e.data, "true");
+      }, this);
+    },this);
+
+    window.setTimeout(function(){
+      iframe.contentWindow.postMessage("all and (orientation:landscape)",'*');
+    },100);
+
+    this.wait(200);
+  },
+
+  testMinWidth : function(){
+
+    var iframe = this.__iframe[0];
+
+    iframe.width = "500px";
+    iframe.height = "400px";
+
+    qxWeb(window).once('message',function(e){
+      this.resume(function() {
+        this.assertEquals(e.data, "true");
+      }, this);
+    },this);
+
+    window.setTimeout(function(){
+      iframe.contentWindow.postMessage("all and (min-width:500px)",'*');
+    },100);
+
+    this.wait(200);
+  },
+
+  testMaxWidth : function(){
+
+    var iframe = this.__iframe[0];
+
+    iframe.width = "500px";
+    iframe.height = "400px";
+
+    qxWeb(window).once('message',function(e){
+      this.resume(function() {
+        this.assertEquals(e.data, "true");
+      }, this);
+    },this);
+
+    window.setTimeout(function(){
+      iframe.contentWindow.postMessage("all and (max-width:500px)",'*');
+    },100);
+
+    this.wait(200);
+  },
+
+  testAnd : function(){
+
+    var iframe = this.__iframe[0];
+
+    iframe.width = "300px";
+    iframe.height = "400px";
+
+    qxWeb(window).once('message',function(e){
+      this.resume(function() {
+        this.assertEquals(e.data, "false");
+      }, this);
+    },this);
+
+    window.setTimeout(function(){
+      iframe.contentWindow.postMessage("screen and (min-width: 400px) and (max-width: 700px)",'*');
+    },100);
+
+    this.wait(200);
+  },
+
+  testMinHeight : function(){
+    var iframe = this.__iframe[0];
+
+    iframe.width = "500px";
+    iframe.height = "400px";
+
+    qxWeb(window).once('message',function(e){
+      this.resume(function() {
+        this.assertEquals(e.data, "false");
+      }, this);
+    },this);
+
+    window.setTimeout(function(){
+      iframe.contentWindow.postMessage("all and (min-height:500px)",'*');
+    },100);
+
+    this.wait(200);
+  },
+
+  testColor : function(){
+    var iframe = this.__iframe[0];
+
+    iframe.width = "500px";
+    iframe.height = "400px";
+
+    qxWeb(window).once('message',function(e){
+      this.resume(function() {
+        this.assertEquals(e.data, "true");
+      }, this);
+    },this);
+
+    window.setTimeout(function(){
+      iframe.contentWindow.postMessage("all and (min-color: 1)",'*');
+    },100);
+
+    this.wait(200);
+  },
+
+  testCombined : function(){
+
+    var iframe = this.__iframe[0];
+
+    iframe.width = "800px";
+    iframe.height = "400px";
+
+    qxWeb(window).once('message',function(e){
+      this.resume(function() {
+        this.assertEquals(e.data, "true");
+      }, this);
+    },this);
+
+    window.setTimeout(function(){
+      iframe.contentWindow.postMessage("(min-width: 700px) and (orientation: landscape)",'*');
+    },100);
+
+    this.wait(200);
+  },
+
+  testDeviceWidth : function(){
+    var iframe = this.__iframe[0];
+
+    qxWeb(window).once('message',function(e){
+      this.resume(function() {
+        var dw = window.screen.width;
+        var match = dw <= 799 ? "true" : "false";
+        this.assertEquals(e.data, match);
+      }, this);
+    },this);
+
+    window.setTimeout(function(){
+      iframe.contentWindow.postMessage("screen and (max-device-width: 799px)",'*');
+    },100);
+
+    this.wait(200);
+  },
+
+  testWidth : function(){
+    var iframe = this.__iframe[0];
+    iframe.width = "800px";
+
+    qxWeb(window).once('message',function(e){
+      this.resume(function() {
+        this.assertEquals(e.data, "true");
+      }, this);
+    },this);
+
+    window.setTimeout(function(){
+      iframe.contentWindow.postMessage("screen and (width: 800px)",'*');
+    },100);
+
+    this.wait(200);
+  },
+
+  testPixelratio : function(){
+    var iframe = this.__iframe[0];
+    iframe.width = "800px";
+
+    qxWeb(window).once('message',function(e){
+      this.resume(function() {
+        this.assertEquals(e.data, "true");
+      }, this);
+    },this);
+
+    window.setTimeout(function(){
+      iframe.contentWindow.postMessage("screen and (width: 800px)",'*');
+    },100);
+
+    this.wait(200);
+  },
+
+  testNot : function(){
+    var iframe = this.__iframe[0];
+    iframe.width = "500px";
+
+    qxWeb(window).once('message',function(e){
+      this.resume(function() {
+        this.assertEquals(e.data, "true");
+      }, this);
+    },this);
+
+    window.setTimeout(function(){
+      iframe.contentWindow.postMessage("not screen and (min-width: 800px)",'*');
+    },100);
+
+    this.wait(200);
+  }
+
+});
+
+
+
 testrunner.define({
 	 classname : "Dataset",
 
@@ -2732,4 +3017,71 @@ testrunner.define({
 
     all.remove();
   }
+});
+
+testrunner.define({
+  classname : "FakeServer",
+
+  tearDown : function() {
+    q.dev.fakeServer.restore();
+  },
+
+  testConfiguredResponse : function() {
+    var url = "/doesnotexist" + Date.now();
+    var expectedResponse = "OK";
+
+    q.dev.fakeServer.configure([
+      {
+        method: "GET",
+        url: url,
+        response: expectedResponse
+      }
+    ]);
+
+    var req = q.io.xhr(url).on("readystatechange", function(xhr) {
+      if (xhr.status == 200 && xhr.readyState == 4 && xhr.responseText == expectedResponse) {
+        this.resume();
+      }
+    }, this).send();
+
+    this.wait();
+  },
+
+  testRemoveResponse : function() {
+    var url = "/doesnotexist" + Date.now();
+    var expectedResponse = "OK";
+
+    q.dev.fakeServer.configure([
+      {
+        method: "GET",
+        url: url,
+        response: expectedResponse
+      }
+    ]);
+
+    q.dev.fakeServer.removeResponse("GET", url);
+
+    var req = q.io.xhr(url).on("readystatechange", function(xhr) {
+      if (xhr.status == 404 && xhr.readyState == 4) {
+        this.resume();
+      }
+    }, this).send();
+
+    this.wait();
+  },
+
+  testRespondWith : function() {
+    var url = "/doesnotexist" + Date.now();
+    var expectedResponse = "OK";
+    q.dev.fakeServer.respondWith("GET", url, expectedResponse);
+
+    var req = q.io.xhr(url).on("readystatechange", function(xhr) {
+      if (xhr.status == 200 && xhr.readyState == 4 && xhr.responseText == expectedResponse) {
+        this.resume();
+      }
+    }, this).send();
+
+    this.wait();
+  }
+
 });

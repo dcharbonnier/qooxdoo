@@ -17,16 +17,10 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#asset(playground/*)
-#ignore(require)
-#ignore(ace)
-
-************************************************************************ */
-
 /**
  * Container for the source code editor.
+ *
+ * @asset(playground/*)
  */
 qx.Class.define("playground.view.Editor",
 {
@@ -85,8 +79,6 @@ qx.Class.define("playground.view.Editor",
     /**
      * The constructor was spit up to make the included mixin available during
      * the init process.
-     *
-     * @lint ignoreUndefined(require)
      */
     init: function()
     {
@@ -95,7 +87,6 @@ qx.Class.define("playground.view.Editor",
       // If widgets are added to the container, the zIndex of the editor blocker
       // is set to 100. This makes possible to resize the splitpanes
       this.addListener("addChildWidget", function() {
-        this.getBlocker().getContentBlockerElement().setStyles({ "zIndex" : 100 });
         this.getBlocker().getBlockerElement().setStyles({ "zIndex" : 100 });
       }, this);
 
@@ -166,7 +157,7 @@ qx.Class.define("playground.view.Editor",
      * This code part uses the ajax.org code editor library to add a
      * syntax-highlighting editor as an textarea replacement
      *
-     * @lint ignoreUndefined(ace,require)
+     * @ignore(ace.edit, require)
      */
     __onEditorAppear : function() {
       // timout needed for chrome to not get the ACE layout wrong and show the

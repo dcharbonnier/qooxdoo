@@ -26,12 +26,14 @@
     "source-all",
     "source-hybrid",
     "source-server",
+    "source-server-reload",
     "source-httpd-config",
     "simulation-build",
     "simulation-run",
     "test",
     "test-source",
-    "translation"
+    "translation",
+    "watch"
   ],
   
   "default-job" : "source-hybrid",

@@ -1,13 +1,5 @@
-/* ************************************************************************
-
-#ignore(qx.test.performance.Base)
-#ignore(qx.test.performance.Extend)
-#ignore(qx.test.performance.Base.prototype.foo_base)
-
-************************************************************************ */
-
 /**
- * @ignore(qx.test.performance.Base)
+ * @ignore(qx.test.performance.Base.*)
  * @ignore(qx.test.performance.Extend)
  */
 
@@ -78,6 +70,9 @@ qx.Class.define("qx.test.performance.Base", {
   }
 });
 
+/**
+ * @ignore(qx.test.performance.Base.*)
+ */
 qx.Class.define("qx.test.performance.Extend", {
   extend : qx.test.performance.Base,
 

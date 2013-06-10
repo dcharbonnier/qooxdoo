@@ -46,9 +46,6 @@
        * Steven Levithan
 
 ************************************************************************ */
-/* ************************************************************************
-#require(qx.lang.normalize.String)
-************************************************************************ */
 
 /**
  * String helper functions
@@ -56,6 +53,8 @@
  * The native JavaScript String is not modified by this class. However,
  * there are modifications to the native String in {@link qx.lang.normalize.String} for
  * browsers that do not support certain features.
+ *
+ * @require(qx.lang.normalize.String)
  */
 qx.Bootstrap.define("qx.lang.String",
 {
@@ -73,7 +72,7 @@ qx.Bootstrap.define("qx.lang.String",
     __unicodeFirstLetterInWordRegexp : null,
 
     /**
-     * {Map} Cache for often used string operations [camelCasing and hyphenation]
+     * @type {Map} Cache for often used string operations [camelCasing and hyphenation]
      * e.g. marginTop => margin-top
      */
     __stringsMap : {},
@@ -184,21 +183,6 @@ qx.Bootstrap.define("qx.lang.String",
      */
     trimRight : function(str) {
       return str.replace(/\s+$/, "");
-    },
-
-
-    /**
-     * removes white space from the left and the right side of a string
-     *
-     * @deprecated {2.1} please use the native trim method.
-     * @param str {String} the string to trim
-     * @return {String} the trimmed string
-     */
-    trim : function(str) {
-      if (qx.core.Environment.get("qx.debug")) {
-        qx.Bootstrap.warn("'qx.lang.String.trim' is deprecated. Please use the native .trim method on String objects.");
-      }
-      return str.replace(/^\s+|\s+$/g, "");
     },
 
 

@@ -41,19 +41,7 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#ignore(module)
-#ignore(require)
-#ignore(global)
-#ignore(require.paths)
-#ignore(__dirname)
-#ignore(module.exports)
-
-************************************************************************ */
-
 /**
- *
  * Exposes Sinon.JS to qooxdoo.
  *
  * This class exposes Sinon.JS (http://sinonjs.org/) and is not to be used
@@ -63,13 +51,11 @@
  * @internal
  * @ignore(module, require, global)
  * @lint ignoreDeprecated(eval)
+ * @ignore(module.exports.*)
  *
  */
-qx.Class.define("qx.dev.unit.Sinon",
+qx.Bootstrap.define("qx.dev.unit.Sinon",
 {
-
-  type : "static",
-
   statics :
   {
     /**
@@ -85,7 +71,8 @@ qx.Class.define("qx.dev.unit.Sinon",
 
 
 /**
- * @ignore(module, require, global, process, setImmediate, msSetImmediate)
+ * @ignore(module, require, global, process.*, setImmediate)
+ * @ignore(msSetImmediate.*)
  * @lint ignoreUnused(alen, requestMethod, index)
  * @lint ignoreNoLoopBlock()
  */

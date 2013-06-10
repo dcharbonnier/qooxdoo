@@ -52,7 +52,49 @@ There is no escape character, so in order to e.g. enter a literal "*@*" into the
 HTML
 -----
 
-There is limited support for HTML markup. You should be able to use all of the character-level tags, like ``<a>`` or ``<code>``, as well as paragraph-level tags like ``<p>`` or ``<ul>``. ``<pre>`` is particularly suited for code snippets, as it allows you to add syntax highlighting for %{JS} with ``<pre class="javascript">``.
+There is limited support for HTML markup. You should be able to use all of the
+character-level tags, like ``<a>`` or ``<code>``, as well as paragraph-level
+tags like ``<p>`` or ``<ul>``. ``<pre>`` is particularly suited for code
+snippets, as it allows you to add syntax highlighting for %{JS} with ``<pre
+class="javascript">``.
+
+.. _pages/development/api_jsdoc_ref#attributes:
+
+Attributes / Documentation Tags
+=================================
+
+After the general description text there may follow any number of attributes or
+"documentation tags" (as the JSDoc3 spec calls them). They all have a common
+general syntax::
+
+  '@' <key> <key_data>
+
+That is they all start with an at-sign, ``@``, as the first thing on a line within
+the JSDoc comment block. Then follows a special key from a pre-defined set of
+keys, like `param`, `return`, `throws` and the like. The key data is then
+key-specific and varies a bit. There might be keys that have no data at all.
+Some use a parenthesized syntax to indicate arguments (like `"@ignore(foo)"`),
+other use a more verb-like syntax (like `"@deprecated {%{version}} use bar
+instead"`). Many of them allow free comment text at the end. See the `Section
+Reference`_ for a full list of supported attributes and their individual
+syntaxes.
+
+A new attribute entry or the end of the JSDoc comment terminate an attribute
+specification. Attributes may stretch across multiple lines. Lines following an
+attribute key are logically appended to the first line (i.e. the effect is as if
+you had written one longe line).
+
+You can **comment out** an attribute by just prefixing it with another ``@``, like
+
+::
+  
+  @@ignore(foo)
+
+Then this attribute will simply be ignored.
+
+The following sections befor the reference list of supported attributes give some
+general information that apply to some of them.
+
 
 .. _pages/development/api_jsdoc_ref#handling_of_data_types:
 
@@ -70,11 +112,16 @@ The following type indicators are accepted:
   * - Primitive
     - ``var``, ``void``, ``undefined``
   * - Builtin classes
-    - ``Object``, ``Boolean``, ``String``, ``Number``, ``Integer``, ``Float``, ``Double``, ``Regexp``, ``Function``, ``Error``, ``Map``, ``Date``, ``Element``
+    - ``Object``, ``Boolean``, ``String``, ``Number``, ``Integer``, ``Float``,
+      ``Double``, ``Regexp``, ``Function``, ``Error``, ``Map``, ``Date``,
+      ``Element``
   * - Other classes
-    - Here the full qualified name is specified (e.g. ``qx.ui.core.Widget``). If the referenced class is in the same package as the currently documented class, the plain class name is sufficient (e.g. ``Widget``).
+    - Here the full qualified name is specified (e.g. ``qx.ui.core.Widget``). If
+      the referenced class is in the same package as the currently documented
+      class, the plain class name is sufficient (e.g. ``Widget``).
   * - Lists
-    - Homogenous lists are indicated by adding one or more ``[]`` to the type, e.g. ``String[]``, ``Integer[][]``.
+    - Homogenous lists are indicated by adding one or more ``[]`` to the type,
+      e.g. ``String[]``, ``Integer[][]``.
 
 
 .. _pages/development/api_jsdoc_ref#types_syntax:
@@ -82,13 +129,19 @@ The following type indicators are accepted:
 Syntax of a Type Specification
 --------------------------------
 
-Here is the full syntax for a type specification as used in concrete doc attributes::
+Here is the full syntax for a type specification as used in concrete doc
+attributes::
 
   `{` [ Type1 `|` Type2 `|` ... [ `?` [<default_value]]  ] `}`
 
-That is, between curly braces an optional list of type indicators (as described above), separated by ``|``, following an optional ``?`` to indicate the entire parameter is optional, followed by an optional default value (the last two for ``@param`` attributes).
+That is, between curly braces an optional list of type indicators (as described
+above), separated by ``|``, following an optional ``?`` to indicate the entire
+parameter is optional, followed by an optional default value (the last two for
+``@param`` attributes).
 
-For a parameter description the meaning is: The expected parameter can be of Type1 or Type2 or ..., is optional, i.e. can be left out, and will default to *<default_value>*.
+For a parameter description the meaning is: The expected parameter can be of
+Type1 or Type2 or ..., is optional, i.e. can be left out, and will default to
+*<default_value>*.
 
 **Example**
 
@@ -102,25 +155,49 @@ For a parameter description the meaning is: The expected parameter can be of Typ
 Matching of Variable Names
 ===========================
 
-Several of the JSDoc keys take some sort of symbol names as parameters, e.g. the ``foo`` in ``@ignore(foo)``, which are then matched against names found in the code. These parameters include names of global variables, built-in functions, formal arguments, namespaces, and the like. It is important that you are aware of the semantics of those parameters, i.e. the way they are used to establish a match with a name actually found in the code.
+Several of the JSDoc keys take some sort of symbol names as parameters, e.g. the
+``foo`` in ``@ignore(foo)``, which are then matched against names found in the
+code. These parameters include names of global variables, built-in functions,
+formal arguments, namespaces, and the like. It is important that you are aware
+of the semantics of those parameters, i.e. the way they are used to establish a
+match with a name actually found in the code.
 
 * **Exact Match**
 
-  Some keys restrict themselves to exact matches, e.g. the ``alert`` in ``@lint ignoreDeprecated(alert)`` will only match the global symbol ``alert`` in the code, neither ``aler`` nor ``alerty`` nor ``alert.foo``.
+  Some keys restrict themselves to exact matches, e.g. the ``alert`` in ``@lint
+  ignoreDeprecated(alert)`` will only match the global symbol ``alert`` in the
+  code, neither ``aler`` nor ``alerty`` nor ``alert.foo``.
 
-  The next two match types include exact match, but also allow other kinds of matches.
+  The next two match types include exact match, but also allow other kinds of
+  matches.
 * **Prefix Match**
 
-  Some keys regard the name from the code as a prefix of the parameter. This is usually restricted to object boundaries (not just simple string prefixes), so a name of ``foo`` in the code will match a parameter of ``foo.bar``, but not ``foozy.bar``.
-  A good example is ``@ignore(foo)``. If you want to ignore the name ``foo`` in your code, it probably makes sense to ignore names nested on ``foo`` as well, like ``foo.bar``, so this key effectively uses prefix matching.
+  Some keys regard the name from the code as a prefix of the parameter. This is
+  usually restricted to object boundaries (not just simple string prefixes), so
+  a name of ``foo`` in the code will match a parameter of ``foo.bar``, but not
+  ``foozy.bar``.
+  A good example is ``@ignore(foo)``. If you want to ignore the name ``foo`` in
+  your code, it probably makes sense to ignore names nested on ``foo`` as well,
+  like ``foo.bar``, so this key effectively uses prefix matching.
 * **Extension Match**
 
-  Some keys regard the parameter as a prefix of the name from the code, again usually restricting it to object boundaries. In that case, a name ``foo.bar`` will match a parameter of ``foo``, while the name ``foozy`` will not.
+  Some keys regard the parameter as a prefix of the name from the code, again
+  usually restricting it to object boundaries. In that case, a name ``foo.bar``
+  will match a parameter of ``foo``, while the name ``foozy`` will not.
 * **Wildcard Match**
 
-  Some keys need an explicit, glob-style wildcard at the end to support extension matches. In that case you need to provide a hint like ``@somehint somekey(foo.*)``, in order to match a name of ``foo.bar`` from the code with this key. Again, a match has to honor object boundaries. (Mind that in the case of a parameter like ``foo.*``, simply ``foo`` with **not** match; the dot is part of the pattern and has to be present in order for the match to succeed).
+  Some keys need an explicit, glob-style wildcard at the end to support
+  extension matches. In that case you need to provide a hint like ``@somehint
+  somekey(foo.*)``, in order to match a name of ``foo.bar`` from the code with
+  this key. Again, a match has to honor object boundaries. (Mind that in the
+  case of a parameter like ``foo.*``, simply ``foo`` with **not** match; the dot
+  is part of the pattern and has to be present in order for the match to
+  succeed).
 
-The individual keys should make it clear which of those match semantics they use when checking actual code names. Many keys will allow not only one parameter, but a list of parameters. Matching is then applied to each parameter in turn, and if one matches, the key applies.
+The individual keys should make it clear which of those match semantics they use
+when checking actual code names. Many keys will allow not only one parameter,
+but a list of parameters. Matching is then applied to each parameter in turn,
+and if one of them matches the key applies.
 
 
 
@@ -155,7 +232,9 @@ A JSDoc comment consists of different sections, where a section is either a lead
    * - Lint Checking
      - * `@lint`_
    * - Compiler
-     - * `@attach`_
+     - * `@cldr`_
+       * `@asset`_
+       * `@attach`_
        * `@attachStatic`_
        * `@ignore`_
        * `@require`_
@@ -216,7 +295,7 @@ Description
 
 **Syntax**
 
-  ``@childControl <name> { <type> } <description>``
+  ``@childControl <name> { <type> } [<description>]``
 
 **Parameters**
 
@@ -229,7 +308,7 @@ Description
       * - type
         - The :ref:`type specification <pages/development/api_jsdoc_ref#types_syntax>` of the child control widget
       * - description
-        - What the child control is used for in the context of this widget
+        - *(opt.)* What the child control is used for in the context of this widget
   
 **Example**
 
@@ -256,7 +335,7 @@ Description
 
 **Syntax**
 
-  ``@param <name> { <type> } <description>``
+  ``@param <name> { <type> } [<description>]``
 
 **Parameters**
 
@@ -269,7 +348,7 @@ Description
       * - type
         - A :ref:`type specification <pages/development/api_jsdoc_ref#types_syntax>` like ``{Boolean | Integer ? 0}``
       * - description
-        - Descriptive text of the parameter
+        - *(opt.)* Descriptive text of the parameter
   
 **Example**
 
@@ -292,11 +371,11 @@ Description
 
 **Description**
 
-  ``@type`` is usually used to document data items, esp. when the type is not immediately apparent in the code. This is for example the case when a class member is initialized with ``null`` and a map value is assigned in the constructor, so as to not share a single map accross multiple instances.
+  ``@type`` is usually used to document data items, esp. when the type is not immediately apparent in the code. This is for example the case when a class member is initialized with ``null`` and a value of some other type is then assigned in the constructor, so as to not share a single data value accross multiple instances.
 
 **Syntax**
 
-  ``@type { <type> }``
+  ``@type { <type> } [<description>]``
 
 **Parameters**
 
@@ -306,6 +385,8 @@ Description
 
       * - type
         - A :ref:`type indicator <pages/development/api_jsdoc_ref#types_syntax>` like ``Map``
+      * - description
+        - *(opt.)* Descriptive text of the type
   
 **Example**
 
@@ -332,7 +413,7 @@ Description
 
 **Syntax**
 
-  ``@return { <type> } <description>``
+  ``@return { <type> } [<description>]``
 
 **Parameters**
 
@@ -343,7 +424,7 @@ Description
       * - type
         - The :ref:`type <pages/development/api_jsdoc_ref#types_syntax>` of the return value.
       * - description
-        - Descriptive text
+        - *(opt.)* Descriptive text
 
 **Example**
 
@@ -370,7 +451,7 @@ Description
 
 **Syntax**
 
-  ``@throws { <type> } <description>``
+  ``@throws { <type> } [<description>]``
 
 **Parameters**
 
@@ -381,7 +462,7 @@ Description
     * - type
       - The :ref:`type <pages/development/api_jsdoc_ref#types_syntax>` of the exception
     * - description
-      - Descriptive text under which circumstances this exception is thrown.
+      - *(opt.)* Descriptive text under which circumstances this exception is thrown.
 
 **Example**
 
@@ -555,7 +636,7 @@ Description
 
 **Syntax**
 
-  ``@deprecated { <since_version> } <description>``
+  ``@deprecated { <since_version> } [<description>]``
 
 **Parameters**
 
@@ -566,7 +647,7 @@ Description
       * - since_version
         - qooxdoo version with which the corresponding item was deprecated
       * - description
-        - Descriptive text of the deprecation
+        - *(opt.)* Descriptive text of the deprecation
   
 **Example**
 
@@ -647,6 +728,74 @@ Description
     @lint environmentNonLiteralKey(foo)
 
 
+.. _pages/development/api_jsdoc_ref#cldr:
+
+.. rst-class:: api-ref
+
+@cldr
+-------------------------------------------
+
+**Scope**
+
+  Class
+
+**Description**
+
+  This hint indicates that the class needs CLDR data (e.g. names of months or
+  week-days). It takes no arguments.
+
+**Syntax**
+
+  ``@cldr()``
+
+**Example**
+
+  ``@cldr()``
+
+
+.. _pages/development/api_jsdoc_ref#asset:
+
+.. rst-class:: api-ref
+
+@asset
+-------------------------------------------
+
+**Scope**
+
+  Class
+
+**Description**
+
+  Request resources, like images, that this class uses to be included in a build.
+
+  You can also use ``*`` as a wildcard character, to request entire
+  resource namespaces: ``@asset(foo/*)`` will request all resources found under
+  the "foo/" namespace.
+
+**Syntax**
+
+  ``@asset ( <resource_id> , [<resource_id>] )``
+
+**Parameters**
+
+    .. list-table::
+      :stub-columns: 1
+      :widths: 30 70
+
+      * - resource_id
+        - The resource ID or resource pattern to be added.
+
+**Example**
+
+  ``@asset(custom/test.png)``
+
+  This will add the image ``custom/test.png`` to the build.
+
+  ``@asset(custom/*)``
+
+  Add all resources under the ``custom`` name space to the build.
+
+
 .. _pages/development/api_jsdoc_ref#attach:
 
 .. rst-class:: api-ref
@@ -674,8 +823,8 @@ Description
 
       * - class
         - Class ID where the function should be attached.
-      * - feature_name *(opt)*
-        - Feature name under which the function should be attached; if missing, the original function name is used.
+      * - feature_name
+        - *(opt.)* Feature name under which the function should be attached; if missing, the original function name is used.
 
 **Example**
 
@@ -711,8 +860,8 @@ Description
 
       * - class
         - Class ID where the function should be attached.
-      * - feature_name *(opt)*
-        - Feature name under which the function should be attached; if missing, the original function name is used.
+      * - feature_name
+        - *(opt.)* Feature name under which the function should be attached; if missing, the original function name is used.
 
 **Example**
 
@@ -734,7 +883,13 @@ Description
 
 **Description**
 
-  Enforce the inclusion of a required class *before* the current code. Use this only if the generator cannot determine the dependency automatically.
+  Enforce the inclusion of a required class *before* the current code. Use this
+  only if the generator cannot determine the dependency automatically.
+
+  There is one special name, ``feature-checks``, which is reserved for internal
+  use and shouldn't be used in normal application code. This will add all known
+  feature check classes as load time dependencies to the current class.
+
 
 **Syntax**
 
@@ -767,7 +922,12 @@ Description
 
 **Description**
 
-  Enforce the inclusion of a required class. Use this only if the generator cannot determine the dependency automatically.
+  Enforce the inclusion of a required class. Use this only if the generator
+  cannot determine the dependency automatically. 
+
+  There is one special name, ``feature-checks``, which is reserved for internal
+  use and shouldn't be used in normal application code. This will add all known
+  feature check classes as run time dependencies to the current class.
 
 **Syntax**
 
@@ -802,8 +962,27 @@ Description
 
   Ignore the occurrence of global symbols. This @ hint has two implications:
 
-  * Don't warn about if the symbol is unknown (i.e. is not in any known library or a known built-in), i.e. it influences the lint system.
-  * Don't include the symbol in the build, i.e. it influences the compiler system, which also doesn't follow the symbol's dependencies.
+  * Don't warn about it if the symbol is unknown (i.e. is not in any known library
+    or a known built-in), i.e. it influences the lint system.
+  * Don't include the symbol in the build, i.e. it influences the compiler
+    system which then also doesn't follow the symbol's dependencies.
+
+  There are two special names that may be used in application code:
+
+  * **auto-require** : Ignore all load time dependencies detected by the
+    automatic analysis; they will not be added to the class' load dependencies.
+    *This effectively turns off the automatic processing of load time
+    dependencies for this class*.
+  * **auto-use** : Ignore all run time dependencies detected by the automatic
+    analysis; they will not be added to the class' run dependencies. *This
+    effectively turns off the automatic processing of run time dependencies for
+    this class*.
+
+  You can also use ``*`` as a wildcard character, to ignore entire
+  class APIs or namespaces: ``@ignore(foo.*)`` will ignore "foo"
+  and any symbol starting with "foo.". Otherwise, matches are exact so
+  `@ignore(foo)` will only ignore "foo", but not "foo.bar".
+
 
 **Syntax**
 
@@ -816,11 +995,18 @@ Description
       :widths: 30 70
 
       * - name
-        - Class name to include. The name can include trailing wildcards, to ignore entire namespaces, e.g. ``qx.dev.*``.
+        - Class name to include. The name can include trailing wildcards, to
+          ignore entire class APIs or namespaces, e.g. ``qx.dev.Debug.*`` or
+          ``qx.dev.unit.*``.
 
 **Example**
 
   ``@ignore(qx.dev.unit.TestSuite)``
+
+
+**See**
+
+  Special section on :doc:`/pages/development/api_jsdoc_at_ignore`.
 
 
 .. _pages/development/api_jsdoc_ref#tag:

@@ -18,15 +18,12 @@
 ************************************************************************ */
 
 /* ************************************************************************
-#ignore(demobrowser.demo.virtual.GalleryCell)
-#ignore(demobrowser.demo.virtual.HtmlGallery)
-#ignore(demobrowser.demo.virtual.WidgetGallery)
-#ignore(demobrowser.demo.virtual.AbstractGallery)
 
-#asset(qx/icon/${qx.icontheme}/32/places/*)
 
 ************************************************************************ */
 /**
+ *
+ * @asset(qx/icon/${qx.icontheme}/32/places/*)
  * @ignore(demobrowser.demo.virtual.GalleryCell)
  * @ignore(demobrowser.demo.virtual.HtmlGallery)
  * @ignore(demobrowser.demo.virtual.WidgetGallery)
@@ -264,11 +261,14 @@ qx.Class.define("demobrowser.demo.virtual.GalleryCell",
  * in a file of its own. You may neglect any warnings when generating this demo.
  */
 
-/*
-*****************************************************************************
+/**
+ *****************************************************************************
    WIDGET GALLERY
-*****************************************************************************
-*/
+ *****************************************************************************
+ *
+ * @ignore(demobrowser.demo.virtual.AbstractGallery)
+ * @ignore(demobrowser.demo.virtual.GalleryCell)
+ */
 qx.Class.define("demobrowser.demo.virtual.WidgetGallery",
 {
   extend : demobrowser.demo.virtual.AbstractGallery,
@@ -383,11 +383,13 @@ qx.Class.define("demobrowser.demo.virtual.WidgetGallery",
  * in a file of its own. You may neglect any warnings when generating this demo.
  */
 
-/*
-*****************************************************************************
-   HTML GALLERY
-*****************************************************************************
-*/
+/**
+ *****************************************************************************
+    HTML GALLERY
+ *****************************************************************************
+ *
+ * @ignore(demobrowser.demo.virtual.AbstractGallery)
+ */
 qx.Class.define("demobrowser.demo.virtual.HtmlGallery",
 {
   extend : demobrowser.demo.virtual.AbstractGallery,

@@ -196,20 +196,14 @@ qx.Class.define("qx.util.format.DateFormat",
 
 
     /**
-     * {Integer} The threshold until when a year should be assumed to belong to the
-     * 21st century (e.g. 12 -> 2012). Years over this threshold but below 100 will be
-     * assumed to belong to the 20th century (e.g. 88 -> 1988). Years over 100 will be
-     * used unchanged (e.g. 1792 -> 1792).
+     * @type {Integer} The threshold until when a year should be assumed to belong to the
+     *   21st century (e.g. 12 -> 2012). Years over this threshold but below 100 will be
+     *   assumed to belong to the 20th century (e.g. 88 -> 1988). Years over 100 will be
+     *   used unchanged (e.g. 1792 -> 1792).
      */
     ASSUME_YEAR_2000_THRESHOLD : 30,
 
-    /**
-     * {String} The date format used for logging.
-     * @deprecated {2.1}
-     */
-    LOGGING_DATE_TIME__format : "yyyy-MM-dd HH:mm:ss",
-
-    /** Special masks of patterns that are used frequently*/
+    /** @type {Map} Special masks of patterns that are used frequently*/
     ISO_MASKS : {
       isoDate :        "yyyy-MM-dd",
       isoTime :        "HH:mm:ss",
@@ -217,10 +211,10 @@ qx.Class.define("qx.util.format.DateFormat",
       isoUtcDateTime : "yyyy-MM-dd'T'HH:mm:ss'Z'"
     },
 
-    /** {String} The am marker. */
+    /** @type {String} The am marker. */
     AM_MARKER : "am",
 
-    /** {String} The pm marker. */
+    /** @type {String} The pm marker. */
     PM_MARKER : "pm"
 
   },
@@ -1796,12 +1790,3 @@ qx.Class.define("qx.util.format.DateFormat",
     this.__formatTree = this.__parseFeed = this.__parseRules = null;
   }
 });
-
-// @deprecated {2.1}
-if (qx.core.Environment.get("qx.debug")) {
-  qx.log.Logger.deprecatedConstantWarning(
-    qx.util.format.DateFormat,
-    "LOGGING_DATE_TIME__format",
-    "The constant 'LOGGING_DATE_TIME__format' will be removed (hasn't been used anyway!)"
-  );
-}

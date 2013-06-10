@@ -23,6 +23,7 @@
  * - Atoms
  * - Images
  * - Buttons
+ * - Collapsible
  * - Enabled / Disabled state
  */
 qx.Class.define("mobileshowcase.page.Basic",
@@ -60,6 +61,7 @@ qx.Class.define("mobileshowcase.page.Basic",
         exAtomRight.toggleEnabled();
         exAtomTop.toggleEnabled();
         exAtomBottom.toggleEnabled();
+        collapsible.toggleEnabled();
       }, this);
 
 
@@ -79,12 +81,12 @@ qx.Class.define("mobileshowcase.page.Basic",
       var exLabel = new qx.ui.mobile.basic.Label(labelText);
       exLabel.addCssClass("space-top");
 
-      var exImage = new qx.ui.mobile.basic.Image("mobileshowcase/icon/arrowleft.png");
+      var exImage = new qx.ui.mobile.basic.Image("mobileshowcase/icon/mobile.png");
 
       // ATOMS
       var positions = [ "left", "right", "top", "bottom" ]
 
-      var iconSrc = "mobileshowcase/icon/camera.png";
+      var iconSrc = "mobileshowcase/icon/mobile.png";
       var exAtomLeft = new qx.ui.mobile.basic.Atom("Icon Position: left", iconSrc);
       exAtomLeft.setIconPosition(positions[0]);
       exAtomLeft.addCssClass("space-top");
@@ -101,6 +103,8 @@ qx.Class.define("mobileshowcase.page.Basic",
       exAtomBottom.setIconPosition(positions[3]);
       exAtomBottom.addCssClass("space-top");
 
+      var collapsible = this._createCollapsible();
+      
       // BUILD VIEW
 
       var menuGroup = new qx.ui.mobile.form.Group([toggleEnableButton,toggleLabelWrapButton]);
@@ -124,14 +128,24 @@ qx.Class.define("mobileshowcase.page.Basic",
 
       this.getContent().add(new qx.ui.mobile.form.Title("Image"));
 
-      var imageGroup = new qx.ui.mobile.form.Group;
-      imageGroup.add(exImage);
+      var imageGroup = new qx.ui.mobile.form.Group([exImage],false);
       this.getContent().add(imageGroup);
+
+      this.getContent().add(new qx.ui.mobile.form.Title("Collapsible"));
+      this.getContent().add(new qx.ui.mobile.form.Group([collapsible],false));      
 
       this.getContent().add(new qx.ui.mobile.form.Title("Atoms"));
 
       var atomGroup = new qx.ui.mobile.form.Group([exAtomLeft,exAtomTop,exAtomRight,exAtomBottom]);
       this.getContent().add(atomGroup);
+    },
+
+
+    _createCollapsible : function() {
+      var collapsible = new qx.ui.mobile.container.Collapsible("Collapsible Header");
+      var label = new qx.ui.mobile.basic.Label("This is the content of the Collapsible.");
+      collapsible.add(label);
+      return collapsible;
     },
 
 

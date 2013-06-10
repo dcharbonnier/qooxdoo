@@ -16,22 +16,18 @@
      * Martin Wittemann (martinwittemann)
 
 ************************************************************************ */
-/* ************************************************************************
-
-#asset(feedreader/css/website.css)
-
-#require(qx.module.Attribute)
-#require(qx.module.Animation)
-#require(qx.module.Event)
-#require(qx.module.Template)
-#require(qx.module.Manipulating)
-#require(qx.module.Traversing)
-#require(qx.module.Transform)
-
-************************************************************************ */
 
 /**
  * The feed reader's website main application class.
+ *
+ * @require(qx.module.Attribute)
+ * @require(qx.module.Animation)
+ * @require(qx.module.Event)
+ * @require(qx.module.Template)
+ * @require(qx.module.Manipulating)
+ * @require(qx.module.Traversing)
+ * @require(qx.module.Transform)
+ * @asset(feedreader/css/website.css)
  */
 qx.Class.define("feedreader.WebsiteApplication",
 {

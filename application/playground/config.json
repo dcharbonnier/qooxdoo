@@ -16,17 +16,27 @@
     "QOOXDOO_PATH" : "../..",
     "QXTHEME"      : "playground.theme.Theme",
     "LOCALES"      : [ "en", "de", "ro", "sv", "cs"],
+    "OPTIMIZE"     : [
+       "basecalls",
+       "comments",
+       "privates",
+       "strings",
+       "variables",
+       "variants",
+       "whitespace"
+    ],
     "ROOT"         : "."
   },
 
   "config-warnings" :
   {
-    "job-shadowing" : 
+    "job-shadowing" :
     [
       "source",
       "source-hybrid",
       "build-resources",
       "build-script",
+      "libraries",
       "translation"
     ],
     "environment" : [ "non-literal-keys" ]
@@ -34,19 +44,9 @@
 
   "jobs" :
   {
-    // this one so that source, build-script and build-resources use common settings
-    "playground-compile" :
+    // provide "libraries" e.g. for 'lint' job
+    "libraries" : 
     {
-      "config-warnings" :
-      {
-        "exclude" : ["*"],
-        "environment" : [ "variants-and-url-settings" ]
-      },
-      "include" :
-      [
-        "${APPLICATION}.*",
-        "qx.*"
-      ],
       "library" :
       [
         {
@@ -55,15 +55,32 @@
         {
           "manifest" : "${QOOXDOO_PATH}/component/library/versionlabel/Manifest.json"
         }
+      ]
+    },
+
+    // this one so that source, build-script and build-resources use common settings
+    "playground-compile" :
+    {
+      "extend" : [ "libraries" ],
+
+      "config-warnings" :
+      {
+        "exclude" : ["*"],
+        "environment" : [ "variants-and-url-settings" ]
+      },
+
+      "include" :
+      [
+        "${APPLICATION}.*",
+        "qx.*"
       ],
+
       "exclude" :
       [
         "qx.test.*",
         "qx.dev.unit.*",
         "qx.dev.FakeServer",  // as this depends on qx.dev.unit classes
-        "playground.test.*",
-        "qx.core.MEvents",
-        "qx.lang.Core"
+        "playground.test.*"
       ],
 
       "environment" :

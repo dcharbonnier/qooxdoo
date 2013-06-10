@@ -29,9 +29,8 @@
  * * Supports buffering of the last 50 messages (configurable)
  * * Supports different debug levels ("debug", "info", "warn" or "error")
  * * Simple data serialization for incoming messages
- */
-/*
- #require(qx.dev.StackTrace)
+ *
+ * @require(qx.dev.StackTrace)
  */
 qx.Class.define("qx.log.Logger",
 {
@@ -97,11 +96,11 @@ qx.Class.define("qx.log.Logger",
     ---------------------------------------------------------------------------
     */
 
-    /** {Map} Map of all known appenders by ID */
+    /** @type {Map} Map of all known appenders by ID */
     __appender : {},
 
 
-    /** {Integer} Last free appender ID */
+    /** @type {Integer} Last free appender ID */
     __id : 0,
 
 
@@ -392,11 +391,11 @@ qx.Class.define("qx.log.Logger",
     ---------------------------------------------------------------------------
     */
 
-    /** {qx.log.appender.RingBuffer} Message buffer of previously fired messages. */
+    /** @type {qx.log.appender.RingBuffer} Message buffer of previously fired messages. */
     __buffer : new qx.log.appender.RingBuffer(50),
 
 
-    /** {Map} Numeric translation of log levels */
+    /** @type {Map} Numeric translation of log levels */
     __levels :
     {
       debug : 0,

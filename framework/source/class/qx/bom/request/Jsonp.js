@@ -17,18 +17,6 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-#require(qx.bom.request.Script#open)
-#require(qx.bom.request.Script#on)
-#require(qx.bom.request.Script#onreadystatechange)
-#require(qx.bom.request.Script#onload)
-#require(qx.bom.request.Script#onloadend)
-#require(qx.bom.request.Script#onerror)
-#require(qx.bom.request.Script#onabort)
-#require(qx.bom.request.Script#ontimeout)
-#require(qx.bom.request.Script#send)
-************************************************************************ */
-
 /**
  * A special script loader handling JSONP responses. Automatically
  * provides callbacks and populates responseJson property.
@@ -49,6 +37,16 @@
  *  req.open("GET", url);
  *  req.send();
  * </pre>
+ *
+ * @require(qx.bom.request.Script#open)
+ * @require(qx.bom.request.Script#on)
+ * @require(qx.bom.request.Script#onreadystatechange)
+ * @require(qx.bom.request.Script#onload)
+ * @require(qx.bom.request.Script#onloadend)
+ * @require(qx.bom.request.Script#onerror)
+ * @require(qx.bom.request.Script#onabort)
+ * @require(qx.bom.request.Script#ontimeout)
+ * @require(qx.bom.request.Script#send)
  */
 qx.Bootstrap.define("qx.bom.request.Jsonp",
 {
@@ -65,37 +63,42 @@ qx.Bootstrap.define("qx.bom.request.Jsonp",
   members :
   {
     /**
-     * {Object} Parsed JSON response.
+     * @type {Object} Parsed JSON response.
      */
     responseJson: null,
 
     /**
-     * {Number} Identifier of this instance.
+     * @type {Number} Identifier of this instance.
      */
     __id: null,
 
     /**
-     * {String} Callback parameter.
+     * @type {String} Callback parameter.
      */
     __callbackParam: null,
 
     /**
-     * {String} Callback name.
+     * @type {String} Callback name.
      */
     __callbackName: null,
 
     /**
-     * {Boolean} Whether callback was called.
+     * @type {Boolean} Whether callback was called.
      */
     __callbackCalled: null,
 
     /**
-     * {Boolean} Whether a custom callback was created automatically.
+     * @type {Boolean} Whether a custom callback was created automatically.
      */
     __customCallbackCreated: null,
 
     /**
-     * {Boolean} Whether request was disposed.
+     * @type {String} The generated URL for the current request
+     */
+    __generatedUrl: null,
+
+    /**
+     * @type {Boolean} Whether request was disposed.
      */
     __disposed: null,
 
@@ -128,7 +131,7 @@ qx.Bootstrap.define("qx.bom.request.Jsonp",
 
       callbackParam = this.__callbackParam || "callback";
       callbackName = this.__callbackName || this.__prefix +
-        "qx.bom.request.Jsonp[" + this.__id + "].callback";
+        "qx.bom.request.Jsonp." + this.__id + ".callback";
 
       // Default callback
       if (!this.__callbackName) {
@@ -162,7 +165,7 @@ qx.Bootstrap.define("qx.bom.request.Jsonp",
       }
 
       query[callbackParam] = callbackName;
-      url = qx.util.Uri.appendParamsToUrl(url, query);
+      this.__generatedUrl = url = qx.util.Uri.appendParamsToUrl(url, query);
 
       this.__callBase("open", [method, url]);
     },
@@ -255,6 +258,17 @@ qx.Bootstrap.define("qx.bom.request.Jsonp",
     },
 
 
+    /**
+     * Returns the generated URL for the current / last request
+     *
+     * @internal
+     * @return {String} The current generated URL for the request
+     */
+    getGeneratedUrl : function() {
+      return this.__generatedUrl;
+    },
+
+
     dispose: function() {
       // In case callback was not called
       this.__deleteCustomCallback();
@@ -304,7 +318,7 @@ qx.Bootstrap.define("qx.bom.request.Jsonp",
     __generateId: function() {
       // Add random digits to date to allow immediately following requests
       // that may be send at the same time
-      this.__id = (new Date().valueOf()) + ("" + Math.random()).substring(2,5);
+      this.__id = "qx" + (new Date().valueOf()) + ("" + Math.random()).substring(2,5);
     }
   }
 });

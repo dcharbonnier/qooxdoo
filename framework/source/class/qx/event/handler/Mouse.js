@@ -20,17 +20,11 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#require(qx.event.handler.UserAction)
-#ignore(qx.event.handler.DragDrop)
-
-************************************************************************ */
-
 /**
  * This class provides an unified mouse event handler for Internet Explorer,
  * Firefox, Opera and Safari
  *
+ * @require(qx.event.handler.UserAction)
  * @ignore(qx.event.handler.DragDrop)
  */
 qx.Class.define("qx.event.handler.Mouse",
@@ -62,7 +56,9 @@ qx.Class.define("qx.event.handler.Mouse",
     this.__root = this.__window.document;
 
     // Initialize observers
-    if (!(qx.core.Environment.get("event.touch") && qx.core.Environment.get("qx.emulatemouse"))) {
+    if (!((qx.core.Environment.get("event.touch") || qx.core.Environment.get("event.mspointer")) &&
+        qx.core.Environment.get("qx.emulatemouse")))
+    {
       this._initButtonObserver();
       this._initMoveObserver();
       this._initWheelObserver();
@@ -85,10 +81,10 @@ qx.Class.define("qx.event.handler.Mouse",
 
   statics :
   {
-    /** {Integer} Priority of this handler */
+    /** @type {Integer} Priority of this handler */
     PRIORITY : qx.event.Registration.PRIORITY_NORMAL,
 
-    /** {Map} Supported event types */
+    /** @type {Map} Supported event types */
     SUPPORTED_TYPES :
     {
       mousemove : 1,
@@ -102,10 +98,10 @@ qx.Class.define("qx.event.handler.Mouse",
       mousewheel : 1
     },
 
-    /** {Integer} Which target check to use */
+    /** @type {Integer} Which target check to use */
     TARGET_CHECK : qx.event.IEventHandler.TARGET_DOMNODE + qx.event.IEventHandler.TARGET_DOCUMENT + qx.event.IEventHandler.TARGET_WINDOW,
 
-    /** {Integer} Whether the method "canHandleEvent" must be called */
+    /** @type {Integer} Whether the method "canHandleEvent" must be called */
     IGNORE_CAN_HANDLE : true
   },
 
@@ -599,7 +595,9 @@ qx.Class.define("qx.event.handler.Mouse",
 
   destruct : function()
   {
-    if (!(qx.core.Environment.get("event.touch") && qx.core.Environment.get("qx.emulatemouse"))) {
+    if (!((qx.core.Environment.get("event.touch") || qx.core.Environment.get("event.mspointer")) &&
+        qx.core.Environment.get("qx.emulatemouse")))
+    {
       this._stopButtonObserver();
       this._stopMoveObserver();
       this._stopWheelObserver();

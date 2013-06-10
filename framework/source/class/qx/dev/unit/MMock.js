@@ -146,11 +146,16 @@ qx.Mixin.define("qx.dev.unit.MMock",
     *
     * A spy has a rich interface to introspect how the wrapped function was used:
     *
+    * * spy.withArgs(arg1[, arg2, ...]);
     * * spy.callCount
     * * spy.called
     * * spy.calledOnce
     * * spy.calledTwice
     * * spy.calledThrice
+    * * spy.firstCall
+    * * spy.secondCall
+    * * spy.thirdCall
+    * * spy.lastCall
     * * spy.calledBefore(anotherSpy)
     * * spy.calledAfter(anotherSpy)
     * * spy.calledOn(obj)
@@ -159,6 +164,11 @@ qx.Mixin.define("qx.dev.unit.MMock",
     * * spy.alwaysCalledWith(arg1, arg2, ...)
     * * spy.calledWithExactly(arg1, arg2, ...)
     * * spy.alwaysCalledWithExactly(arg1, arg2, ...)
+    * * spy.calledWithMatch(arg1, arg2, ...);
+    * * spy.alwaysCalledWithMatch(arg1, arg2, ...);
+    * * spy.calledWithNew();
+    * * spy.neverCalledWith(arg1, arg2, ...);
+    * * spy.neverCalledWithMatch(arg1, arg2, ...);
     * * spy.threw()
     * * spy.threw("TypeError")
     * * spy.threw(obj)
@@ -172,6 +182,8 @@ qx.Mixin.define("qx.dev.unit.MMock",
     * * spy.args
     * * spy.exceptions
     * * spy.returnValues
+    * * spy.reset()
+    * * spy.printf("format string", [arg1, arg2, ...])
     *
     * See http://sinonjs.org/docs/#spies.
     *
@@ -367,15 +379,20 @@ qx.Mixin.define("qx.dev.unit.MMock",
     /**
      * EXPERIMENTAL - NOT READY FOR PRODUCTION
      *
-     * Shallowly stub methods that belong to classes found in inheritance
+     * Shallowly stub all methods (except excluded) that belong to classes found in inheritance
      * chain up to (but including) the given class.
      *
      * @param object {Object} Object to stub shallowly.
      * @param targetClazz {Object} Class which marks the end of the chain.
+     * @param propsToExclude {Array} Array with properties which shouldn't be stubbed.
      * @return {Object} A stub.
      */
-    shallowStub: function(object, targetClazz) {
+    shallowStub: function(object, targetClazz, propsToExclude) {
       this.__getOwnProperties(object, targetClazz).forEach(function(prop) {
+        if (propsToExclude && propsToExclude.indexOf(prop) >= 0) {
+          // don't stub excluded prop
+          return;
+        }
         this.__stubProperty(object, prop);
       }, this);
 

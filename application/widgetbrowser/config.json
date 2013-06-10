@@ -22,21 +22,21 @@
     "SELENIUM_SERVER" : "localhost",
     "SELENIUM_PORT" : 4444,
     "SELENIUM_BROWSER" : "*googlechrome",
-    "AUT_HOST" : null,
-    "AUT_PATH" : null,
-    "SIMULATOR_REPORTSERVER" : null
+    "AUT_HOST" : "",
+    "AUT_PATH" : "",
+    "SIMULATOR_REPORTSERVER" : false
   },
 
   "config-warnings" :
   {
-    "job-shadowing" : ["common", "simulation-run", "translation"],
+    "job-shadowing" : ["common", "simulation-run", "translation", "libraries"],
 
     "environment" : [ "non-literal-keys" ]
   },
 
   "jobs" :
   {
-    "common" :
+    "libraries" :
     {
       "library" :
       [
@@ -46,7 +46,11 @@
         {
           "manifest" : "${QOOXDOO_PATH}/component/library/versionlabel/Manifest.json"
         }
-      ],
+      ]
+    },
+
+    "common" :
+    {
       "environment"  :
       {
         "qx.nativeScrollBars" : true,

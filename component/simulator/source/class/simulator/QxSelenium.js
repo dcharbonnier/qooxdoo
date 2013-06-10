@@ -17,13 +17,6 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-#ignore(importClass)
-#ignore(QxSelenium)
-#ignore(ThreadSafeSeleniumSessionStorage)
-************************************************************************ */
-
-
 /**
  * Imports the com.thoughtworks.selenium.QxSelenium Java class and creates
  * an instance. If the "simulator.threadSafe" setting is active, a session
@@ -56,7 +49,9 @@
  * be converted to a JavaScript string for comparisons or string operations,
  * e.g. by calling String(qxSeleniumReturnValue)
  *
- * @lint ignoreUndefined(importClass,QxSelenium,ThreadSafeSeleniumSessionStorage)
+ * @ignore(importClass)
+ * @ignore(QxSelenium)
+ * @ignore(ThreadSafeSeleniumSessionStorage.*)
  */
 qx.Class.define("simulator.QxSelenium", {
 
@@ -400,10 +395,10 @@ qx.Class.define("simulator.QxSelenium", {
      *
      * @param locator {String} an element locator that finds a qooxdoo widget's
      * DOM element
-     * @param options an element whose location (i.e., whose
+     * @param destination {String} locator for an element whose location (i.e., whose
      * center-most pixel) will be the point where the dragged element is dropped
      */
-    qxDragAndDropToObject : function(locator, options) {},
+    qxDragAndDropToObject : function(locator, destination) {},
 
 
     /**

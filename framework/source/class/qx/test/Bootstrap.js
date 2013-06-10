@@ -18,21 +18,11 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-#ignore(qx.test.ExtendSuper)
-#ignore(qx.test.ExtendSuper.prototype)
-#ignore(qx.test.Super.prototype)
-#ignore(qx.test.Super)
-#ignore(qx.test.ExtendNull)
-#ignore(qx.test.ExtendQxObject)
-#ignore(qx.test.ExtendError)
-#ignore(qx.test.Construct)
-************************************************************************ */
 /**
- * @ignore(qx.test.Construct, qx.test.ExtendError, qx.test.ExtendNull)
- * @ignore(qx.test.ExtendQxObject, qx.test.ExtendSuper, qx.test.Super, qx.test.ROOT)
+ * @ignore(qx.test.Construct.*, qx.test.ExtendError, qx.test.ExtendNull)
+ * @ignore(qx.test.ExtendQxObject, qx.test.ExtendSuper.*, qx.test.Super.*)
+ * @ignore(qx.test.ROOT, qx.test.MyClass.*, qx.test.Bmw.*)
  */
-
 qx.Class.define("qx.test.Bootstrap",
 {
   extend : qx.dev.unit.TestCase,
@@ -49,35 +39,76 @@ qx.Class.define("qx.test.Bootstrap",
       this.assertTrue(clazz.test());
     },
 
-
     testAlternativeRoot : function() {
-      var myRoot = {};
-      qx.Bootstrap.setRoot(myRoot);
-      var c = qx.Bootstrap.define("qx.test.ROOT", {});
-      this.assertUndefined(qx.test.ROOT);
-      this.assertEquals(c, myRoot.qx.test.ROOT);
-      qx.Bootstrap.setRoot(undefined);
-    },
-
-
-    testAlternativeRootAdvanced : function() {
-      window.foobar = {};
-      var myRoots = { "qx": window.qx, "foobar": window.foobar };
+      var qq = {};
+      var foobar = {};
+      var myRoots = { "qq": qq, "foobar": foobar };
       qx.Bootstrap.setRoot(myRoots);
 
-      var qxClass = qx.Bootstrap.define("qx.test.ROOT", {});
+      var qqClass = qx.Bootstrap.define("qq.test.ROOT", {});
       var foobarClass = qx.Bootstrap.define("foobar.test.ROOT", {});
       var vanillebaerClass = qx.Bootstrap.define("vanillebaer.test.ROOT", {});
 
-      this.assertEquals(qxClass, window.qx.test.ROOT);
-      this.assertEquals(foobarClass, window.foobar.test.ROOT);
+      this.assertEquals(qqClass, qq.test.ROOT);
+      this.assertEquals(foobarClass, foobar.test.ROOT);
       this.assertEquals(vanillebaerClass, window.vanillebaer.test.ROOT);
 
       qx.Bootstrap.setRoot(undefined);
-      delete window.foobar;
-      delete window.vanillebaer;
+
+      delete foobar;
+      qx.Class.undefine("vanillebaer.test.ROOT");
     },
 
+    "test: merge methods of same class (statics optimization)" : function() {
+      qx.Bootstrap.define("qx.test.MyClass", {
+        statics : {
+          methodA : function() {
+            return true;
+          }
+        }
+      });
+
+      qx.Bootstrap.define("qx.test.MyClass", {
+        statics : {
+          methodB : function() {
+            return true;
+          }
+        }
+      });
+
+      this.assertNotUndefined(qx.test.MyClass.methodA);
+      this.assertNotUndefined(qx.test.MyClass.methodB);
+
+      qx.Class.undefine("qx.test.MyClass");
+    },
+
+    "test: merge methods of same class (statics optimization) respect defer" : function() {
+      qx.Bootstrap.define("qx.test.MyClass", {
+        statics : {
+          methodA : function() {
+            return true;
+          },
+          methodB : function() {
+            return true;
+          }
+        }
+      });
+
+      qx.Bootstrap.define("qx.test.MyClass", {
+        statics : {
+          methodA : null
+        },
+        defer : function(statics)
+        {
+          statics.methodA = function() { return true; };
+        }
+      });
+
+      this.assertNotNull(qx.test.MyClass.methodA);
+      this.assertNotUndefined(qx.test.MyClass.methodB);
+
+      qx.Class.undefine("qx.test.MyClass");
+    },
 
     "test: define class with contructor" : function()
     {
@@ -192,6 +223,87 @@ qx.Class.define("qx.test.Bootstrap",
       qx.Class.undefine("qx.test.ExtendSuper");
     },
 
+    "test: superclass calls aka basecalls (constructor and methods)" : function()
+    {
+      qx.Bootstrap.define("qx.test.Car",
+      {
+        construct : function(name) {
+          this._name = name;
+        },
+
+        members :
+        {
+          startEngine : function() {
+            return "start";
+          },
+
+          stopEngine : function() {
+            return "stop";
+          },
+
+          getName : function() {
+            return this._name;
+          }
+        }
+      });
+
+      var car = new qx.test.Car("Audi");
+      this.assertEquals("start", car.startEngine());
+      this.assertEquals("stop", car.stopEngine());
+      this.assertEquals("Audi", car.getName());
+
+      qx.Bootstrap.define("qx.test.Bmw",
+      {
+        extend : qx.test.Car,
+
+        construct : function(name, prize) {
+          this.base(arguments, name);
+        },
+
+        members :
+        {
+          startEngine : function()
+          {
+            var ret = this.base(arguments);
+            return "brrr " + ret;
+          },
+
+          stopEngine : function()
+          {
+            var ret = arguments.callee.base.call();
+            return "brrr " + ret;
+          },
+
+          getWheels : function() {
+            return qx.test.Bmw.WHEELS;
+          },
+
+          getMaxSpeed : function()
+          {
+            // call base in non overridden method
+            this.base(arguments);
+          }
+        },
+
+        statics : { WHEELS : 4 }
+      });
+
+      var bmw = new qx.test.Bmw("bmw", 44000);
+      this.assertEquals("bmw", bmw.getName());
+      this.assertEquals("brrr start", bmw.startEngine());
+      this.assertEquals("brrr stop", bmw.stopEngine());
+      this.assertEquals(4, bmw.getWheels());
+
+      if (this.isDebugOn())
+      {
+        this.assertException(function() {
+          bmw.getMaxSpeed();
+        }, Error);
+      }
+
+      qx.Class.undefine("qx.test.Car");
+      qx.Class.undefine("qx.test.Bmw");
+    },
 
     testFunctionWrap : function()
     {
@@ -207,15 +319,7 @@ qx.Class.define("qx.test.Bootstrap",
       context = null;
       result = add(1, 2);
 
-      // The assertEquals test fails in Safari 3 but is fixed in WebKit nightly
-      if (qx.core.Environment.get("browser.version") == "safari" &&
-        qx.core.Environment.get("browser.version") < 4 )
-      {
-        this.assertNotEquals(context, window, "This test fails if the issue is "
-        + "fixed in Safari 3.");
-      } else {
-        this.assertEquals(context, window);
-      }
+      this.assertEquals(context, window);
       this.assertEquals(3, result);
 
       context = null;

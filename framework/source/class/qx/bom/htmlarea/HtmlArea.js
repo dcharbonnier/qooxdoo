@@ -24,8 +24,6 @@
 
 /* ************************************************************************
 
-#asset(qx/static/blank.html)
-#require(qx.lang.normalize.String)
 
 ************************************************************************ */
 
@@ -35,8 +33,10 @@
  * This component does not contain any {@link qx.ui} code resulting in a
  * smaller footprint.
  *
- *
  * Optimized for the use at a traditional webpage.
+ *
+ * @asset(qx/static/blank.html)
+ * @require(qx.lang.normalize.String)
  */
 qx.Class.define("qx.bom.htmlarea.HtmlArea",
 {
@@ -577,22 +577,6 @@ qx.Class.define("qx.bom.htmlarea.HtmlArea",
       s = s.replace(/\xA9/ig, "&copy;");
 
       return s;
-    },
-
-
-    /**
-     * Checks if the given node is a block node
-     *
-     * @param node {Node} Node
-     * @return {Boolean} whether it is a block node
-     */
-    isBlockNode : function(node)
-    {
-      var deprecatedFunction = qx.bom.htmlarea.HtmlArea.isBlockNode;
-      var deprecationMessage = "Please use the method 'qx.dom.Node.isBlockNode' instead.";
-      qx.log.Logger.deprecatedMethodWarning(deprecatedFunction, deprecationMessage);
-
-      return qx.dom.Node.isBlockNode(node);
     },
 
 

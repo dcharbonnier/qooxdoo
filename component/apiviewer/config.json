@@ -42,11 +42,18 @@
 
   "config-warnings" :
   {
-    "job-shadowing" : ["translation"]
+    "job-shadowing" : [
+      "translation",
+      "libraries"
+    ]
   },
 
   "jobs" :
   {
+    "libraries" : {
+      "extend" : [ "apicnf::libraries" ]  
+    },
+
     "source" :
     {
       "extend" : [ "apicnf::source" ],

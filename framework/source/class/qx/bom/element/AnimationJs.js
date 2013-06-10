@@ -16,12 +16,6 @@
      * Martin Wittemann (wittemann)
 
 ************************************************************************ */
-/* ************************************************************************
-
-#ignore(qx.bom.element.Style)
-#use(qx.bom.element.AnimationJs#play)
-
-************************************************************************ */
 
 /**
  * This class offers the same API as the CSS3 animation layer in
@@ -32,7 +26,8 @@
  * (CSS or JavaScript) should be used. Most likely, this implementation should
  * be the one to use.
  *
- * @ignore(qx.bom.element.Style)
+ * @ignore(qx.bom.element.Style.*)
+ * @use(qx.bom.element.AnimationJs#play)
  */
 qx.Bootstrap.define("qx.bom.element.AnimationJs",
 {
@@ -112,6 +107,7 @@ qx.Bootstrap.define("qx.bom.element.AnimationJs",
 
       var delta = this.__calculateDelta(steps, stepTime, keys, keyFrames, duration, desc.timing);
       var handle = new qx.bom.element.AnimationHandle();
+      handle.jsAnimation = true;
 
       if (reverse) {
         delta.reverse();
@@ -360,7 +356,7 @@ qx.Bootstrap.define("qx.bom.element.AnimationJs",
 
       // if we should keep a frame
       var keep = desc.keep;
-      if (keep != undefined) {
+      if (keep != undefined && !handle.stopped) {
         if (handle.reverse || (desc.alternate && desc.repeat && desc.repeat % 2 == 0)) {
           keep = 100 - keep;
         }
@@ -410,8 +406,9 @@ qx.Bootstrap.define("qx.bom.element.AnimationJs",
           continue;
         }
 
-        // apply element property value
-        if (key in el) {
+        // apply element property value - only if a CSS property
+        // is *not* available
+        if (typeof el.style[key] === "undefined" && key in el) {
           el[key] = styles[key];
           continue;
         }

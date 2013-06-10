@@ -18,13 +18,11 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-#require(qx.bom.Stylesheet)
-************************************************************************ */
-
 /**
  * An abstract data cell renderer that does the basic coloring
  * (borders, selected look, ...).
+ *
+ * @require(qx.bom.Stylesheet)
  */
 qx.Class.define("qx.ui.table.cellrenderer.Abstract",
 {
@@ -43,9 +41,11 @@ qx.Class.define("qx.ui.table.cellrenderer.Abstract",
       this._createStyleSheet();
 
       // add dynamic theme listener
-      qx.theme.manager.Appearance.getInstance().addListener(
-        "changeTheme", this._onChangeTheme, this
-      );
+      if (qx.core.Environment.get("qx.dyntheme")) {
+        qx.theme.manager.Color.getInstance().addListener(
+          "changeTheme", this._onChangeTheme, this
+        );
+      }
     }
   },
 
@@ -69,13 +69,18 @@ qx.Class.define("qx.ui.table.cellrenderer.Abstract",
   {
     /**
      * Handler for the theme change.
+     * @signature function()
      */
-    _onChangeTheme : function() {
-      qx.bom.Stylesheet.removeAllRules(
-        qx.ui.table.cellrenderer.Abstract.__clazz.stylesheet
-      );
-      this._createStyleSheet();
-    },
+    _onChangeTheme : qx.core.Environment.select("qx.dyntheme",
+    {
+      "true" : function() {
+        qx.bom.Stylesheet.removeAllRules(
+          qx.ui.table.cellrenderer.Abstract.__clazz.stylesheet
+        );
+        this._createStyleSheet();
+      },
+      "false" : null
+    }),
 
 
     /**
@@ -232,8 +237,10 @@ qx.Class.define("qx.ui.table.cellrenderer.Abstract",
 
   destruct : function() {
     // remove dynamic theme listener
-    qx.theme.manager.Appearance.getInstance().removeListener(
-      "changeTheme", this._onChangeTheme, this
-    );
+    if (qx.core.Environment.get("qx.dyntheme")) {
+      qx.theme.manager.Color.getInstance().removeListener(
+        "changeTheme", this._onChangeTheme, this
+      );
+    }
   }
 });

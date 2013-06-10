@@ -19,11 +19,12 @@
 
 /* ************************************************************************
 
-#asset(mobileshowcase/icon/camera.png)
 
 ************************************************************************ */
 /**
  * Mobile page responsible for showing the different showcases.
+ *
+ * @asset(mobileshowcase/icon/camera.png)
  */
 qx.Class.define("mobileshowcase.page.Toolbar",
 {
@@ -96,9 +97,8 @@ qx.Class.define("mobileshowcase.page.Toolbar",
       toolbar.add(new qx.ui.mobile.toolbar.Separator());
 
       this.__loadButton = new qx.ui.mobile.toolbar.Button(
-        "Take a new picture", mobileshowcase.page.Toolbar.__toolbarButtonImages[1]
+        null, mobileshowcase.page.Toolbar.__toolbarButtonImages[1]
       );
-      this.__loadButton.setIconPosition("top");
       this.__loadButton.setGap(0);
 
       this.__loadButton.addListener("tap", function(){

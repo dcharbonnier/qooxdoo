@@ -18,12 +18,13 @@
 ************************************************************************ */
 
 /* ************************************************************************
-#asset(fce/lowlevel/*)
-#use(feature-checks)
 ************************************************************************ */
 
 /**
  * Tool used to create configuration maps for feature-based builds
+ *
+ * @use(feature-checks)
+ * @asset(fce/lowlevel/*)
  */
 qx.Class.define("fce.ApplicationLowLevel",
 {

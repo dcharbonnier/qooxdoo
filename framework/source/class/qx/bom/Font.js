@@ -38,8 +38,8 @@ qx.Class.define("qx.bom.Font",
   */
 
   /**
-   * @param size {String} The font size (Unit: pixel)
-   * @param family {String[]} A sorted list of font families
+   * @param size {String?} The font size (Unit: pixel)
+   * @param family {String[]?} A sorted list of font families
    */
   construct : function(size, family)
   {
@@ -143,7 +143,7 @@ qx.Class.define("qx.bom.Font",
     },
 
 
-    /** {Map} Default (empty) CSS styles */
+    /** @type {Map} Default (empty) CSS styles */
     __defaultStyles :
     {
       fontFamily: "",

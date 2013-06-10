@@ -21,13 +21,16 @@
 
 /* ************************************************************************
 
-#asset(demobrowser/demo/ui/FsmMiceMaze.png)
-#asset(demobrowser/demo/ui/mouse-north.gif)
-#asset(demobrowser/demo/ui/mouse-east.gif)
-#asset(demobrowser/demo/ui/mouse-south.gif)
-#asset(demobrowser/demo/ui/mouse-west.gif)
 
 ************************************************************************ */
+/**
+ *
+ * @asset(demobrowser/demo/ui/FsmMiceMaze.png)
+ * @asset(demobrowser/demo/ui/mouse-north.gif)
+ * @asset(demobrowser/demo/ui/mouse-east.gif)
+ * @asset(demobrowser/demo/ui/mouse-south.gif)
+ * @asset(demobrowser/demo/ui/mouse-west.gif)
+ */
 
 qx.Class.define("demobrowser.demo.ui.FiniteStateMachine",
 {
@@ -43,8 +46,6 @@ qx.Class.define("demobrowser.demo.ui.FiniteStateMachine",
   {
     /**
      * TODOC
-     *
-     * @type member
      */
     main : function()
     {
@@ -139,8 +140,6 @@ qx.Class.define("demobrowser.demo.ui.FiniteStateMachine",
 
     /**
      * TODOC
-     *
-     * @type member
      */
     close : function()
     {
@@ -150,8 +149,6 @@ qx.Class.define("demobrowser.demo.ui.FiniteStateMachine",
 
     /**
      * TODOC
-     *
-     * @type member
      */
     terminate : function() {
       this.base(arguments);

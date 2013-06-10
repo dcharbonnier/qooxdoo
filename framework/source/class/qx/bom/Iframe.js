@@ -20,14 +20,10 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#require(qx.event.handler.Iframe)
-
-************************************************************************ */
-
 /**
  * Cross browser abstractions to work with iframes.
+ *
+ * @require(qx.event.handler.Iframe)
  */
 qx.Class.define("qx.bom.Iframe",
 {
@@ -40,7 +36,7 @@ qx.Class.define("qx.bom.Iframe",
   statics :
   {
     /**
-     * {Map} Default attributes for creation {@link #create}.
+     * @type {Map} Default attributes for creation {@link #create}.
      */
     DEFAULT_ATTRIBUTES :
     {

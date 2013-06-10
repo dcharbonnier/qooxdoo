@@ -23,12 +23,13 @@
 
 /* ************************************************************************
 
-#asset(qx/decoration/Classic/*)
 
 ************************************************************************* */
 
 /**
  * The classic qooxdoo decoration theme.
+ *
+ * @asset(qx/decoration/Classic/*)
  */
 qx.Theme.define("qx.theme.classic.Decoration",
 {
@@ -208,17 +209,6 @@ qx.Theme.define("qx.theme.classic.Decoration",
         shadowLength : 1,
         shadowBlurRadius : 2,
         shadowColor : "shadow"
-      }
-    },
-
-
-    "checkbox-invalid-shadow" :
-    {
-      style :
-      {
-        outerColor : "invalid",
-        innerColor : "border-focused-invalid",
-        insets: [0]
       }
     },
 

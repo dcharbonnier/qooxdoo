@@ -19,7 +19,6 @@
 
 /* ************************************************************************
 
-#asset(inspector/*)
 
 ************************************************************************ */
 
@@ -28,6 +27,8 @@
  *
  * This popup contains a table which will be filled with suggestions to enter
  * in the console.
+ *
+ * @asset(inspector/*)
  */
 qx.Class.define("inspector.console.AutoCompletePopup", {
 
@@ -253,7 +254,7 @@ qx.Class.define("inspector.console.AutoCompletePopup", {
 
     /**
      * Returns whether the popup is on the screen.
-     * @return True, if the AutoCompletePopup is visible and displayed.
+     * @return {Boolean} True, if the AutoCompletePopup is visible and displayed.
      */
     isOnScreen: function() {
       return this.getVisibility() == "visible";

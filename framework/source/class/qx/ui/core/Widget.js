@@ -20,10 +20,7 @@
 
 /* ************************************************************************
 
-#use(qx.ui.core.EventHandler)
-#use(qx.event.handler.DragDrop)
 
-#asset(qx/static/blank.gif)
 
 ************************************************************************ */
 
@@ -34,6 +31,10 @@
  *
  * <a href='http://manual.qooxdoo.org/${qxversion}/pages/widget.html' target='_blank'>
  * Documentation of this widget in the qooxdoo manual.</a>
+ *
+ * @use(qx.ui.core.EventHandler)
+ * @use(qx.event.handler.DragDrop)
+ * @asset(qx/static/blank.gif)
  */
 qx.Class.define("qx.ui.core.Widget",
 {
@@ -852,7 +853,7 @@ qx.Class.define("qx.ui.core.Widget",
       return false;
     },
 
-    /** {Map} Contains all pooled separators for reuse */
+    /** @type {Map} Contains all pooled separators for reuse */
     __separatorPool : new qx.util.ObjectPool()
   },
 
@@ -881,7 +882,7 @@ qx.Class.define("qx.ui.core.Widget",
     */
 
     /**
-     * {qx.ui.layout.Abstract} The connected layout manager
+     * @type {qx.ui.layout.Abstract} The connected layout manager
      */
     __layoutManager : null,
 
@@ -948,50 +949,8 @@ qx.Class.define("qx.ui.core.Widget",
     },
 
 
-    /** {Boolean} Whether insets have changed and must be updated */
+    /** @type {Boolean} Whether insets have changed and must be updated */
     _updateInsets : null,
-
-
-    /**
-     * Detects whether the move from decorator <code>a</code> to <code>b</code>
-     * results into modified insets.
-     *
-     * @param a {Decorator} Old decorator or <code>null</code>
-     * @param b {Decorator} New decorator or <code>null</code>
-     * @return {Boolean} Whether the insets have been modified
-     */
-    __checkInsetsModified : function(a, b)
-    {
-      if (a == b) {
-        return false;
-      }
-
-      if (a == null || b == null) {
-        return true;
-      }
-
-      var manager = qx.theme.manager.Decoration.getInstance();
-
-      var first = manager.resolve(a);
-      var second = manager.resolve(b);
-
-      if (!first || !second) {
-        return true;
-      }
-
-      first = first.getInsets();
-      second = second.getInsets();
-
-      if (first.top != second.top ||
-          first.right != second.right ||
-          first.bottom != second.bottom ||
-          first.left != second.left
-      ) {
-        return true;
-      }
-
-      return false;
-    },
 
 
     // overridden
@@ -1669,7 +1628,7 @@ qx.Class.define("qx.ui.core.Widget",
     ---------------------------------------------------------------------------
     */
 
-    /** {qx.ui.core.LayoutItem[]} List of all child widgets */
+    /** @type {qx.ui.core.LayoutItem[]} List of all child widgets */
     __widgetChildren : null,
 
 
@@ -1768,7 +1727,7 @@ qx.Class.define("qx.ui.core.Widget",
 
 
     /**
-     * {Array} Placeholder for children list in empty widgets.
+     * @type {Array} Placeholder for children list in empty widgets.
      *     Mainly to keep instance number low.
      *
      * @lint ignoreReferenceField(__emptyChildren)
@@ -2304,21 +2263,8 @@ qx.Class.define("qx.ui.core.Widget",
 
 
     // property apply
-    _applyOpacity : function(value, old)
-    {
+    _applyOpacity : function(value, old) {
       this.getContentElement().setStyle("opacity", value == 1 ? null : value);
-
-      // Fix for AlphaImageLoader - see Bug #1894 for details
-      if (qx.core.Environment.get("css.alphaimageloaderneeded"))
-      {
-        // Do not apply this fix on images - see Bug #2748
-        if (!qx.Class.isSubClassOf(this.getContentElement().constructor, qx.html.Image))
-        {
-          // 0.99 is necessary since 1.0 is ignored and not being applied
-          var contentElementOpacity = (value == 1 || value == null) ? null : 0.99;
-          this.getContentElement().setStyle("opacity", contentElementOpacity);
-        }
-      }
     },
 
 
@@ -2398,15 +2344,15 @@ qx.Class.define("qx.ui.core.Widget",
     ---------------------------------------------------------------------------
     */
 
-    /** {Map} The current widget states */
+    /** @type {Map} The current widget states */
     __states : null,
 
 
-    /** {Boolean} Whether the widget has state changes which are not yet queued */
+    /** @type {Boolean} Whether the widget has state changes which are not yet queued */
     $$stateChanges : null,
 
 
-    /** {Map} Can be overridden to forward states to the child controls. */
+    /** @type {Map} Can be overridden to forward states to the child controls. */
     _forwardStates : null,
 
 
@@ -2567,11 +2513,11 @@ qx.Class.define("qx.ui.core.Widget",
     ---------------------------------------------------------------------------
     */
 
-    /** {String} The currently compiled selector to lookup the matching appearance */
+    /** @type {String} The currently compiled selector to lookup the matching appearance */
     __appearanceSelector : null,
 
 
-    /** {Boolean} Whether the selectors needs to be recomputed before updating appearance */
+    /** @type {Boolean} Whether the selectors needs to be recomputed before updating appearance */
     __updateSelector : null,
 
 
@@ -2850,16 +2796,7 @@ qx.Class.define("qx.ui.core.Widget",
         target.setAttribute("tabIndex", tabIndex);
 
         // Omit native dotted outline border
-        if (
-          (qx.core.Environment.get("engine.name") == "mshtml" &&
-           parseFloat(qx.core.Environment.get("engine.version")) < 8) ||
-          (qx.core.Environment.get("engine.name") == "mshtml" &&
-           qx.core.Environment.get("browser.documentmode") < 8)
-        ) {
-          target.setAttribute("hideFocus", "true");
-        } else {
-          target.setStyle("outline", "none");
-        }
+        target.setStyle("outline", "none");
       }
       else
       {
@@ -3085,6 +3022,10 @@ qx.Class.define("qx.ui.core.Widget",
     // property apply
     _applyDraggable : function(value, old)
     {
+      var hasTouch = qx.core.Environment.get("event.touch") || qx.core.Environment.get("event.mspointer");
+      if (hasTouch && qx.core.Environment.get("qx.emulatemouse")) {
+        return;
+      }
       if (!this.isEnabled() && value === true) {
         value = false;
       }
@@ -3398,7 +3339,7 @@ qx.Class.define("qx.ui.core.Widget",
     },
 
 
-    /** {Map} Map of instantiated child controls */
+    /** @type {Map} Map of instantiated child controls */
     __childControls : null,
 
 

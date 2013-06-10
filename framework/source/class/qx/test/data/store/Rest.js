@@ -57,6 +57,7 @@ qx.Class.define("qx.test.data.store.Rest",
 
       // Inject double and return
       this.injectStub(qx.io.request, "Xhr", req);
+
       return req;
     },
 

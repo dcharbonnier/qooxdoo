@@ -68,6 +68,7 @@ Technical Concepts
    desktop/html_element_handling
    desktop/focus_layer_impl
    desktop/using_q
+   desktop/on_mobile
 
 
 Tutorials
@@ -87,3 +88,11 @@ Tutorials
    /pages/desktop/tutorials/tutorial-part-4-4-1
    /pages/desktop/tutorials/tutorial-part-4-5
 
+
+Migration
+=========
+
+.. toctree::
+   :maxdepth: 1
+
+   /pages/desktop/migration/migration_from_2_x

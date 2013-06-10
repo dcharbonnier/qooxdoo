@@ -18,8 +18,6 @@
 ************************************************************************ */
 
 /* ************************************************************************
-#ignore(selenium)
-#ignore(qx.Simulation.eventStore)
 ************************************************************************ */
 
 /**
@@ -34,7 +32,7 @@ qx.Mixin.define("simulator.MEventSupport",
      * Adds utility functions to the AUT that allow attaching and removing event
      * listeners to qooxdoo objects identified by their object registry hash.
      *
-     * @lint ignoreUndefined(selenium)
+     * @ignore(selenium.qxStoredVars)
      */
     _addListenerSupport : function()
     {
@@ -111,8 +109,7 @@ qx.Mixin.define("simulator.MEventSupport",
      * context.
      * @return {String} The listener's ID as returned by addListener
      *
-     * @lint ignoreUndefined(selenium)
-     * @lint ignoreUndefined(qx.Simulation)
+     * @ignore(qx.Simulation.eventStore.push)
      */
     storeEvent : function(locator, event, script)
     {

@@ -18,12 +18,6 @@
 ************************************************************************ */
 
 /* ************************************************************************
-#asset(qx/icon/Tango/22/actions/list-add.png)
-#asset(qx/icon/Tango/22/actions/list-remove.png)
-#asset(qx/icon/Tango/22/actions/media-playback-start.png)
-#asset(qx/icon/Tango/22/actions/media-record.png)
-#asset(qx/icon/Tango/22/actions/window-new.png)
-#asset(qx/icon/Tango/22/categories/system.png)
 ************************************************************************ */
 
 /**
@@ -33,6 +27,13 @@
  * functionality, namely generating locator strings (in this case for qooxdoo
  * widgets instead of regular DOM elements) and running Selenium commands
  * against the inspected application.
+ *
+ * @asset(qx/icon/Tango/22/actions/list-add.png)
+ * @asset(qx/icon/Tango/22/actions/list-remove.png)
+ * @asset(qx/icon/Tango/22/actions/media-playback-start.png)
+ * @asset(qx/icon/Tango/22/actions/media-record.png)
+ * @asset(qx/icon/Tango/22/actions/window-new.png)
+ * @asset(qx/icon/Tango/22/categories/system.png)
  */
 qx.Class.define("inspector.selenium.SeleniumWindow", {
 
@@ -122,6 +123,8 @@ qx.Class.define("inspector.selenium.SeleniumWindow", {
     this._model.removeListenerById(this.__changeInspectedListenerID);
     this.__view.dispose();
     this.__view = null;
-    this.__appChangeTimer.dispose();
+    if (this.__appChangeTimer) {
+      this.__appChangeTimer.dispose();
+    }
   }
 });

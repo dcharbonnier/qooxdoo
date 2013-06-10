@@ -18,7 +18,6 @@
 ************************************************************************ */
 
 /* ************************************************************************
-#ignore(selenium)
 ************************************************************************ */
 
 /**
@@ -33,7 +32,7 @@ qx.Mixin.define("simulator.MApplicationLogging",
     /**
      * Adds a function to the AUT that retrieves all messages from the logger
      * created by {@link #addAutLogStore}.
-     * @lint ignoreUndefined(selenium)
+     * @ignore(selenium.qxStoredVars)
      */
     _addAutLogGetter : function()
     {

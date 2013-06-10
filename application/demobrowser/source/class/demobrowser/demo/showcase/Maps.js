@@ -17,18 +17,9 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-#ignore(YMap)
-#ignore(YAHOO_MAP_REG)
-#ignore(google.maps)
-#ignore(google.maps)
-#ignore(google.maps.MapTypeId)
-#ignore(google.maps.event)
-************************************************************************ */
-
 /**
  * @tag showcase
- * @lint ignoreUndefined(google, YMap, YAHOO_MAP_REG)
+ * @ignore(google.*, YMap, YAHOO_MAP_REG)
  */
 qx.Class.define("demobrowser.demo.showcase.Maps",
 {

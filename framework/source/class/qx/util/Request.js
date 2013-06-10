@@ -14,11 +14,12 @@
 
    Authors:
      * Tristan Koch (tristankoch)
+     * Richard Sternagel (rsternagel)
 
 ************************************************************************ */
 
 /**
- * Static helpers for handling requests.
+ * Static helpers for handling HTTP requests.
  */
 qx.Bootstrap.define("qx.util.Request",
 {
@@ -66,6 +67,17 @@ qx.Bootstrap.define("qx.util.Request",
     },
 
     /**
+     * Determine if given HTTP method is valid.
+     *
+     * @param method {String} HTTP method.
+     * @return {Boolean} Whether method is a valid HTTP method.
+     */
+    isMethod: function(method) {
+      var knownMethods = ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "TRACE", "CONNECT", "PATCH"];
+      return (knownMethods.indexOf(method) !== -1) ? true : false;
+    },
+
+    /**
      * Request body is ignored for HTTP method GET and HEAD.
      *
      * See http://www.w3.org/TR/XMLHttpRequest2/#the-send-method.
@@ -74,7 +86,7 @@ qx.Bootstrap.define("qx.util.Request",
      * @return {Boolean} Whether request may contain body.
      */
     methodAllowsRequestBody: function(method) {
-      return !((/^(GET)|(HEAD)$/).test(method));
+      return !((/^(GET|HEAD)$/).test(method));
     }
   }
 });

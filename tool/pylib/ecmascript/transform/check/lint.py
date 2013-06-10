@@ -28,9 +28,10 @@ from collections import defaultdict
 from ecmascript.frontend import treeutil, lang, Comment
 from ecmascript.frontend import tree, treegenerator
 from ecmascript.transform.optimizer import variantoptimizer
-from ecmascript.transform.evaluate  import evaluate
 from ecmascript.transform.check  import scopes
-from generator import Context
+from ecmascript.transform.check  import jshints
+from ecmascript.transform.check  import global_symbols as gs
+from generator.runtime.CodeIssue import CodeIssue
 
 class LintChecker(treeutil.NodeVisitor):
 
@@ -39,6 +40,7 @@ class LintChecker(treeutil.NodeVisitor):
         self.root_node = root_node
         self.file_name = file_name_  # it's a warning module, so i need a proper file name
         self.opts = opts
+        self.issues = []
         self.known_globals_bases = (
             self.opts.library_classes + self.opts.allowed_globals + lang.QXGLOBALS )
         global file_name
@@ -47,7 +49,7 @@ class LintChecker(treeutil.NodeVisitor):
     def visit_file(self, node):
         # we can run the basic scope checks as with function nodes
         if not self.opts.ignore_undefined_globals:
-            self.function_unknown_globals(node)
+            self.unknown_globals(node.scope)
         self.function_unused_vars(node)
         if not self.opts.ignore_deprecated_symbols:
             self.function_used_deprecated(node)
@@ -86,7 +88,7 @@ class LintChecker(treeutil.NodeVisitor):
     def visit_function(self, node):
         #print "visiting", node.type
         if not self.opts.ignore_undefined_globals:
-            self.function_unknown_globals(node)
+            self.unknown_globals(node.scope)
         self.function_unused_vars(node)  # self.opts are applied in the function
         if not self.opts.ignore_deprecated_symbols:
             self.function_used_deprecated(node)
@@ -128,33 +130,38 @@ class LintChecker(treeutil.NodeVisitor):
                     if at_hints:
                         ok = self.is_name_lint_filtered(full_name, at_hints, "ignoreDeprecated")
                 if not ok:
-                    warn("Deprecated global symbol used: '%s'" % full_name, self.file_name, var_node)
+                    issue = warn("Deprecated global symbol used: '%s'" % full_name, self.file_name, var_node)
+                    self.issues.append(issue)
 
-    def function_unknown_globals(self, funcnode):
-        # take advantage of Scope() objects
-        scope = funcnode.scope
+    def unknown_globals(self, scope):
+        # collect scope's global use locations
+        global_nodes = defaultdict(list)  # {assembled: [node]}
         for id_, scopeVar in scope.globals().items():
-            if id_ in self.opts.allowed_globals:
-                continue
-            elif id_ in lang.GLOBALS: # JS built-ins ('alert' etc.)
-                continue
-            else:
-                # we want to be more specific than just the left-most symbol,
-                # like "qx", so let's look at the var uses
-                for var_node in scopeVar.uses:
-                    var_top = treeutil.findVarRoot(var_node)
-                    full_name = (treeutil.assembleVariable(var_top))[0]
-                    ok = False
-                    if extension_match_in(full_name, self.known_globals_bases, 
-                        self.opts.class_namespaces): # known classes (classList + their namespaces)
-                        ok = True
-                    else:
-                        at_hints = get_at_hints(var_node) # check full_name against @ignore hints
-                        if at_hints:
-                            ok = ( self.is_name_ignore_filtered(full_name, at_hints)
-                                or self.is_name_lint_filtered(full_name, at_hints, "ignoreUndefined")) # /**deprecated*/
-                    if not ok:
-                        warn("Unknown global symbol used: '%s'" % full_name, self.file_name, var_node)
+            for head_node in scopeVar.uses:
+                var_top = treeutil.findVarRoot(head_node)
+                full_name = (treeutil.assembleVariable(var_top))[0]
+                global_nodes[full_name].append(head_node)
+        # filter allowed globals
+        # - from config
+        global_nodes = dict([(key,nodes) for (key,nodes) in global_nodes.items()
+            if key not in self.opts.allowed_globals])
+        # - from known classes and namespaces
+        global_nodes = dict([(key,nodes) for (key,nodes) in global_nodes.items()
+            if not extension_match_in(key, self.known_globals_bases,self.opts.class_namespaces)]) # known classes (classList + their namespaces)
+        # - from built-ins
+        new_keys = gs.globals_filter_by_builtins(global_nodes.keys())
+        global_nodes = dict([(key,nodes) for (key,nodes) in global_nodes.items()
+            if key in new_keys])
+        # - with jshints
+        for key, nodes in global_nodes.items():
+            global_nodes[key] = [node for node in nodes 
+                if not gs.ident_is_ignored(key, node)]
+        # warn remaining
+        for key, nodes in global_nodes.items():
+            for node in nodes:
+                issue = warn("Unknown global symbol used: '%s'" % key, self.file_name, node)
+                self.issues.append(issue)
+
 
     def function_unused_vars(self, funcnode):
         scope = funcnode.scope
@@ -172,7 +179,8 @@ class LintChecker(treeutil.NodeVisitor):
                 if at_hints:
                     ok = self.is_name_lint_filtered(var_name, at_hints, "ignoreUnused")
             if not ok:
-                warn("Declared but unused variable or parameter: '%s'" % var_name, self.file_name, scopeVar.decl[0])
+                issue = warn("Declared but unused variable or parameter: '%s'" % var_name, self.file_name, scopeVar.decl[0])
+                self.issues.append(issue)
 
     ##
     # <name> is an extension match of <prefix> .iff. <prefix> is a prefix of <name>
@@ -199,14 +207,6 @@ class LintChecker(treeutil.NodeVisitor):
 
 
     ##
-    # Checks @ignore(...)
-    #
-    def is_name_ignore_filtered(self, var_name, at_hints):
-        return ('ignore' in at_hints and 
-            any([self.extension_match(var_name, x) for x in at_hints['ignore']]))
-
-
-    ##
     # Check if a map only has unique keys.
     #
     def map_unique_keys(self, node):
@@ -215,15 +215,17 @@ class LintChecker(treeutil.NodeVisitor):
         seen = set()
         for key,keyval in entries:
             if key in seen:
-                warn("Duplicate use of map key", self.file_name, keyval)
+                issue = warn("Duplicate use of map key", self.file_name, keyval)
+                self.issues.append(issue)
             seen.add(key)
 
     def function_multiple_var_decls(self, node):
         scope_node = node.scope
         for id_, var_node in scope_node.vars.items():
             if self.multiple_var_decls(var_node):
-                warn("Multiple declarations of variable: '%s' (%r)" % (
+                issue = warn("Multiple declarations of variable: '%s' (%r)" % (
                     id_, [n.get("line",-1) for n in var_node.decl]), self.file_name, None)
+                self.issues.append(issue)
 
     def multiple_var_decls(self, scopeVar):
         return len(scopeVar.decl) > 1
@@ -254,7 +256,8 @@ class LintChecker(treeutil.NodeVisitor):
                     if at_hints and 'lint' in at_hints and 'ignoreNoLoopBlock' in at_hints['lint']:
                         ok = True
             if not ok:
-                warn("Loop or condition statement without a block as body", self.file_name, body_node)
+                issue = warn("Loop or condition statement without a block as body", self.file_name, body_node)
+                self.issues.append(issue)
 
     ##
     # Check that no privates are used in code that are not declared as a class member
@@ -285,7 +288,8 @@ class LintChecker(treeutil.NodeVisitor):
                         function_privs = self.function_uses_local_privs(val.children[0])
                         for priv, node in function_privs:
                             if priv not in private_keys:
-                                warn("Using an undeclared private class feature: '%s'" % priv, self.file_name, node)
+                                issue = warn("Using an undeclared private class feature: '%s'" % priv, self.file_name, node)
+                                self.issues.append(issue)
 
 
     ##
@@ -308,7 +312,8 @@ class LintChecker(treeutil.NodeVisitor):
                 if at_hints:
                     ok = self.is_name_lint_filtered(key, at_hints, "ignoreReferenceField")
                 if not ok:
-                    warn("Reference values are shared across all instances: '%s'" % key, self.file_name, value_node)
+                    issue = warn("Reference values are shared across all instances: '%s'" % key, self.file_name, value_node)
+                    self.issues.append(issue)
 
 
     def function_uses_local_privs(self, func_node):
@@ -341,7 +346,8 @@ class LintChecker(treeutil.NodeVisitor):
 
         params = select_call.getChild("arguments")
         if len(params.children) != 2:
-            warn("qx.core.Environment.select: takes exactly two arguments.", self.file_name, select_call)
+            issue = warn("qx.core.Environment.select: takes exactly two arguments.", self.file_name, select_call)
+            self.issues.append(issue)
             return False
 
         # Get the variant key from the select() call
@@ -361,7 +367,8 @@ class LintChecker(treeutil.NodeVisitor):
                         or self.is_name_lint_filtered(firstParam.toJS(None), at_hints, lint_key)): # environmentNonLiteralKey(foo)
                         ok = True
             if not ok:
-                warn("qx.core.Environment.select: first argument is not a string literal.", self.file_name, select_call)
+                issue = warn("qx.core.Environment.select: first argument is not a string literal.", self.file_name, select_call)
+                self.issues.append(issue)
             return False
 
         # Get the resolution map, keyed by possible variant key values (or value expressions)
@@ -373,7 +380,8 @@ class LintChecker(treeutil.NodeVisitor):
             # like in variantoptimzier - deferred
             pass
         else:
-            warn("qx.core.Environment.select: second parameter is not a map.", self.file_name, select_call)
+            issue = warn("qx.core.Environment.select: second parameter is not a map.", self.file_name, select_call)
+            self.issues.append(issue)
 
 
     def environment_check_get(self, get_call):
@@ -381,7 +389,8 @@ class LintChecker(treeutil.NodeVisitor):
         # Simple sanity checks
         params = get_call.getChild("arguments")
         if len(params.children) != 1:
-            warn("qx.core.Environment.get: takes exactly one argument.", self.file_name, get_call)
+            issue = warn("qx.core.Environment.get: takes exactly one argument.", self.file_name, get_call)
+            self.issues.append(issue)
             return False
 
         firstParam = params.getChildByPosition(0)
@@ -397,7 +406,8 @@ class LintChecker(treeutil.NodeVisitor):
                         or self.is_name_lint_filtered(firstParam.toJS(None), at_hints, lint_key)): # environmentNonLiteralKey(foo)
                         ok = True
             if not ok:
-                warn("qx.core.Environment.get: first argument is not a string literal.", self.file_name, get_call)
+                issue = warn("qx.core.Environment.get: first argument is not a string literal.", self.file_name, get_call)
+                self.issues.append(issue)
             return False
 
         # we could try to verify the key, like in variantoptimizer
@@ -414,13 +424,15 @@ class LintChecker(treeutil.NodeVisitor):
 
         params = filter_call.getChild("arguments")
         if len(params.children) != 1:
-            warn("qx.core.Environment.filter: takes exactly one argument.", self.file_name, filter_call)
+            issue = warn("qx.core.Environment.filter: takes exactly one argument.", self.file_name, filter_call)
+            self.issues.append(issue)
             return complete
 
         # Get the map from the filter call
         firstParam = params.getChildByPosition(0)
         if not firstParam.type == "map":
-            warn("qx.core.Environment.filter: first argument is not a map.", self.file_name, filter_call)
+            issue = warn("qx.core.Environment.filter: first argument is not a map.", self.file_name, filter_call)
+            self.issues.append(issue)
             return complete
 
         # we could now try to verify the keys in the map - deferred
@@ -438,8 +450,9 @@ class LintChecker(treeutil.NodeVisitor):
         if catch_param:
             higher_scope = catch_param.scope.parent.lookup(catch_param.get("value")) # want to look at scopes *above* the catch scope
             if higher_scope: # "e" has been registered with a higher scope, either as decl'ed or global
-                warn("Shadowing scoped var with catch parameter (bug#1207): %s" % 
+                issue = warn("Shadowing scoped var with catch parameter (bug#1207): %s" % 
                     catch_param.get("value"), self.file_name, catch_param)
+                self.issues.append(issue)
             
     ##
     # Check for try-finally without 'catch' block (issue in older IE, s. bug#3688)
@@ -447,28 +460,26 @@ class LintChecker(treeutil.NodeVisitor):
     def finally_without_catch(self, finally_node):
         try_node = finally_node.parent
         if not try_node.getChild("catch", 0):
-            warn("A finally clause without a catch might not be run (bug#3688)",
+            issue = warn("A finally clause without a catch might not be run (bug#3688)",
                 self.file_name, finally_node)
+            self.issues.append(issue)
             
 
 # - ---------------------------------------------------------------------------
 
 def warn(msg, fname, node):
+    issue = CodeIssue()
+    issue.msg = msg
     if node:
-        emsg = "%s (%s,%s): %s" % (fname, node.get("line"), node.get("column"), msg)
-    else:
-        emsg = "%s: %s" % (fname, msg)
-    if Context.console:
-        Context.console.warn(emsg)
-    else:
-        print >>sys.stderr, emsg
+        issue.line, issue.column = node.get("line"), node.get("column")
+    return issue
 
 ##
 # Get the JSDoc comments in a nested dict structure
 def get_at_hints(node, at_hints=None):
     if at_hints is None:
         at_hints = defaultdict(dict)
-    commentsArray = Comment.parseNode(node)  # searches comment "around" this node
+    commentsArray = Comment.parseNode(node, process_txt=False)  # searches comment "around" this node
     for commentAttributes in commentsArray:
         for entry in commentAttributes:
              # {'arguments': ['a', 'b'],
@@ -513,7 +524,6 @@ def defaultOptions():
     opts.ignore_unused_variables = False
     opts.warn_unknown_jsdoc_keys = False
     opts.warn_jsdoc_key_syntax   = True
- 
 
     return opts
 
@@ -551,5 +561,8 @@ def extension_match_in(name, name_list, name_spaces):
 
 def lint_check(node, file_name, opts):
     node = scopes.create_scopes(node)  # update scopes
+    if not hasattr(node, 'hint'):
+        node = jshints.create_hints_tree(node)
     lint = LintChecker(node, file_name, opts)
     lint.visit(node)
+    return lint.issues

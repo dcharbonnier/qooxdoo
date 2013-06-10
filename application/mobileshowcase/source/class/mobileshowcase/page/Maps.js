@@ -17,20 +17,11 @@
 
 ************************************************************************ */
 
-/*
- * If you have added resources to your app remove the leading '*' in the
- * following line to make use of them.
-
-#asset(qx/mobile/css/*)
-#ignore(OpenLayers)
-#ignore(OpenLayers.Layer)
-
-************************************************************************ */
-
 /**
  * Mobile page showing an OpenStreetMap map.
  *
- * @ignore(OpenLayers)
+ * @ignore(OpenLayers.*)
+ * @asset(qx/mobile/css/*)
  */
 qx.Class.define("mobileshowcase.page.Maps",
 {

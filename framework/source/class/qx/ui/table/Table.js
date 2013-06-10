@@ -462,7 +462,7 @@ qx.Class.define("qx.ui.table.Table",
 
 
     /**
-     * {Integer[]} The number of columns per meta column. If the last array entry is -1,
+     * @type {Integer[]} The number of columns per meta column. If the last array entry is -1,
      * this meta column will get the remaining columns.
      */
     metaColumnCounts :
@@ -1876,9 +1876,9 @@ qx.Class.define("qx.ui.table.Table",
     {
       var scrollerArr = this._getPaneScrollerArr();
       for (var i=0; i<scrollerArr.length; i++) {
-        scrollerArr[i].getHeader().getBlocker().unblockContent();
+        scrollerArr[i].getHeader().getBlocker().unblock();
       }
-      this.getChildControl("column-button").getBlocker().unblockContent();
+      this.getChildControl("column-button").getBlocker().unblock();
     },
 
     /**

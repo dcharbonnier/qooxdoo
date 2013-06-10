@@ -18,13 +18,14 @@
 ************************************************************************ */
 
 /* ************************************************************************
- #ignore(environment)
  ************************************************************************ */
 
 /**
  * Automated GUI test of a qooxdoo application using QxSelenium. Provides access
  * to the AUT's log messages and any exceptions caught by qooxdoo's global error
  * handling. Also supports event testing.
+ *
+ * @ignore(environment)
  */
 
 qx.Class.define("simulator.Simulation", {
@@ -173,8 +174,6 @@ qx.Class.define("simulator.Simulation", {
      * Repeatedly tries to find a visible widget using the given locator until
      * the timeout is reached.
      *
-     * @throws an Error if no visible widget is found before the timeout is
-     * reached
      * @param locator {String} (Qx)Selenium locator string
      * @param timeout {Integer?} Timeout in milliseconds. Default: 5000
      */
@@ -339,7 +338,7 @@ qx.Class.define("simulator.Simulation", {
      * Logs the Simulation's start date, URL of the AUT and the operating system
      * platform.
      *
-     * @lint ignoreUndefined(environment)
+     * @ignore(environment)
      */
     logEnvironment : function()
     {

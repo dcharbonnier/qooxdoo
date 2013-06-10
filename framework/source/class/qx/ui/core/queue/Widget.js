@@ -30,12 +30,12 @@ qx.Class.define("qx.ui.core.queue.Widget",
 {
   statics :
   {
-    /** {Array} This contains all the queued widgets for the next flush. */
+    /** @type {Array} This contains all the queued widgets for the next flush. */
     __queue : [],
 
 
     /**
-     * {Object} This contains a map of widgets hash ($$hash) and their
+     * @type {Object} This contains a map of widgets hash ($$hash) and their
      * corresponding map of jobs.
      */
     __jobs : {},
@@ -135,8 +135,7 @@ qx.Class.define("qx.ui.core.queue.Widget",
         return;
       }
 
-      // Recreate the array is cheaper compared to keep a holey array over time
-      // This is especially true for IE7
+      // Recreate the array is cheaper compared to keep a sparse array over time
       this.__queue = [];
       this.__jobs = {};
     }

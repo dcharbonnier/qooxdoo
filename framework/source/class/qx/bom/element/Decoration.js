@@ -35,14 +35,13 @@ qx.Class.define("qx.bom.element.Decoration",
 
   statics :
   {
-    /** {Boolean} Whether clipping hints should be logged */
+    /** @type {Boolean} Whether clipping hints should be logged */
     DEBUG : false,
 
-    /** {Map} Collect warnings for potential clipped images */
+    /** @type {Map} Collect warnings for potential clipped images */
     __warnings : {},
 
-
-    /** {Map} List of repeat modes which supports the IE AlphaImageLoader */
+    /** @type {Map} List of repeat modes which supports the IE AlphaImageLoader */
     __alphaFixRepeats : qx.core.Environment.select("engine.name",
     {
       "mshtml" :
@@ -57,7 +56,7 @@ qx.Class.define("qx.bom.element.Decoration",
     }),
 
 
-    /** {Map} Mapping between background repeat and the tag to create */
+    /** @type {Map} Mapping between background repeat and the tag to create */
     __repeatToTagname :
     {
       "scale-x" : "img",
@@ -286,6 +285,9 @@ qx.Class.define("qx.bom.element.Decoration",
      */
     processAlphaFix : function(style, repeat, source)
     {
+      if (repeat == "repeat" || repeat == "repeat-x" || repeat == "repeat-y") {
+        return style;
+      }
       var sizingMethod = repeat == "no-repeat" ? "crop" : "scale";
       var filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" +
                    qx.util.ResourceManager.getInstance().toUri(source) +

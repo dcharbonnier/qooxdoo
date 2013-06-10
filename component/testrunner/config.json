@@ -47,7 +47,9 @@
     "source-basic",
     "source-mobile",
     "source-widget",
-    "translation"
+    "translation",
+    "validate-config",
+    "validate-manifest"
   ],
 
   "default-job" : "source",
@@ -62,6 +64,7 @@
       "testrunner::build-basic",
       "testrunner::source-basic",
       "portable::build-script",
+      "libraries",
       "translation"
     ],
 
@@ -92,7 +95,7 @@
     {
       "let" :
       {
-        "BUILD_PATH"     : "${ROOT}/api",
+        "BUILD_PATH"     : "${ROOT}/api"
       }
     },
 

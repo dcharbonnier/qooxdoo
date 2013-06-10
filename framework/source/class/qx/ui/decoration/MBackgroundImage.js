@@ -113,7 +113,16 @@ qx.Mixin.define("qx.ui.decoration.MBackgroundImage",
 
       var top = this.getBackgroundPositionY() || 0;
       var left = this.getBackgroundPositionX() || 0;
-      styles["background-position"] = left + "px " + top + "px";
+
+      if (!isNaN(top)) {
+        top += "px";
+      }
+
+      if (!isNaN(left)) {
+        left += "px";
+      }
+
+      styles["background-position"] = left + " " + top;
 
       if (qx.core.Environment.get("css.alphaimageloaderneeded")) {
         qx.bom.element.Decoration.processAlphaFix(styles, repeat, id);
@@ -122,7 +131,7 @@ qx.Mixin.define("qx.ui.decoration.MBackgroundImage",
 
 
     /**
-     * Whether an info was already displayed for browsers using the AlphaImageLoader (IE6 - IE9)
+     * Whether an info was already displayed for browsers using the AlphaImageLoader (IE8 - IE9)
      * together with the 'backgroundPosition' property. The AlphaImageLoader is not able to make use
      * of this CSS property. So the developer should be informed about this *once*.
      */

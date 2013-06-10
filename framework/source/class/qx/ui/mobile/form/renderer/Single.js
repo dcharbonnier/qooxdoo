@@ -37,16 +37,16 @@ qx.Class.define("qx.ui.mobile.form.renderer.Single",
   construct : function(form)
   {
     this.__errorMessageContainers = [];
-    this.__rows = [];
-    this.__labels = [];
+    this._rows = [];
+    this._labels = [];
     this.base(arguments,form);
   },
 
   members :
   {
 
-    __rows : null,
-    __labels : null,
+    _rows : null,
+    _labels : null,
 
     /**
      * A collection of error containers used to keep the error messages
@@ -54,7 +54,6 @@ qx.Class.define("qx.ui.mobile.form.renderer.Single",
      * Also useful to clear them when the validation passes.
      */
     __errorMessageContainers : null,
-
 
 
     // override
@@ -137,26 +136,26 @@ qx.Class.define("qx.ui.mobile.form.renderer.Single",
      * @param name {String} A name for the form item.
      */
     _addInSeparateLines : function(item, name) {
-        var labelRow = new qx.ui.mobile.form.Row();
-        labelRow.addCssClass("formRowContent");
+      var labelRow = new qx.ui.mobile.form.Row();
+      labelRow.addCssClass("formRowContent");
 
-        var itemRow = new qx.ui.mobile.form.Row();
-        itemRow.addCssClass("formRowContent");
+      var itemRow = new qx.ui.mobile.form.Row();
+      itemRow.addCssClass("formRowContent");
 
-        if(name) {
-          var label = new qx.ui.mobile.form.Label(name);
-          label.setLabelFor(item.getId());
+      if(name) {
+        var label = new qx.ui.mobile.form.Label(name);
+        label.setLabelFor(item.getId());
 
-          labelRow.add(label);
-          this.__labels.push(label);
+        labelRow.add(label);
+        this._labels.push(label);
 
-          this._add(labelRow);
-          this.__rows.push(labelRow);
-        }
+        this._add(labelRow);
+        this._rows.push(labelRow);
+      }
 
-        itemRow.add(item);
-        this._add(itemRow);
-        this.__rows.push(itemRow);
+      itemRow.add(item);
+      this._add(itemRow);
+      this._rows.push(itemRow);
     },
 
 
@@ -166,18 +165,18 @@ qx.Class.define("qx.ui.mobile.form.renderer.Single",
      * @param name {String} A name for the form item.
      */
     _addInOneLine : function(item, name) {
-        var row = new qx.ui.mobile.form.Row(new qx.ui.mobile.layout.HBox());
-        row.addCssClass("formRowContent");
+      var row = new qx.ui.mobile.form.Row(new qx.ui.mobile.layout.HBox());
+      row.addCssClass("formRowContent");
 
-        if(name != null) {
-          var label = new qx.ui.mobile.form.Label(name);
-          label.setLabelFor(item.getId());
-          row.add(label, {flex:1});
-          this.__labels.push(label);
-        }
-        row.add(item);
-        this._add(row);
-        this.__rows.push(row);
+      if(name != null) {
+        var label = new qx.ui.mobile.form.Label(name);
+        label.setLabelFor(item.getId());
+        row.add(label, {flex:1});
+        this._labels.push(label);
+      }
+      row.add(item);
+      this._add(row);
+      this._rows.push(row);
     },
 
 
@@ -188,7 +187,7 @@ qx.Class.define("qx.ui.mobile.form.renderer.Single",
       var row = new qx.ui.mobile.form.Row();
       row.addCssClass("formSeparationRow")
       this._add(row);
-      this.__rows.push(row);
+      this._rows.push(row);
     },
 
 
@@ -199,7 +198,7 @@ qx.Class.define("qx.ui.mobile.form.renderer.Single",
       var row = new qx.ui.mobile.form.Row();
       row.addCssClass("formRowGroupFirstItem")
       this._add(row);
-      this.__rows.push(row);
+      this._rows.push(row);
     },
 
 
@@ -210,7 +209,7 @@ qx.Class.define("qx.ui.mobile.form.renderer.Single",
       var row = new qx.ui.mobile.form.Row();
       row.addCssClass("formRowGroupLastItem")
       this._add(row);
-      this.__rows.push(row);
+      this._rows.push(row);
     },
 
 
@@ -227,8 +226,8 @@ qx.Class.define("qx.ui.mobile.form.renderer.Single",
       var titleLabel = new qx.ui.mobile.basic.Label(title);
       row.add(titleLabel);
       this._add(row);
-      this.__labels.push(titleLabel);
-      this.__rows.push(row);
+      this._labels.push(titleLabel);
+      this._rows.push(row);
     },
 
 
@@ -237,7 +236,7 @@ qx.Class.define("qx.ui.mobile.form.renderer.Single",
       var row = new qx.ui.mobile.form.Row(new qx.ui.mobile.layout.HBox());
       row.add(button, {flex:1});
       this._add(row);
-      this.__rows.push(row);
+      this._rows.push(row);
     },
 
 
@@ -288,7 +287,7 @@ qx.Class.define("qx.ui.mobile.form.renderer.Single",
   destruct : function()
   {
     this.resetForm();
-    this._disposeArray("__labels");
-    this._disposeArray("__rows");
+    this._disposeArray("_labels");
+    this._disposeArray("_rows");
   }
 });

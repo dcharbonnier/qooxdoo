@@ -17,20 +17,14 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#ignore(qx.dev.Debug)
-
-************************************************************************ */
-
 /**
  * Registration for all instances of qooxdoo classes. Mainly
  * used to manage them for the final shutdown sequence and to
  * use weak references when connecting widgets to DOM nodes etc.
  *
- * @ignore(qx.dev.Debug)
+ * @ignore(qx.dev.Debug.*)
  */
-qx.Class.define("qx.core.ObjectRegistry",
+qx.Bootstrap.define("qx.core.ObjectRegistry",
 {
   /*
   *****************************************************************************
@@ -40,22 +34,22 @@ qx.Class.define("qx.core.ObjectRegistry",
 
   statics :
   {
-    /** {Boolean} Whether the application is in the shutdown phase */
+    /** @type {Boolean} Whether the application is in the shutdown phase */
     inShutDown : false,
 
-    /** {Map} Internal data structure to store objects */
+    /** @type {Map} Internal data structure to store objects */
     __registry : {},
 
-    /** {Integer} Next new hash code. */
+    /** @type {Integer} Next new hash code. */
     __nextHash : 0,
 
-    /** {Array} List of all free hash codes */
+    /** @type {Array} List of all free hash codes */
     __freeHashes : [],
 
-    /** {String} Post id for hash code creation. */
+    /** @type {String} Post id for hash code creation. */
     __postId : "",
 
-    /** {Map} Object hashes to stack traces (for dispose profiling only) */
+    /** @type {Map} Object hashes to stack traces (for dispose profiling only) */
     __stackTraces : {},
 
     /**

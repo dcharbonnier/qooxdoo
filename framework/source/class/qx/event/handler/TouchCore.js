@@ -20,18 +20,11 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-#ignore(qx.event.type.Tap)
-#ignore(qx.event.type.Swipe)
-#ignore(qx.event.type)
-#ignore(qx.event)
-************************************************************************ */
-
 /**
  * Listens for native touch events and fires composite events like "tap" and
  * "swipe"
  *
- * @ignore(qx.event)
+ * @ignore(qx.event.*)
  */
 qx.Bootstrap.define("qx.event.handler.TouchCore", {
 
@@ -39,14 +32,14 @@ qx.Bootstrap.define("qx.event.handler.TouchCore", {
 
   statics :
   {
-    /** {Integer} The maximum distance of a tap. Only if the x or y distance of
+    /** @type {Integer} The maximum distance of a tap. Only if the x or y distance of
      *      the performed tap is less or equal the value of this constant, a tap
      *      event is fired.
      */
     TAP_MAX_DISTANCE : qx.core.Environment.get("os.name") != "android" ? 10 : 40,
 
 
-    /** {Map} The direction of a swipe relative to the axis */
+    /** @type {Map} The direction of a swipe relative to the axis */
     SWIPE_DIRECTION :
     {
       x : ["left", "right"],
@@ -54,13 +47,13 @@ qx.Bootstrap.define("qx.event.handler.TouchCore", {
     },
 
 
-    /** {Integer} The minimum distance of a swipe. Only if the x or y distance
+    /** @type {Integer} The minimum distance of a swipe. Only if the x or y distance
      *      of the performed swipe is greater as or equal the value of this
      *      constant, a swipe event is fired.
      */
     SWIPE_MIN_DISTANCE : qx.core.Environment.get("os.name") != "android" ? 11 : 41,
 
-    /** {Integer} The minimum velocity of a swipe. Only if the velocity of the
+    /** @type {Integer} The minimum velocity of a swipe. Only if the velocity of the
      *      performed swipe is greater as or equal the value of this constant, a
      *      swipe event is fired.
      */
@@ -94,6 +87,7 @@ qx.Bootstrap.define("qx.event.handler.TouchCore", {
     __startPageY : null,
     __startTime : null,
     __isSingleTouchGesture : null,
+    __isTapGesture : null,
     __onMove : null,
     
     __beginScalingDistance : null,
@@ -228,6 +222,8 @@ qx.Bootstrap.define("qx.event.handler.TouchCore", {
       if (type == "touchstart") {
         this.__originalTarget = this._getTarget(domEvent);
         
+        this.__isTapGesture = true;
+
         if(domEvent.touches && domEvent.touches.length > 1) {
           this.__beginScalingDistance = this._getScalingDistance(domEvent.touches[0],domEvent.touches[1]);
           this.__beginRotation = this._getRotationAngle(domEvent.touches[0],domEvent.touches[1]);
@@ -247,10 +243,34 @@ qx.Bootstrap.define("qx.event.handler.TouchCore", {
           var currentRotation = this._getRotationAngle(domEvent.changedTouches[0],domEvent.changedTouches[1]);
           domEvent.rotation = currentRotation - this.__beginRotation;
         }
+
+        if (this.__isTapGesture) {
+          this.__isTapGesture = this._isBelowTapMaxDistance(domEvent.changedTouches[0]);
+        }
       }
       
       this._fireEvent(domEvent, type);
       this.__checkAndFireGesture(domEvent, type);
+    },
+
+
+    /**
+     * Checks if the distance between the x/y coordinates of "touchstart" and "touchmove" event
+     * exceeds TAP_MAX_DISTANCE and returns the result.
+     *
+     * @param touch {Event} The "touchmove" event from the browser.
+     * @return {Boolean} true if distance is below TAP_MAX_DISTANCE.
+     */
+    _isBelowTapMaxDistance: function(touch) {
+      var deltaCoordinates = {
+        x: touch.screenX - this.__startPageX,
+        y: touch.screenY - this.__startPageY
+      };
+
+      var clazz = qx.event.handler.TouchCore;
+
+      return (Math.abs(deltaCoordinates.x) <= clazz.TAP_MAX_DISTANCE &&
+              Math.abs(deltaCoordinates.y) <= clazz.TAP_MAX_DISTANCE);
     },
 
 
@@ -420,16 +440,12 @@ qx.Bootstrap.define("qx.event.handler.TouchCore", {
             y : touch.screenY - this.__startPageY
         };
 
-        var clazz = qx.event.handler.TouchCore;
         var eventType;
 
-        if (this.__originalTarget == target
-            && Math.abs(deltaCoordinates.x) <= clazz.TAP_MAX_DISTANCE
-            && Math.abs(deltaCoordinates.y) <= clazz.TAP_MAX_DISTANCE) {
+        if (this.__originalTarget == target && this.__isTapGesture) {
           if (qx.event && qx.event.type && qx.event.type.Tap) {
             eventType = qx.event.type.Tap;
           }
-
           this._fireEvent(domEvent, "tap", target, eventType);
         }
         else

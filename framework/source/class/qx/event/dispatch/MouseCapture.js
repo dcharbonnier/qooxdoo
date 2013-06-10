@@ -17,20 +17,16 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#use(qx.event.handler.Focus)
-#use(qx.event.handler.Window)
-#use(qx.event.handler.Capture)
-
-************************************************************************ */
-
 /**
  * Implementation of the Internet Explorer specific event capturing mode for
  * mouse events http://msdn2.microsoft.com/en-us/library/ms536742.aspx.
  *
  * This class is used internally by {@link qx.event.Manager} to do mouse event
  * capturing.
+ *
+ * @use(qx.event.handler.Focus)
+ * @use(qx.event.handler.Window)
+ * @use(qx.event.handler.Capture)
  */
 qx.Class.define("qx.event.dispatch.MouseCapture",
 {
@@ -55,7 +51,7 @@ qx.Class.define("qx.event.dispatch.MouseCapture",
 
   statics :
   {
-    /** {Integer} Priority of this dispatcher */
+    /** @type {Integer} Priority of this dispatcher */
     PRIORITY : qx.event.Registration.PRIORITY_FIRST
   },
 

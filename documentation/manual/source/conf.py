@@ -45,16 +45,16 @@ copyright = u'2011-2012, ' + project + ' developers'
 # built documents.
 #
 # The short X.Y version.
-version = '2.2'
+version = '3.0'
 # The full version, including alpha/beta/rc tags.
-release = '2.2'
+release = '3.0'
 # The current git branch (used for github links)
 git_branch = "master"
 
 # qooxdoo Source Text Macros
 # use e.g. as "%{version}" anywhere in .rst files
-vMajor = "2"
-vMinor = "2"
+vMajor = "3"
+vMinor = "0"
 vPatch = ""
 qxmacros = {
     "version"  : vMajor + '.' + vMinor + (('.' + vPatch) if vPatch else '')
@@ -133,7 +133,7 @@ html_theme = '_theme.indigo'
 
 # A dict passed to the HTML templating engine (like {% set ... *})
 html_context = {
-  "version" : qxmacros["version"],  
+  "version" : qxmacros["version"],
 }
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -243,7 +243,7 @@ latex_elements = {
 #latex_use_modindex = True
 
 
-# -- Custom options ------------------------------------------------------------
+# -- Custom qooxdoo processing ------------------------------------------------
 
 # config vars
 qxcomponents = 'all'
@@ -252,7 +252,7 @@ qxcomponents = 'all'
 def setup(app):
     app.connect('source-read', qxmacro_resolve)
     app.add_config_value('qxcomponents', 'all', 'env')
-    
+
 ##
 # qooxdoo macro extension
 import string
@@ -264,3 +264,16 @@ def qxmacro_resolve(app, docname, source):
     templ     = MyTemplate(source[0])
     source[0] = templ.safe_substitute(qxmacros)
 
+##
+# qooxdoo sphinx index file augmentation
+#
+# overwrite word regex to also pick up words such as "qx.util.ColorUtil" or "watch-files"
+# when feeding the index for the later client side search (BUG #7292)
+import re
+try:
+    from sphinx.search import SearchLanguage
+    if hasattr(SearchLanguage, '_word_re'):
+        SearchLanguage._word_re = re.compile(r'[\w.-]+\w', re.UNICODE)
+except ImportError:
+    # sphinx <= v1.0.8 has no package 'search'
+    pass

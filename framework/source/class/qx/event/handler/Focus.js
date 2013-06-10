@@ -19,12 +19,6 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#use(qx.event.dispatch.DomBubbling)
-
-************************************************************************ */
-
 /**
  * This handler is used to normalize all focus/activation requirements
  * and normalize all cross browser quirks in this area.
@@ -37,6 +31,8 @@
  * * TabIndex is normally 0, which means all naturally focusable elements are focusable.
  * * TabIndex > 0 means that the element is focusable and tabable
  * * TabIndex < 0 means that the element, even if naturally possible, is not focusable.
+ *
+ * @use(qx.event.dispatch.DomBubbling)
  */
 qx.Class.define("qx.event.handler.Focus",
 {
@@ -105,10 +101,10 @@ qx.Class.define("qx.event.handler.Focus",
 
   statics :
   {
-    /** {Integer} Priority of this handler */
+    /** @type {Integer} Priority of this handler */
     PRIORITY : qx.event.Registration.PRIORITY_NORMAL,
 
-    /** {Map} Supported event types */
+    /** @type {Map} Supported event types */
     SUPPORTED_TYPES :
     {
       focus : 1,
@@ -119,11 +115,11 @@ qx.Class.define("qx.event.handler.Focus",
       deactivate : 1
     },
 
-    /** {Integer} Whether the method "canHandleEvent" must be called */
+    /** @type {Integer} Whether the method "canHandleEvent" must be called */
     IGNORE_CAN_HANDLE : true,
 
     /**
-     * {Map} See: http://msdn.microsoft.com/en-us/library/ms534654(VS.85).aspx
+     * @type {Map} See: http://msdn.microsoft.com/en-us/library/ms534654(VS.85).aspx
      */
     FOCUSABLE_ELEMENTS : qx.core.Environment.select("engine.name",
     {
@@ -319,7 +315,7 @@ qx.Class.define("qx.event.handler.Focus",
     ---------------------------------------------------------------------------
     */
 
-    /** {Boolean} Whether the window is focused currently */
+    /** @type {Boolean} Whether the window is focused currently */
     _windowFocused : true,
 
     /**

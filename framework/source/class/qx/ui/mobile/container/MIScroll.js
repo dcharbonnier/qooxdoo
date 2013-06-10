@@ -20,8 +20,6 @@
 
 /* ************************************************************************
 
-#asset(qx/mobile/js/iscroll*.js)
-#ignore(iScroll)
 
 ************************************************************************ */
 
@@ -32,6 +30,7 @@
  * Android < 2.2.
  *
  * @ignore(iScroll)
+ * @asset(qx/mobile/js/iscroll*.js)
  */
 qx.Mixin.define("qx.ui.mobile.container.MIScroll",
 {
@@ -118,7 +117,7 @@ qx.Mixin.define("qx.ui.mobile.container.MIScroll",
     /**
      * Loads and inits the iScroll instance.
      *
-     * @lint ignoreUndefined(iScroll)
+     * @ignore(iScroll)
      */
     __initScroll : function()
     {
@@ -149,7 +148,7 @@ qx.Mixin.define("qx.ui.mobile.container.MIScroll",
      * Creates the iScroll instance.
      *
      * @return {Object} The iScroll instance
-     * @lint ignoreUndefined(iScroll)
+     * @ignore(iScroll)
      */
     __createScrollInstance : function()
     {
@@ -177,6 +176,24 @@ qx.Mixin.define("qx.ui.mobile.container.MIScroll",
         hScrollbar : false,
         scrollbarClass: "scrollbar",
         useTransform: true,
+        onScrollEnd : function() {
+          // Alert interested parties that we scrolled to end of page.
+          if (qx.core.Environment.get("qx.mobile.nativescroll") == false)
+          {
+            if(this.y == this.maxScrollY) {
+              qx.event.Registration.fireEvent( this.wrapper,"iscrollpageend");
+            }
+          }
+        },
+        onScrollMove : function() {
+          // Alert interested parties that we scrolled to end of page.
+          if (qx.core.Environment.get("qx.mobile.nativescroll") == false)
+          {
+            if(this.y == this.maxScrollY) {
+              qx.event.Registration.fireEvent(this.wrapper,"iscrollpageend");
+            }
+          }
+        },
         onBeforeScrollStart : function(e) {
           // QOOXDOO ENHANCEMENT: Do not prevent default for form elements
           /* When updating iScroll, please check out that doubleTapTimer is not active (commented out)

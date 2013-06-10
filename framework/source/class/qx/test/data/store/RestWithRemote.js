@@ -19,9 +19,12 @@
 
 /* ************************************************************************
 
-#asset(qx/test/primitive.json)
 
 ************************************************************************ */
+/**
+ *
+ * @asset(qx/test/primitive.json)
+ */
 
 qx.Class.define("qx.test.data.store.RestWithRemote",
 {
@@ -38,7 +41,7 @@ qx.Class.define("qx.test.data.store.RestWithRemote",
           store = this.store = new qx.data.store.Rest(res, "index");
 
       res.configureRequest(function(req) {
-        req.setParser("json");
+        req.setParser(qx.util.ResponseParser.PARSER.json);
       });
 
       this.require(["http"]);

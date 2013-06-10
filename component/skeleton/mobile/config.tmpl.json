@@ -27,6 +27,7 @@
     "source-all",
     "source-hybrid",
     "source-server",
+    "source-server-reload",
     "source-httpd-config",
     "test",
     "test-source",
@@ -34,7 +35,10 @@
     "test-mobile-source",
     "translation",
     "minify-css",
-    "watch-scss"
+    "validate-config",
+    "validate-manifest",
+    "watch-scss",
+    "watch"
   ],
 
   "default-job" : "source-hybrid",
@@ -194,6 +198,7 @@
       "extend" : ["cache"],
       "let" :
       {
+        "MKDIRCMD"   : "$${PYTHON_CMD} $${QOOXDOO_PATH}/tool/bin/mkdir.py",
         "CATCMD"     : "$${PYTHON_CMD} $${QOOXDOO_PATH}/tool/bin/cat.py",
         "CSSMIN_CMD" : "$${PYTHON_CMD} $${QOOXDOO_PATH}/tool/bin/cssmin.py"
       },
@@ -202,6 +207,7 @@
       {
         "command" :
         [
+          "$${MKDIRCMD} $${BUILD_PATH}/resource/$${APPLICATION}/css",
           "$${CATCMD} $${ROOT}/source/resource/$${APPLICATION_CSS} | $${CSSMIN_CMD} > $${BUILD_PATH}/resource/$${APPLICATION_CSS}"
         ]
       }
@@ -217,6 +223,7 @@
         "command" :
         {
           "line"  : "$${PYTHON_CMD} $${QOOXDOO_PATH}/tool/bin/scss.py source/resource/$${APPLICATION_PATH}/scss/styles.scss -o source/resource/$${APPLICATION_PATH}/css/styles.css --load-path=source/resource/$${APPLICATION_PATH}/scss,$${QOOXDOO_PATH}/framework/source/resource/qx/mobile/scss",
+          "exec-on-startup" : true,
           "per-file" : false
         }
       }

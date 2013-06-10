@@ -18,7 +18,6 @@
 ************************************************************************ */
 
 /* ************************************************************************
-#ignore(simulator.webdriver.By)
 ************************************************************************ */
 
 /**
@@ -33,8 +32,8 @@ qx.Class.define("simulator.qxwebdriver.interaction.form.SelectBox", {
      * @param item {String|Integer} The target list item's label text or index
      * @return {webdriver.Promise} A promise that will be resolved when the
      * target item is selected
-     * @lint ignoreUndefined(simulator.webdriver.By)
-     * @lint ignoreUndefined(simulator.webdriver.promise)
+     * @ignore(simulator.webdriver.By.js)
+     * @ignore(simulator.webdriver.promise.*)
      */
     selectItem : function(item)
     {

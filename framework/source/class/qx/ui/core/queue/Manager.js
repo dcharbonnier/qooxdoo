@@ -18,33 +18,29 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#require(qx.event.handler.UserAction)
-
-************************************************************************ */
-
 /**
  * This class performs the auto flush of all layout relevant queues.
+ *
+ * @require(qx.event.handler.UserAction)
  */
 qx.Class.define("qx.ui.core.queue.Manager",
 {
   statics :
   {
-    /** {Boolean} Whether a flush was scheduled */
+    /** @type {Boolean} Whether a flush was scheduled */
     __scheduled : false,
 
-    /** {Boolean} true, if the flush should not be executed */
+    /** @type {Boolean} true, if the flush should not be executed */
     __canceled : false,
 
-    /** {Map} Internal data structure for the current job list */
+    /** @type {Map} Internal data structure for the current job list */
     __jobs : {},
 
 
-    /** {Integer} Counts how often a flush failed due to exceptions */
+    /** @type {Integer} Counts how often a flush failed due to exceptions */
     __retries : 0,
 
-    /** {Integer} Maximum number of flush retries */
+    /** @type {Integer} Maximum number of flush retries */
     MAX_RETRIES : 10,
 
 

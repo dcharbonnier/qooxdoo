@@ -16,15 +16,12 @@
      * Tino Butz (tbtz)
 
 ************************************************************************ */
-/* ************************************************************************
-
-#asset(qx/mobile/css)
-#require(qx.core.Init)
-
-************************************************************************ */
 
 /**
  * For a mobile application. Supports the mobile widget set.
+ *
+ * @require(qx.core.Init)
+ * @asset(qx/mobile/css)
  */
 qx.Class.define("qx.application.Mobile",
 {

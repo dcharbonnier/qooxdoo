@@ -18,8 +18,6 @@
 ************************************************************************ */
 
 /* ************************************************************************
-#ignore(qxwebdriver)
-#ignore(qxwebdriver.util)
 ************************************************************************ */
 
 /**
@@ -35,7 +33,7 @@ qx.Class.define("simulator.qxwebdriver.interaction.core.Object", {
      * @param propertyName {String} Name of the property
      * @return {webdriver.promise.Promise} A promise that will resolve to
      * the value of the property
-     * @lint ignoreUndefined(qxwebdriver)
+     * @ignore(qxwebdriver.util.*)
      */
     get : function(propertyName)
     {

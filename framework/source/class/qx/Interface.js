@@ -23,11 +23,9 @@
  *
  * See the description of the {@link #define} method how an interface is
  * defined.
+ *
+ * @require(qx.lang.normalize.Array)
  */
-
-/* ************************************************************************
-#require(qx.lang.normalize.Array)
-************************************************************************ */
 qx.Bootstrap.define("qx.Interface",
 {
   statics :
@@ -465,7 +463,7 @@ qx.Bootstrap.define("qx.Interface",
     }),
 
 
-    /** {Map} allowed keys in interface definition */
+    /** @type {Map} allowed keys in interface definition */
     __allowedKeys : qx.core.Environment.select("qx.debug",
     {
       "true":

@@ -18,11 +18,6 @@
 ************************************************************************ */
 
 /* *********************************************************************
-#asset(qx/test/xmlhttp/php_version.php)
-#use(feature-checks)
-#ignore(qx.application.Standalone)
-#ignore(qx.application.Inline)
-#ignore(qx.application.Native)
 ************************************************************************ */
 
 /**
@@ -36,9 +31,12 @@
  * }
  * </pre>
  *
+ * @use(feature-checks)
  * @ignore(qx.application.Standalone)
  * @ignore(qx.application.Inline)
  * @ignore(qx.application.Native)
+ *
+ * @asset(qx/test/xmlhttp/php_version.php)
  */
 qx.Mixin.define("qx.dev.unit.MRequirements", {
 
@@ -51,7 +49,7 @@ qx.Mixin.define("qx.dev.unit.MRequirements", {
   */
   statics :
   {
-    /** {Boolean} Result of {@link #hasPhp}. Stored as class member to avoid
+    /** @type {Boolean} Result of {@link #hasPhp}. Stored as class member to avoid
      * repeating the check. */
     __hasPhp : null
   },

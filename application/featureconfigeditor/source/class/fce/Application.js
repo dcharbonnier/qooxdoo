@@ -19,13 +19,15 @@
 
 /* ************************************************************************
 
-#asset(qx/icon/Tango/16/actions/help-contents.png)
-#use(feature-checks)
 
 ************************************************************************ */
 
 /**
  * Tool used to create configuration maps for feature-based builds
+ *
+ * @use(feature-checks)
+ *
+ * @asset(qx/icon/Tango/16/actions/help-contents.png)
  */
 qx.Class.define("fce.Application",
 {
@@ -125,7 +127,7 @@ qx.Class.define("fce.Application",
      * Creates the application header
      *
      * @return {qx.ui.container.Composite} Header widget
-     * @lint ignoreUndefined(qxc)
+     * @ignore(qxc)
      */
     _createHeader : function()
     {

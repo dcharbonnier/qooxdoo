@@ -55,38 +55,34 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#require(qx.lang.String)
-#require(qx.bom.client.Css)
-
-#require(qx.bom.element.Clip#set)
-#require(qx.bom.element.Cursor#set)
-#require(qx.bom.element.Opacity#set)
-#require(qx.bom.element.BoxSizing#set)
-
-#require(qx.bom.element.Clip#get)
-#require(qx.bom.element.Cursor#get)
-#require(qx.bom.element.Opacity#get)
-#require(qx.bom.element.BoxSizing#get)
-
-#require(qx.bom.element.Clip#reset)
-#require(qx.bom.element.Cursor#reset)
-#require(qx.bom.element.Opacity#reset)
-#require(qx.bom.element.BoxSizing#reset)
-
-#require(qx.bom.element.Clip#compile)
-#require(qx.bom.element.Cursor#compile)
-#require(qx.bom.element.Opacity#compile)
-#require(qx.bom.element.BoxSizing#compile)
-
-************************************************************************ */
-
 /**
  * Style querying and modification of HTML elements.
  *
  * Automatically normalizes cross-browser differences for setting and reading
  * CSS attributes. Optimized for performance.
+ *
+ * @require(qx.lang.String)
+ * @require(qx.bom.client.Css)
+
+ * @require(qx.bom.element.Clip#set)
+ * @require(qx.bom.element.Cursor#set)
+ * @require(qx.bom.element.Opacity#set)
+ * @require(qx.bom.element.BoxSizing#set)
+
+ * @require(qx.bom.element.Clip#get)
+ * @require(qx.bom.element.Cursor#get)
+ * @require(qx.bom.element.Opacity#get)
+ * @require(qx.bom.element.BoxSizing#get)
+
+ * @require(qx.bom.element.Clip#reset)
+ * @require(qx.bom.element.Cursor#reset)
+ * @require(qx.bom.element.Opacity#reset)
+ * @require(qx.bom.element.BoxSizing#reset)
+
+ * @require(qx.bom.element.Clip#compile)
+ * @require(qx.bom.element.Cursor#compile)
+ * @require(qx.bom.element.Opacity#compile)
+ * @require(qx.bom.element.BoxSizing#compile)
  */
 qx.Bootstrap.define("qx.bom.element.Style",
 {
@@ -295,19 +291,19 @@ qx.Bootstrap.define("qx.bom.element.Style",
     },
 
 
-    /** {Integer} Computed value of a style property. Compared to the cascaded style,
+    /** @type {Integer} Computed value of a style property. Compared to the cascaded style,
      * this one also interprets the values e.g. translates <code>em</code> units to
      * <code>px</code>.
      */
     COMPUTED_MODE : 1,
 
 
-    /** {Integer} Cascaded value of a style property. */
+    /** @type {Integer} Cascaded value of a style property. */
     CASCADED_MODE : 2,
 
 
     /**
-     * {Integer} Local value of a style property. Ignores inheritance cascade.
+     * @type {Integer} Local value of a style property. Ignores inheritance cascade.
      *   Does not interpret values.
      */
     LOCAL_MODE : 3,

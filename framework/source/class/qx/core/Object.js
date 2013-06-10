@@ -19,12 +19,6 @@
 
 ************************************************************************ */
 
-/* ************************************************************************
-
-#require(qx.core.ObjectRegistry)
-
-************************************************************************ */
-
 /**
  * The qooxdoo root class. All other classes are direct or indirect subclasses of this one.
  *
@@ -35,6 +29,8 @@
  * * generic setter/getter support
  * * interfaces for logging console
  * * user friendly OO interfaces like {@link #self} or {@link #base}
+ *
+ * @require(qx.core.ObjectRegistry)
  */
 qx.Class.define("qx.core.Object",
 {
@@ -122,10 +118,10 @@ qx.Class.define("qx.core.Object",
      * Call the same method of the super class.
      *
      * @param args {arguments} the arguments variable of the calling method
-     * @param varags {var} variable number of arguments passed to the overwritten function
+     * @param varargs {var} variable number of arguments passed to the overwritten function
      * @return {var} the return value of the method of the base class.
      */
-    base : function(args, varags)
+    base : function(args, varargs)
     {
       if (qx.core.Environment.get("qx.debug"))
       {
@@ -207,7 +203,7 @@ qx.Class.define("qx.core.Object",
     ---------------------------------------------------------------------------
     */
 
-    /** {Map} stored user data */
+    /** @type {Map} stored user data */
     __userData : null,
 
 
@@ -312,11 +308,6 @@ qx.Class.define("qx.core.Object",
         clazz = clazz.superclass;
       }
 
-      // remove all property references for IE6 and FF2
-      if (this.__removePropertyReferences) {
-        this.__removePropertyReferences();
-      }
-
       // Additional checks
       if (qx.core.Environment.get("qx.debug"))
       {
@@ -337,46 +328,13 @@ qx.Class.define("qx.core.Object",
                 continue;
               }
 
-              var ff2 = navigator.userAgent.indexOf("rv:1.8.1") != -1;
-              var ie6 = navigator.userAgent.indexOf("MSIE 6.0") != -1;
-              // keep the old behavior for IE6 and FF2
-              if (ff2 || ie6) {
-                if (value instanceof qx.core.Object || qx.core.Environment.get("qx.debug.dispose.level") > 1) {
-                  qx.Bootstrap.warn(this, "Missing destruct definition for '" + key + "' in " + this.classname + "[" + this.toHashCode() + "]: " + value);
-                  delete this[key];
-                }
-              } else {
-                if (qx.core.Environment.get("qx.debug.dispose.level") > 1) {
-                  qx.Bootstrap.warn(this, "Missing destruct definition for '" + key + "' in " + this.classname + "[" + this.toHashCode() + "]: " + value);
-                  delete this[key];
-                }
+              if (qx.core.Environment.get("qx.debug.dispose.level") > 1) {
+                qx.Bootstrap.warn(this, "Missing destruct definition for '" + key + "' in " + this.classname + "[" + this.toHashCode() + "]: " + value);
+                delete this[key];
               }
             }
           }
         }
-      }
-    },
-
-
-    /**
-     * Possible reference to special method for IE6 and FF2
-     * {@link #__removePropertyReferencesOld}
-     *
-     * @signature function()
-     */
-    __removePropertyReferences : null,
-
-
-    /**
-     * Special method for IE6 and FF2 which removes all $$user_ references
-     * set up by the properties.
-     * @signature function()
-     */
-    __removePropertyReferencesOld : function() {
-      // remove all property references
-      var properties = qx.Class.getProperties(this.constructor);
-      for (var i = 0, l = properties.length; i < l; i++) {
-        delete this["$$user_" + properties[i]];
       }
     },
 
@@ -444,30 +402,6 @@ qx.Class.define("qx.core.Object",
   environment : {
     "qx.debug.dispose.level" : 0
   },
-
-
-
-
-  /*
-  *****************************************************************************
-     DEFER
-  *****************************************************************************
-  */
-
-  defer : function(statics, members)
-  {
-    // special treatment for IE6 and FF2
-    var ie6 = navigator.userAgent.indexOf("MSIE 6.0") != -1;
-    var ff2 = navigator.userAgent.indexOf("rv:1.8.1") != -1;
-
-    // patch the remove property method for IE6 and FF2
-    if (ie6 || ff2) {
-      members.__removePropertyReferences = members.__removePropertyReferencesOld;
-      // debugger;
-    }
-  },
-
-
 
 
 

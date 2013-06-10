@@ -60,9 +60,11 @@ qx.Class.define("qx.ui.progressive.renderer.table.Row",
     this.__layout.connectToWidget(this);
 
     // dynamic theme switch
-    qx.theme.manager.Appearance.getInstance().addListener(
-      "changeTheme", this.__linkColors, this
-    );
+    if (qx.core.Environment.get("qx.dyntheme")) {
+      qx.theme.manager.Color.getInstance().addListener(
+        "changeTheme", this.__linkColors, this
+      );
+    }
   },
 
 
@@ -434,7 +436,7 @@ qx.Class.define("qx.ui.progressive.renderer.table.Row",
                                  rule);
 
       // Compute the column widths
-      this.__layout.renderLayout(width, 100);
+      this.__layout.renderLayout(width, 100, {top: 0, right: 0, bottom: 0, left: 0});
 
       // Get the column data
       var columnData = this.__columnWidths.getData();
@@ -503,7 +505,7 @@ qx.Class.define("qx.ui.progressive.renderer.table.Row",
   destruct : function()
   {
     // remove dynamic theme listener
-    qx.theme.manager.Appearance.getInstance().removeListener(
+    qx.theme.manager.Color.getInstance().removeListener(
       "changeTheme", this.__linkColors, this
     );
 

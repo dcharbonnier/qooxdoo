@@ -24,33 +24,34 @@
 
 /* ************************************************************************
 
-#asset(qx/icon/Tango/16/places/folder-open.png)
-#asset(qx/icon/Tango/16/places/folder.png)
-#asset(qx/icon/Tango/16/mimetypes/office-document.png)
-
-#asset(qx/icon/Tango/16/actions/window-close.png)
-
-#asset(qx/icon/Tango/22/places/folder-open.png)
-#asset(qx/icon/Tango/22/places/folder.png)
-#asset(qx/icon/Tango/22/mimetypes/office-document.png)
-
-#asset(qx/icon/Tango/32/places/folder-open.png)
-#asset(qx/icon/Tango/32/places/folder.png)
-#asset(qx/icon/Tango/32/mimetypes/office-document.png)
-
-#asset(qx/icon/Tango/16/apps/office-calendar.png)
-#asset(qx/icon/Tango/16/apps/utilities-color-chooser.png)
-#asset(qx/icon/Tango/16/actions/view-refresh.png)
-
-#asset(qx/icon/Tango/16/actions/dialog-cancel.png)
-#asset(qx/icon/Tango/16/actions/dialog-ok.png)
-
-#asset(qx/decoration/Modern/*)
 
 ************************************************************************* */
 
 /**
  * The modern appearance theme.
+ *
+ * @asset(qx/icon/Tango/16/places/folder-open.png)
+ * @asset(qx/icon/Tango/16/places/folder.png)
+ * @asset(qx/icon/Tango/16/mimetypes/office-document.png)
+
+ * @asset(qx/icon/Tango/16/actions/window-close.png)
+
+ * @asset(qx/icon/Tango/22/places/folder-open.png)
+ * @asset(qx/icon/Tango/22/places/folder.png)
+ * @asset(qx/icon/Tango/22/mimetypes/office-document.png)
+
+ * @asset(qx/icon/Tango/32/places/folder-open.png)
+ * @asset(qx/icon/Tango/32/places/folder.png)
+ * @asset(qx/icon/Tango/32/mimetypes/office-document.png)
+
+ * @asset(qx/icon/Tango/16/apps/office-calendar.png)
+ * @asset(qx/icon/Tango/16/apps/utilities-color-chooser.png)
+ * @asset(qx/icon/Tango/16/actions/view-refresh.png)
+
+ * @asset(qx/icon/Tango/16/actions/dialog-cancel.png)
+ * @asset(qx/icon/Tango/16/actions/dialog-ok.png)
+
+ * @asset(qx/decoration/Modern/*)
  */
 qx.Theme.define("qx.theme.modern.Appearance",
 {
@@ -207,7 +208,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
         }
 
         return {
-          decorator : decorator + "-css",
+          decorator : decorator,
           textColor : textColor,
           padding : padding,
           margin : [1, 0]
@@ -435,7 +436,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
         }
 
         return {
-          decorator : decorator + "-css",
+          decorator : decorator,
           padding : [ 2, 4, 1 ],
           textColor : textColor
         };
@@ -486,7 +487,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
         }
 
         return {
-          decorator : decorator + "-css"
+          decorator : decorator
         };
       }
     },
@@ -837,7 +838,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
         }
 
         return {
-          decorator : decorator + "-css"
+          decorator : decorator
         };
       }
     },
@@ -894,7 +895,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
 
         return {
           backgroundColor : "background-light",
-          decorator : decorator + "-css"
+          decorator : decorator
         };
       }
     },
@@ -1080,8 +1081,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         return {
-          decorator : "tabview-pane-css",
-          minHeight : 100,
+          decorator : "tabview-pane",
 
           marginBottom : states.barBottom ? -1 : 0,
           marginTop : states.barTop ? -1 : 0,
@@ -1677,6 +1677,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
           decorator: "tooltip-error-css",
           font: "bold",
           padding: [3, 4, 4, 4],
+          margin: [1, 0, 0, 0],
           maxWidth: 333
         };
       }
@@ -1880,7 +1881,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         return {
-          decorator : "pane-css"
+          decorator : "pane"
         };
       }
     },
@@ -2005,7 +2006,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
 
         return {
           padding : 2,
-          decorator : decorator + "-css",
+          decorator : decorator,
           backgroundColor : "background-light"
         };
       }
@@ -2150,8 +2151,6 @@ qx.Theme.define("qx.theme.modern.Appearance",
         } else {
           decorator = "input";
         }
-
-        decorator += "-css";
 
         return {
           decorator : decorator

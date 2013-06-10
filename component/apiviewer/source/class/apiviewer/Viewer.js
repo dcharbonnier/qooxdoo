@@ -23,11 +23,6 @@
 
 /* ************************************************************************
 
-#asset(qx/icon/Tango/22/apps/utilities-dictionary.png)
-#asset(qx/icon/Tango/22/actions/edit-find.png)
-#asset(qx/icon/Tango/22/apps/utilities-help.png)
-#asset(qx/icon/Tango/22/apps/utilities-graphics-viewer.png)
-#asset(qx/icon/Tango/22/actions/media-seek-forward.png)
 
 ************************************************************************ */
 
@@ -36,6 +31,12 @@
  *
  * The connections between the GUI components are established in
  * the {@link Controller}.
+ *
+ * @asset(qx/icon/Tango/22/apps/utilities-dictionary.png)
+ * @asset(qx/icon/Tango/22/actions/edit-find.png)
+ * @asset(qx/icon/Tango/22/apps/utilities-help.png)
+ * @asset(qx/icon/Tango/22/apps/utilities-graphics-viewer.png)
+ * @asset(qx/icon/Tango/22/actions/media-seek-forward.png)
  */
 qx.Class.define("apiviewer.Viewer",
 {
@@ -391,7 +392,6 @@ qx.Class.define("apiviewer.Viewer",
 
     /**
      * Creates the application header.
-     * @lint ignoreUndefined(qxc)
      */
     __createHeader : function()
     {
