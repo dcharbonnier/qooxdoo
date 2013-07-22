@@ -20,10 +20,6 @@
 
 /**
  * Widget responsible for hosting the run code for mobile apps.
- *
- * @asset(qx/mobile/icon/android/*)
- * @asset(qx/mobile/icon/ios/*)
- * @asset(qx/mobile/icon/common/*)
  */
 qx.Class.define("playground.view.MobilePlayArea",
 {
@@ -37,19 +33,20 @@ qx.Class.define("playground.view.MobilePlayArea",
 
     var sizeSelect = new qx.ui.form.SelectBox();
     sizeSelect.setMaxHeight(21);
-    sizeSelect.setMarginTop(7);
-    sizeSelect.setPaddingTop(0);
+    sizeSelect.setMarginTop(6);
+    sizeSelect.setPaddingTop(-1);
     sizeSelect.setPaddingBottom(0);
+    sizeSelect.setWidth(130);
     sizeSelect.add(new qx.ui.form.ListItem("Fit to viewport"));
 
     var resolutions = [
-      [320, 480, "iPhone 3+4, Android"], 
+      [320, 480, "iPhone 3+4, Android"],
       [480, 320, "iPhone 3+4, Android"],
-      [320, 568, "iPhone 5"], 
+      [320, 568, "iPhone 5"],
       [568, 320, "iPhone 5"],
-      [480, 800, "Android"], 
+      [480, 800, "Android"],
       [800, 480, "Android"],
-      [380, 685, "Android"], 
+      [380, 685, "Android"],
       [685, 320, "Android"]
     ];
 

@@ -8,10 +8,10 @@ HTML Editing In General
 External Information
 ====================
 
-.. _pages/ui_html_editing/html_editing_in_general#general_infos:
+.. _pages/ui_html_editing/html_editing_in_general#general_info:
 
-General infos
--------------
+General info
+------------
 
 * `Rich HTML editing - Part 1 <http://dev.opera.com/articles/view/rich-html-editing-in-the-browser-part-1/>`_
 
@@ -74,7 +74,7 @@ General
 * `htmlarea.com <http://www.htmlarea.com>`_
 * `cmsreview.com <http://www.cmsreview.com/WYSIWYG/OpenSource/directory.html>`_
 * `geniisoft.com <http://www.geniisoft.com/showcase.nsf/WebEditors>`_
-* `Web-Based Rich Text Editors Compared <http://bulletproofbox.com/web-based-rich-text-editors-compared>`_
+* `Web-Based Rich Text Editors Listing <https://en.wikipedia.org/wiki/Online_rich-text_editor>`_
 
 .. _pages/ui_html_editing/html_editing_in_general#overview_of_exisiting_wysiwyg_editors:
 

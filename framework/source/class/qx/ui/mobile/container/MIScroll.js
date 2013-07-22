@@ -103,13 +103,16 @@ qx.Mixin.define("qx.ui.mobile.container.MIScroll",
     * period.
     *
     * @param elementId {String} the elementId, the scroll container should scroll to.
-    * @param time {Integer} Time slice in which scrolling should be done (in seconds).
+    * @param time {Integer?0} Time slice in which scrolling should be done (in seconds).
     *
     */
     _scrollToElement : function(elementId, time)
     {
+      if(typeof time === "undefined") {
+        time = 0;
+      }
       if (this.__scroll) {
-        this.__scroll.scrollToElement(elementId, time);
+        this.__scroll.scrollToElement("#"+elementId, time);
       }
     },
 
@@ -154,22 +157,24 @@ qx.Mixin.define("qx.ui.mobile.container.MIScroll",
     {
       var defaultScrollProperties = this._getDefaultScrollProperties();
       var customScrollProperties = {};
-      
+
       if(this._scrollProperties != null) {
         customScrollProperties = this._scrollProperties;
       }
-      
+
       var iScrollProperties = qx.lang.Object.mergeWith(defaultScrollProperties, customScrollProperties, true);
-      
+
       return new iScroll(this.getContainerElement(), iScrollProperties);
     },
-    
-    
+
+
     /**
      * Returns a map with default iScroll properties for the iScroll instance.
      * @return {Object} Map with default iScroll properties
      */
     _getDefaultScrollProperties : function() {
+      var container = this;
+
       return {
         hideScrollbar: true,
         fadeScrollbar: true,
@@ -181,7 +186,7 @@ qx.Mixin.define("qx.ui.mobile.container.MIScroll",
           if (qx.core.Environment.get("qx.mobile.nativescroll") == false)
           {
             if(this.y == this.maxScrollY) {
-              qx.event.Registration.fireEvent( this.wrapper,"iscrollpageend");
+              container.fireEvent("pageEnd");
             }
           }
         },
@@ -190,7 +195,7 @@ qx.Mixin.define("qx.ui.mobile.container.MIScroll",
           if (qx.core.Environment.get("qx.mobile.nativescroll") == false)
           {
             if(this.y == this.maxScrollY) {
-              qx.event.Registration.fireEvent(this.wrapper,"iscrollpageend");
+              container.fireEvent("pageEnd");
             }
           }
         },

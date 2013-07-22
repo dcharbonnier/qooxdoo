@@ -31,7 +31,7 @@ An example:
     * @see #getDragEvent(dragSource, elem, x, y)
     * @see com.ptvag.webcomponent.ui.dnd.DragEvent
     */
-    handleDrop : function(dragSource, targetElement, dropType) {	
+    handleDrop : function(dragSource, targetElement, dropType) {
       ...
     };
 
@@ -82,17 +82,17 @@ syntaxes.
 A new attribute entry or the end of the JSDoc comment terminate an attribute
 specification. Attributes may stretch across multiple lines. Lines following an
 attribute key are logically appended to the first line (i.e. the effect is as if
-you had written one longe line).
+you had written one long line).
 
 You can **comment out** an attribute by just prefixing it with another ``@``, like
 
 ::
-  
+
   @@ignore(foo)
 
 Then this attribute will simply be ignored.
 
-The following sections befor the reference list of supported attributes give some
+The following sections before the reference list of supported attributes give some
 general information that apply to some of them.
 
 
@@ -146,55 +146,75 @@ Type1 or Type2 or ..., is optional, i.e. can be left out, and will default to
 **Example**
 
   ::
-  
+
     {String|Integer ? null}
 
 
 .. _pages/development/api_jsdoc_ref#symbol_matching:
 
-Matching of Variable Names
+Matching of Names in Code
 ===========================
 
-Several of the JSDoc keys take some sort of symbol names as parameters, e.g. the
+Many of the JSDoc keys take some sort of symbol names as parameters, e.g. the
 ``foo`` in ``@ignore(foo)``, which are then matched against names found in the
-code. These parameters include names of global variables, built-in functions,
-formal arguments, namespaces, and the like. It is important that you are aware
-of the semantics of those parameters, i.e. the way they are used to establish a
-match with a name actually found in the code.
+code. These parameters include global variables, built-in functions, function
+arguments, namespaces, and the like. It is important that you are aware of the
+semantics of those parameters, i.e. the way they are used to establish a match with a
+name actually found in the code. The left arrow in the schematics, ``->``, can
+be read as "matches".
 
 * **Exact Match**
 
-  Some keys restrict themselves to exact matches, e.g. the ``alert`` in ``@lint
-  ignoreDeprecated(alert)`` will only match the global symbol ``alert`` in the
-  code, neither ``aler`` nor ``alerty`` nor ``alert.foo``.
+  The name matches the parameter exactly. Some keys restrict themselves to exact
+  matches, e.g. the *alert* in ``@lint ignoreDeprecated(alert)`` will only
+  match the global symbol *alert* in the code, neither *aler* nor *alerty*
+  nor *alert.foo*.
 
-  The next two match types include exact match, but also allow other kinds of
-  matches.
+  ::
+
+    foo (parameter) -> foo (name)
+
+  The following match types include exact match, but also allow other kinds of
+  matches. Non-exact matches always honor object boundaries (not just simple
+  string prefixes), so e.g. ``foo`` might match ``foo.bar`` but will never match
+  ``foobar``.
+
 * **Prefix Match**
 
-  Some keys regard the name from the code as a prefix of the parameter. This is
-  usually restricted to object boundaries (not just simple string prefixes), so
-  a name of ``foo`` in the code will match a parameter of ``foo.bar``, but not
-  ``foozy.bar``.
-  A good example is ``@ignore(foo)``. If you want to ignore the name ``foo`` in
-  your code, it probably makes sense to ignore names nested on ``foo`` as well,
-  like ``foo.bar``, so this key effectively uses prefix matching.
+  The name matches a prefix of the parameter. Some keys regard the name from the
+  code as a (pot. complete) prefix of their parameters. E.g. if you use
+  ``foo.bar.baz`` as a parameter, ``foo``, ``foo.bar`` and ``foo.bar.baz`` will
+  be matched.
+
+  ::
+
+    foo.bar (parameter) -> foo (name)
+
 * **Extension Match**
 
-  Some keys regard the parameter as a prefix of the name from the code, again
-  usually restricting it to object boundaries. In that case, a name ``foo.bar``
-  will match a parameter of ``foo``, while the name ``foozy`` will not.
+  The parameter matches a prefix of the name. Some keys regard the parameter as
+  a prefix of the name from the code, again usually restricting it to object
+  boundaries. In that case, a name ``foo.bar`` will match a parameter of
+  ``foo``, while the name ``foozy`` will not.
+
+  ::
+
+    foo (parameter) -> foo.bar (name)
+
 * **Wildcard Match**
 
   Some keys need an explicit, glob-style wildcard at the end to support
-  extension matches. In that case you need to provide a hint like ``@somehint
-  somekey(foo.*)``, in order to match a name of ``foo.bar`` from the code with
-  this key. Again, a match has to honor object boundaries. (Mind that in the
-  case of a parameter like ``foo.*``, simply ``foo`` with **not** match; the dot
-  is part of the pattern and has to be present in order for the match to
-  succeed).
+  extension matches. In that case you need to provide a parameter like
+  ``foo.*``, in order to match a name of ``foo.bar`` from the code . Again, a
+  match has to honor object boundaries. In the case of a wildcard like
+  ``foo.*``, a simple ``foo`` will also be matched, so the exact match (without
+  dot and wildcard) is included.
 
-The individual keys should make it clear which of those match semantics they use
+  ::
+
+    foo.* (parameter) -> foo.bar (name)
+
+The individual tags should make it clear which of those match semantics they use
 when checking actual code names. Many keys will allow not only one parameter,
 but a list of parameters. Matching is then applied to each parameter in turn,
 and if one of them matches the key applies.
@@ -217,15 +237,16 @@ A JSDoc comment consists of different sections, where a section is either a lead
    :widths: 60 40
 
    * - API Documentation
-     - * `Description`_ 
+     - * `Description`_
        * `@abstract`_
        * `@childControl`_
        * `@deprecated`_
        * `@internal`_
        * `@link`_
-       * `@param`_ 
-       * `@return`_ 
-       * `@see`_ 
+       * `@param`_
+       * `@protected`_
+       * `@return`_
+       * `@see`_
        * `@signature`_
        * `@throws`_
        * `@type`_
@@ -252,7 +273,7 @@ Description
 
 **Description**
 
-  General description of the item the JSDoc comment refers to. 
+  General description of the item the JSDoc comment refers to.
 
 **Syntax**
 
@@ -309,7 +330,7 @@ Description
         - The :ref:`type specification <pages/development/api_jsdoc_ref#types_syntax>` of the child control widget
       * - description
         - *(opt.)* What the child control is used for in the context of this widget
-  
+
 **Example**
 
   ::
@@ -349,12 +370,50 @@ Description
         - A :ref:`type specification <pages/development/api_jsdoc_ref#types_syntax>` like ``{Boolean | Integer ? 0}``
       * - description
         - *(opt.)* Descriptive text of the parameter
-  
+
 **Example**
 
   ::
 
     @param foo {Integer} The main factor
+
+
+
+.. _pages/development/api_jsdoc_ref#rotected:
+
+.. rst-class:: api-ref
+
+@protected
+-------------------------------------------
+
+**Scope**
+
+  functions
+
+**Description**
+
+  Marks the method as protected. This is helpful if for some reason a protected
+  method name cannot start with "_" (single underscore). With this attribute the Apiviewer can
+  still classify the method as protected.
+
+**Syntax**
+
+  ``@protected [<description>]``
+
+**Parameters**
+
+    .. list-table::
+      :stub-columns: 1
+      :widths: 30 70
+
+      * - description
+        - *(opt.)* Descriptive text of the parameter
+
+**Example**
+
+  ::
+
+    @protected
 
 
 
@@ -371,7 +430,7 @@ Description
 
 **Description**
 
-  ``@type`` is usually used to document data items, esp. when the type is not immediately apparent in the code. This is for example the case when a class member is initialized with ``null`` and a value of some other type is then assigned in the constructor, so as to not share a single data value accross multiple instances.
+  ``@type`` is usually used to document data items, esp. when the type is not immediately apparent in the code. This is for example the case when a class member is initialized with ``null`` and a value of some other type is then assigned in the constructor, so as to not share a single data value across multiple instances.
 
 **Syntax**
 
@@ -387,7 +446,7 @@ Description
         - A :ref:`type indicator <pages/development/api_jsdoc_ref#types_syntax>` like ``Map``
       * - description
         - *(opt.)* Descriptive text of the type
-  
+
 **Example**
 
   ::
@@ -480,7 +539,7 @@ Description
 **Description**
 
   Adds a cross reference to another structure (class, property, method or constant).
-  
+
 **Syntax**
 
   ``@see <class_item> [<link_text>]``
@@ -516,7 +575,7 @@ Description
   Embedded in descriptive text, `Description`_.
 
 **Description**
-  
+
   The ``@link`` attribute is similar to the `@see`_ attribute, but it is used for linking within description texts. Unlike the other attributes, the ``@link`` attribute is not standalone, but in curly brackets and within the main description text or a description text of another attribute.
 
 **Syntax**
@@ -648,7 +707,7 @@ Description
         - qooxdoo version with which the corresponding item was deprecated
       * - description
         - *(opt.)* Descriptive text of the deprecation
-  
+
 **Example**
 
   ::
@@ -689,23 +748,23 @@ Description
 
                Use of deprecated globals (like ``alert``).
              * **ignoreNoLoopBlock**
-               
+
                Don't warn about loop or condition statements which don't have a block (``{...}``) as body. Takes no argument.
              * **ignoreReferenceField**
-               
+
                A class map member that is initialized with a reference value (object, array, map, ...), as those will be shared among class instances.
              * **ignoreUndefined**
-               
+
                *(Deprecated)* This key is deprecated for the more general :ref:`@ignore <pages/development/api_jsdoc_ref#ignore>` hint.
              * **ignoreUnused**
-               
+
                Scoped variables (function parameters, function expression's identifier, or variables declared with ``var``) which are never used.
              * **ignoreJsdocKey** *[Not yet implemented]*
-               
+
                JSDoc @ keys which are either unknown (i.e. not documented on this page) or do not comply with the syntax given here.
       * - name
         - The identifier which the lint subkey should be applied to.
-  
+
 
 **Example**
 
@@ -923,7 +982,7 @@ Description
 **Description**
 
   Enforce the inclusion of a required class. Use this only if the generator
-  cannot determine the dependency automatically. 
+  cannot determine the dependency automatically.
 
   There is one special name, ``feature-checks``, which is reserved for internal
   use and shouldn't be used in normal application code. This will add all known
@@ -1036,7 +1095,7 @@ Description
 
       * - text
         - Arbitrary text, usually short or composed tag names
-  
+
 **Example**
 
   ::

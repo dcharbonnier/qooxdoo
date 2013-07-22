@@ -63,13 +63,13 @@ qx.Class.define("qxc.application.datademo.Demo", {
       controller.setLabelPath("text");
 
       // set the name for the icon property
-      if (qx.core.Environment.get("engine.name") != "mshtml") {
-        controller.setIconPath("user.profile_image_url");
-      }
+      controller.setIconPath("user.profile_image_url");
 
       // fetch some data from identi.ca
-      var url = "http://identi.ca/api/statuses/user_timeline/linuxfoundation.json";
-      var store = new qx.data.store.Jsonp(url);
+      var url = "qxc/application/datademo/service.js";
+      var store = new qx.data.store.Jsonp();
+      store.setCallbackName("callback");
+      store.setUrl(url);
 
       // connect the store and the controller
       store.bind("model", controller, "model");
@@ -130,12 +130,10 @@ qx.Class.define("qxc.application.datademo.Demo", {
           };
           return message.join(" ");
         }});
-      if (qx.core.Environment.get("engine.name") != "mshtml") {
-        detailsBox.add(new qx.ui.basic.Label("Avatar: "), {row: 3, column: 0});
-        var avatar = new qx.ui.basic.Image();
-        detailsBox.add(avatar, {row: 3, column: 1});
-        detailsController.addTarget(avatar, "source", "user.profile_image_url");
-      }
+      detailsBox.add(new qx.ui.basic.Label("Avatar: "), {row: 3, column: 0});
+      var avatar = new qx.ui.basic.Image();
+      detailsBox.add(avatar, {row: 3, column: 1});
+      detailsController.addTarget(avatar, "source", "user.profile_image_url");
       // connect the selected model item of the list to the detail view
       controller.bind("selection[0]", detailsController, "model");
     },

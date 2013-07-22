@@ -139,7 +139,7 @@ qx.Class.define("qx.ui.form.TextArea",
       var contentElement = this.getContentElement();
       var scrollY = contentElement.getScrollY();
 
-      if (qx.core.Environment.get("event.touch") && qx.core.Environment.get("qx.emulatemouse")) {
+      if (qx.event.handler.MouseEmulation.ON) {
         contentElement.scrollToY(scrollY + e.getWheelDelta("y"));
       } else {
         contentElement.scrollToY(scrollY + e.getWheelDelta("y") * this.getSingleStep());
@@ -167,14 +167,14 @@ qx.Class.define("qx.ui.form.TextArea",
       if (this.isAutoSize()) {
         var clone = this.__getAreaClone();
 
-        if (clone) {
+        if (clone && this.getBounds()) {
 
           // Remember original area height
           this.__originalAreaHeight = this.__originalAreaHeight || this._getAreaHeight();
 
           var scrolledHeight = this._getScrolledAreaHeight();
 
-          // Show scoll-bar when above maxHeight, if defined
+          // Show scroll-bar when above maxHeight, if defined
           if (this.getMaxHeight()) {
             var insets = this.getInsets();
             var innerMaxHeight = -insets.top + this.getMaxHeight() - insets.bottom;
@@ -247,11 +247,13 @@ qx.Class.define("qx.ui.form.TextArea",
           return this._getScrolledAreaHeight();
         }
 
-        // In WebKit, "wrap" must have been "soft" on DOM level before setting
+        // In WebKit and IE8, "wrap" must have been "soft" on DOM level before setting
         // "off" can disable wrapping. To fix, make sure wrap is toggled.
         // Otherwise, the height of an auto-size text area with wrapping
         // disabled initially is incorrectly computed as if wrapping was enabled.
-        if (qx.core.Environment.get("engine.name") === "webkit") {
+        if (qx.core.Environment.get("engine.name") === "webkit" ||
+            (qx.core.Environment.get("engine.name") == "mshtml" &&
+          qx.core.Environment.get("browser.documentmode") == 8)) {
           clone.setWrap(!this.getWrap(), true);
         }
 
@@ -264,25 +266,37 @@ qx.Class.define("qx.ui.form.TextArea",
 
         // IE >= 8 needs overflow "visible" in order to correctly compute height
         if (qx.core.Environment.get("engine.name") == "mshtml" &&
-          qx.core.Environment.get("browser.documentmode") >= 8) {
+          qx.core.Environment.get("browser.documentmode") == 8) {
           cloneDom.style.overflow = "visible";
+          cloneDom.style.overflowX = "hidden";
         }
 
         // Update value
-        clone.setValue(this.getValue());
+        if (qx.core.Environment.get("engine.name") == "mshtml" &&
+            qx.core.Environment.get("browser.documentmode") == 8)
+        {
+          var lineHeight = this.getContentElement().getStyle("lineHeight");
+          clone.setStyle("lineHeight", this.getValue() ? lineHeight : 0);
+        }
+        clone.setValue(this.getValue() || "");
+
+        // Force IE > 8 to update size measurements
+        if (qx.core.Environment.get("engine.name") == "mshtml") {
+          cloneDom.style.height = "auto";
+          qx.html.Element.flush();
+          cloneDom.style.height = "0";
+        }
 
         // Recompute
         this.__scrollCloneToBottom(clone);
 
-        if (qx.core.Environment.get("engine.name") == "mshtml") {
+        if (qx.core.Environment.get("engine.name") == "mshtml" &&
+            qx.core.Environment.get("browser.documentmode") == 8) {
           // Flush required for scrollTop to return correct value
           // when initial value should be taken into consideration
           if (!cloneDom.scrollTop) {
             qx.html.Element.flush();
           }
-
-          // Compensate for slightly off scroll height in IE
-          return cloneDom.scrollTop + this._getTextSize().height;
         }
 
         return cloneDom.scrollTop;
@@ -342,7 +356,7 @@ qx.Class.define("qx.ui.form.TextArea",
       clone.setAttribute("tabIndex", "-1");
 
       // Copy value
-      clone.setValue(orig.getValue());
+      clone.setValue(orig.getValue() || "");
 
       // Attach to DOM
       clone.insertBefore(orig);

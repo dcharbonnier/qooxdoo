@@ -1,16 +1,20 @@
 .. _pages/tool/generator/generator_config_articles#generator_configuration_articles:
 
-Generator Configuration Articles
+Generator Configuration Details
 ********************************
 
-This page contains various articles related to the generator JSON configuration.
+This page contains various special sections related to the Generator
+configuration system. They are mostly linked to from other, more general pages
+so you might want to just follow their *"special section"* links if you want
+more information about a specific item rather than wading through this material
+linearly.
 
 .. _pages/tool/generator/generator_config_articles#path_names:
 
 Path Names
 ==========
 
-A lot of entries in a config file take path names as their values (top-level "include", "manifest" keys of a library entry, output path of compile keys, asf.).  Quite a few of them, like the top-level include paths, are interpreted **relative** to the config file in which they appear, and this relation is retained no matter from where you reference the config file. 
+A lot of entries in a config file take path names as their values (top-level "include", "manifest" keys of a library entry, output path of compile keys, asf.).  Quite a few of them, like the top-level include paths, are interpreted **relative** to the config file in which they appear, and this relation is retained no matter from where you reference the config file.
 
 This might not hold true in each and every case, though. For some keys you might have to take care of relative paths yourself. The authoritative reference is always the corresponding documentation of the :doc:`individual config keys <generator_config_ref>`. If a key takes a path value it will state if and how these values are interpreted. Please check there.
 
@@ -29,7 +33,7 @@ This should make it more intuitive to maintain a config file.
 Paths with Spaces
 -----------------
 
-Most file systems allow spaces in directory and file names these days, a notorious example of this being the ``C:\\Documents and Settings`` path on Windows. To enter such paths safely in your configuration Json structure, you need to escape the spaces with back-slash (\\). As the back-slash is also a meta-character in Json, it needs to be escaped as well. So a path with spaces would look like this in your config: ``".../foo/dir\\ with\\ spaces/bar/file\\ with\\ spaces.html"``. 
+Most file systems allow spaces in directory and file names these days, a notorious example of this being the ``C:\\Documents and Settings`` path on Windows. To enter such paths safely in your configuration Json structure, you need to escape the spaces with back-slash (\\). As the back-slash is also a meta-character in Json, it needs to be escaped as well. So a path with spaces would look like this in your config: ``".../foo/dir\\ with\\ spaces/bar/file\\ with\\ spaces.html"``.
 
 **Nota bene**: As the configuration files are processed by Python, and Python is allowing forward-slash on Windows, the initial example can more easily be given as ``"c:/Documents\\ and \\Settings"`` (rather than the canonical ``"C:\\\\Documents\\ and\\ Settings"``).
 
@@ -50,11 +54,11 @@ File Globs
 Some config keys take file paths as their attributes. Where specified, *file globs* are allowed, as supported by the underlying Python module. File globs are file paths containing simple metacharacters, which are similar to but not quite identical with metacharacters from regular expressions. Here are the legal metacharacters and their meanings:
 
 =================  ==================================================================================================================
- Metacharacter       Meaning                                                                                                           
+ Metacharacter       Meaning
 =================  ==================================================================================================================
- \*                 matches any string of zero or more characters (regexp: .*)                                                         
- ?                  matches any single character (regexp: .)                                                                           
- []                 matches any of the enclosed characters; character ranges are possible using a hyphen, e.g. [a-z] (regexp: <same>)  
+ \*                 matches any string of zero or more characters (regexp: .*)
+ ?                  matches any single character (regexp: .)
+ []                 matches any of the enclosed characters; character ranges are possible using a hyphen, e.g. [a-z] (regexp: <same>)
 =================  ==================================================================================================================
 
 .. _pages/tool/generator/generator_config_articles#examples:
@@ -65,11 +69,11 @@ Examples
 Given a set of files like ``file9.js,  file10.js,  file11.js``, here are some file globs and their resolution:
 
 ==============  ====================================
-File Glob        Resolution                           
+File Glob        Resolution
 ==============  ====================================
- file*           file9.js,  file10.js and file11.js   
- file?.js        file9.js                             
- file1[01].js    file10.js and file11.js              
+ file*           file9.js,  file10.js and file11.js
+ file?.js        file9.js
+ file1[01].js    file10.js and file11.js
 ==============  ====================================
 
 .. _pages/tool/generator/generator_config_articles#class_data:
@@ -77,7 +81,10 @@ File Glob        Resolution
 Class Data
 ==========
 
-Besides code a qooxdoo application maintains a certain amount of data that represents some sort of resources. This might be negligible for small to medium size applications, but becomes significant for large apps. The resources fall roughly into two categories,
+Besides code a qooxdoo application maintains a certain amount of data that
+represents some sort of resources. This might be negligible for small to medium
+size applications, but becomes significant for large apps. The resources fall
+roughly into two categories,
 
 * **Internationalization (I18N) Data** This comprises two kinds of data:
 
@@ -86,22 +93,61 @@ Besides code a qooxdoo application maintains a certain amount of data that repre
 
 * **File Resources**
 
-  * static files like PNG and GIF graphics, but also HTML and CSS files, sound and multimedia files, asf.
+  * static files like PNG and GIF graphics, but also HTML and CSS files, sound
+    and multimedia files, asf.
 
-Many of these resources need an internal representation in the qooxdoo app. E.g. translated strings are stored as key:value pairs of maps, and images are stored with their size and location. All this data requires space that shows up in  sizes of application files, as they are transfered from server to browser.
+Many of these resources need an internal representation in the qooxdoo app. E.g.
+translated strings are stored as key:value pairs of maps, and images are stored
+with their size and location. All this data requires space that shows up in
+sizes of application files, as they are transfered from server to browser.
 
-The build system allows you to tailor where those resources are stored, so you can optimize on your network consumption and memory footprint. Here is an overview:
+Packaging of Class Data
+--------------------------
+
+Resource information is packaged up by the tool chain, and they are kept
+together with the code that uses them. Generally, they go together with a
+package, which is a bunch of code that will be loaded simultaneously.
+Alternatively, you can configure the Generator to place all internationalization
+data in **dedicated I18N parts** (see further).
+
+In the former case resource data including *all* locales is placed together so it
+can be loaded with the classes using this data. If you support a lot of
+different languages in your application that might mean that e.g. all
+translations for a set of keys are always loaded, although a client might only
+use one of them. Your app is hence wasting bandwidth and memory transfering all
+data. But if you allow locale switches at runtime these would be fast as all the
+necessary translations are already loaded.
+
+In the second case, I18N resources (translations, CLDR data) are forked out into
+dedicated parts (and consequently, packages), one for each locale (see
+:ref:`packages/i18n-as-parts
+<pages/tool/generator/generator_config_ref#packages>`). The advantage is that
+you only load exactly those resources which you need for a specific locale,
+leaving all others on the server. On the downside, like with other parts
+those parts have to be actively loaded by the application (using
+`qx.io.PartLoader.require
+<http://demo.qooxdoo.org/%{version}/apiviewer/#qx.io.PartLoader>`_), and
+switching the locale at runtime requires another server roundtrip for the new
+locale.
+
+So the build system allows you to tailor where resource information is stored
+so you can optimize on your network consumption and memory footprint. Here is an
+overview of the possible packaging:
 
   - **source** version:
-    - without dedicated I18N parts:all class data is allocated in the loader
-    - with dedicated I18N parts:class data is in dedicated I18N packages
+
+    - **default**: all class data is stored in separate file(s) (one for
+      each defined part)
+    - **with I18N parts**: class data is in dedicated I18N packages (one
+      for each locale)
+
   - **build** version:
-    - without dedicated I18N parts: class data is allocated in each individual package, corresponding to the contained class code that needs it
-    - with dedicated I18N parts: class data is in dedicated I18N packages
 
-The term *"dedicated I18N parts"* refers to the possibility to split translated strings and CLDR data out in separate parts, one for each language (see :ref:`packages/i18n-with-boot <pages/tool/generator/generator_config_ref#packages>`). Like with other parts, those parts have to be actively loaded by the application (using `qx.io.PartLoader.require <http://demo.qooxdoo.org/%{version}/apiviewer/#qx.io.PartLoader>`_).
+    - **default**: class data is stored together with code, in the first file of each package
+    - **with I18N parts**: class data is in dedicated I18N packages (one for
+      each locale)
 
-In the build version without dedicated I18N parts (case 2.1), those class data is stored as is needed by the code of the package. This may mean that the same data is stored in multiple packages, as e.g. two packages might use the same image or translated string. This is to ensure optimal independence of packages among each other so they can be loaded independently, and is resolved at the browser (ie. resource data is stored uniquely in memory).
+In the build version without dedicated I18N parts (case 2.1), those class data is stored as is needed by the code of the package. This may mean that the same data is stored in multiple packages, as e.g. two packages might use the same image or translated string. This is to ensure optimal independence of packages among each other so they can be loaded independently, and is resolved at the browser (i.e. resource data is stored uniquely in memory).
 
 .. _pages/tool/generator/generator_config_articles#cache_key:
 
@@ -113,7 +159,7 @@ In the build version without dedicated I18N parts (case 2.1), those class data i
 Compile cache
 -------------
 
-The main payload of the :ref:`cache <pages/tool/generator/generator_config_ref#cache>` key is to point to the directory for the compile cache. It is very recommendable to have a system-wide compile cache directory so cache contents can be shared among different projects and libraries. Otherwise, the cache has to be rebuilt in each enviornment anew, costing extra time and space.
+The main payload of the :ref:`cache <pages/tool/generator/generator_config_ref#cache>` key is to point to the directory for the compile cache. It is very recommendable to have a system-wide compile cache directory so cache contents can be shared among different projects and libraries. Otherwise, the cache has to be rebuilt in each environment anew, costing extra time and space.
 
 The default for the cache directory is beneath the system TMP directory. To find out where this actually is either run ``generate.py info``, or run a build job with the ``-v`` command line flag and look for the *cache* key in the expanded job definition, or use this `snippet <http://qooxdoo.org/docs/general/snippets#finding_your_system-wide_tmp_directory>`__.
 
@@ -125,7 +171,7 @@ The compile cache directory can become very large in terms of contained files, a
 "let" Key
 =========
 
-Config files let you define simple macros with the ``let`` key. The value of a macro can be a string or another JSON-permissible value (map, array, ...). You refer to a macro value in a job definition by using ``${<macro_name>}``. 
+Config files let you define simple macros with the ``let`` key. The value of a macro can be a string or another JSON-permissible value (map, array, ...). You refer to a macro value in a job definition by using ``${<macro_name>}``.
 
 ::
 
@@ -148,9 +194,9 @@ If the value of the macro is something other than a string, things are a bit mor
 
 and the "joblist" key will get the value [1,2,3].
 
-A special situation arises if you are using a **top-level let**, i.e. a *let* section on the highest level in the config file, and not in any job definition. This *let* map will be automatically applied to every job run, without any explicit reference (so be aware of undesired side effects of bindings herein). 
+A special situation arises if you are using a **top-level let**, i.e. a *let* section on the highest level in the config file, and not in any job definition. This *let* map will be automatically applied to every job run, without any explicit reference (so be aware of undesired side effects of bindings herein).
 
-When assembling a job to run, the precedence of all the various *let* maps is 
+When assembling a job to run, the precedence of all the various *let* maps is
 
 ::
 
@@ -167,7 +213,7 @@ OS Environment Variables as Configuration Macros
 
 *(experimental)*
 
-On startup, the generator will read the operating system environment settings, and provide them as configuration macros, as if you had defined them with *let*. This can be handy as an alterative to hard-coding macros in a configuration file, or providing them on the generator command line (with the *-m* command-line option).
+On startup, the generator will read the operating system environment settings, and provide them as configuration macros, as if you had defined them with *let*. This can be handy as an alternative to hard-coding macros in a configuration file, or providing them on the generator command line (with the *-m* command-line option).
 
 Here is an example. Suppose in your *config.json* you have section like this::
 
@@ -271,7 +317,7 @@ You can again use ``=`` to control the merging:
 "run" Key
 =========
 
-"run" jobs are jobs that bear the ``run`` keyword. Since these are kind of meta jobs and ment to invoke a sequence of other jobs, they have special semantics. When a ``run`` keyword is encountered in a job, for each sub-job in the "run" list a new job is generated (so called *synthetic jobs*, since they are not from the textual config files). For each of those new jobs, a job name is auto-generated using the initial job's name as a prefix. As for the contents, the initial job's definition is used as a template for the new job. The ``extend`` key is set to the name of the current sub-job (it is assumed that the initial job has been expanded before), so the settings of the sub-job will eventually be included, and the "run" key is removed. All other settings from the initial job remain unaffected. This means that all sub-jobs "inherit" the settings of the initial job (This is significant when sub-jobs evaluate the same key, and maybe do so in a different manner).
+"run" jobs are jobs that bear the ``run`` keyword. Since these are kind of meta jobs and meant to invoke a sequence of other jobs, they have special semantics. When a ``run`` keyword is encountered in a job, for each sub-job in the "run" list a new job is generated (so called *synthetic jobs*, since they are not from the textual config files). For each of those new jobs, a job name is auto-generated using the initial job's name as a prefix. As for the contents, the initial job's definition is used as a template for the new job. The ``extend`` key is set to the name of the current sub-job (it is assumed that the initial job has been expanded before), so the settings of the sub-job will eventually be included, and the "run" key is removed. All other settings from the initial job remain unaffected. This means that all sub-jobs "inherit" the settings of the initial job (This is significant when sub-jobs evaluate the same key, and maybe do so in a different manner).
 
 In the overall queue of jobs to be performed, the initial job is replaced by the list of new jobs just generated. This process is repeated until there are no more "run" jobs in the job queue, and none with unresolved "extend"s.
 
@@ -317,7 +363,16 @@ The values of these macros are lists, and each reference will be expanded into a
 "library" Key and Manifest Files
 ================================
 
-The :ref:`pages/tool/generator/generator_config_ref#library` key of a configuration holds information about source locations that will be considered in a job (much like the CLASSPATH in Java). Each element specifies one such library. The term "library" is meant here in the broadest sense; everything that has a qooxdoo application structure with a *Manifest.json* file can be considered a library in this context. This includes applications like the Showcase or the Feedreader, add-ins like the Testrunner or the Apiviewer, contribs from the qooxdoo-contrib repository, or of course the qooxdoo framework library itself. The main purpose of any *library* entry in the configuration is to provide the path to the library's "Manifest" file.
+The :ref:`pages/tool/generator/generator_config_ref#library` key of a
+configuration holds information about source locations that will be considered
+in a job (much like the CLASSPATH in Java). Each element specifies one such
+library. The term "library" is meant here in the broadest sense; everything that
+has a qooxdoo application structure with a *Manifest.json* file can be
+considered a library in this context. This includes applications like the
+Showcase or the Feedreader, add-ins like the Testrunner or the Apiviewer,
+contribs from the qooxdoo-contrib repository, or of course the qooxdoo framework
+library itself. The main purpose of any *library* entry in the configuration is
+to provide the path to the library's "Manifest" file.
 
 .. _pages/tool/generator/generator_config_articles#manifest_files:
 
@@ -326,64 +381,65 @@ Manifest files
 
 Manifest files serve to provide meta information for a library in a structured way. Their syntax is again JSON, and part of them is read by the generator, particularly the ``provides`` section. See :ref:`here <pages/application_structure/manifest#manifest.json>` for more information about manifest files.
 
-.. _pages/tool/generator/generator_config_articles#contrib_libraries:
 
-Contrib libraries
------------------
+.. _pages/tool/generator/generator_config_articles#manifest_values:
 
-Contributions can be included in a configuration like any other libraries: You add an appropriate entry in the ``library`` array of your configuration. Like other libraries, the contribution must provide a :ref:`Manifest.json <pages/application_structure/manifest#manifest.json>` file with appropriate contents.
+"manifest" values
+------------------
 
-If the contribution resides on your local file system, there is actually no difference to any other library. Specify the relative path to its Manifest file and you're basically set. The really new part comes when the contribution resides online, in the `qooxdoo-contrib <http://qooxdoo.org/contrib>`_ repository. Then you use a special syntax to specify the location of the Manifest file. It is URL-like with a ``contrib`` scheme and will usually look like this:
+The most important key in each
+:ref:`pages/tool/generator/generator_config_ref#library` entry is *manifest*.
+This section gives some examples and background on the possible values of this
+key.
 
-::
+Local path
+  The simplest value is just a path on your local machine. It must lead to the
+  library root directory and end in the library's *Manifest.json*::
 
-    contrib://<ContributionName>/<Version>/<ManifestFile>
+    ../../mylib/utils/Manifest.json
 
-The contribution source tree will then be downloaded from the repository, the generator will adjust to the local path, and the contribution is then used just like a local library. A consideration that comes into play here is where the files are placed locally. The default location is a subdirectory from your cache path named ``downloads``. You can modify this through the *downloads* attribute of the :ref:`pages/tool/generator/generator_config_ref#cache` key in your config.
+  Like in this example paths can be relative, and will be calculated from the
+  configuration file they appear in. The Generator will search the Manifest file
+  especially for the *provides* keys, e.g. *provides/class* which points to the
+  library's class path.
 
-So, for example an entry for the "trunk" version of the "Dialog" contribution would look like this:
+  The other possible values are concerned with network-base libraries.
 
-::
+contrib:// URL
+  If the value starts with ``contrib://`` there will be a lookup in the
+  :doc:`contribution catalog </pages/development/contrib>` for the given
+  contribution and version. For example::
 
-    {
-      "manifest" : "contrib://Dialog/trunk/Manifest.json"
-    }
+    contrib://UploadWidget/0.4/Manifest.json
 
-You will rarely need to set the ``uri`` attribute of a library entry. This is only necessary if the relative path to the library (which is automatically calculated) does not represent a valid URL path when running the **source** version of the final app. (This can be the case if your try to run the source version from a web server that requires you to set up different document roots). It is not relevant for the *build* version of your app, as here all resources from the various libraries are collected under a common directory. For more on URI handling, see the next section.
+  will look in the catalog for a contribution named "UploadWidget" and below
+  that for a version named "0.4". This must contain a file "Manifest.json" that
+  contains a download link to an archive, and some other entries to assist in
+  downloading.
 
+  The archive will be downloaded and unpacked, and then used by the Generator
+  like a local library.
 
-"contrib://" URIs and Internet Access
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+http(s):// URL
+  If the value starts with ``http://`` or ``https://`` there are two cases:
 
-As contrib libraries are downloaded from an online repository, you need Internet access to use them. Here are some tips on how to address offline usage and Internet proxies.
+  * Either it points to a file that has an archive extension (like *.zip* or
+    *.tar.gz*), it will be downloaded and unpacked, just like with a contribution
+    archive. Example::
 
+      http://example.com/foo/bar/my-contrib-0.3.tar.gz
 
-Avoiding Online Access
-++++++++++++++++++++++
+  * Or it points to a file that has a *.json* extension. Then it will be
+    evaluated like a catalog entry-style *Manifest.json* file and the download
+    information therein will be used to get to the archive. Example::
 
-If you need to work with a contrib offline, it is best to download it to your hard disk, and then use it like any local qooxdoo library. Sourceforge offers the "ViewVC" online repository browser, so you can browse the contrib online, e.g.
+      http://example.com/foo/bar/MyContrib-0.3.catalog.json
 
-::
-
-  http://qooxdoo-contrib.svn.sourceforge.net/viewvc/qooxdoo-contrib/trunk/qooxdoo-contrib/Dialog/
-
-Browse to the desired contrib version, like *trunk*, and hit the *"Download GNU tarball"* link. This will download an archive of this part of the repository tree. Unpack it to a local directory, and enter the relative path to it in the corresponding *manifest* config entry. Now you are using the contrib like a local library.
-
-The only thing you are missing this way is the automatic online check for updates, where a newer version of the contrib would be detected and downloaded. You need to do this by hand, re-checking the repository when you can, and re-downloading a newer version if you find one.
-
-
-Accessing Online from behind a Proxy
-++++++++++++++++++++++++++++++++++++
-
-If you are sitting behind a proxy, here is what you can do. The generator uses the *urllib* module of Python to access web-based resources. This module honors proxies:
-
-* It checks for a *http_proxy* environment variable in the shell running the generator. On Bash-like shells you can set it like this::
-
-    http_proxy="http://www.someproxy.com:3128"; export http_proxy
-
-* If there is no such shell setting on Windows, the registry is queried for the Internet Options.
-* On MacOS, the Internet Config is queried in this case.
-* See the `module documentation <http://docs.python.org/release/2.5.4/lib/module-urllib.html>`__ for more details.
+Mind that for network-based libraries the JSON files pointed to by a URL is
+searched for the *download* information for the archive, while the downloaded
+archive itself needs to contain a *Manifest.json* file (literally) which is
+searched for information about the actual library contents (e.g. classes).
+See the :doc:`contribution page </pages/development/contrib>` for details.
 
 
 .. _pages/tool/generator/generator_config_articles#uri_handling:
@@ -391,7 +447,19 @@ If you are sitting behind a proxy, here is what you can do. The generator uses t
 URI handling
 ------------
 
-URIs are used in a qooxdoo application to refer from one part to other parts like resources. There are places within the generator configuration where you can specify *uri* parameters. What they mean and how this all connects is explained in this section.
+URIs are used in a qooxdoo application to refer from one part to other parts
+like resources. There are places within the generator configuration where you
+can specify *uri* parameters. What they mean and how this all connects is
+explained in this section.
+
+You will rarely need to set the ``uri`` attribute of a library entry. This is
+only necessary if the relative path to the library (which is automatically
+calculated) does not represent a valid URL path when running the **source**
+version of the final app. (This can be the case if your try to run the source
+version from a web server that requires you to set up different document roots).
+It is not relevant for the *build* version of your app, as here all resources
+from the various libraries are collected under a common directory. For more on
+URI handling, see the next section.
 
 .. _pages/tool/generator/generator_config_articles#where_uris_are_used:
 
@@ -440,13 +508,13 @@ So how does the generator create all of those URIs in the final application code
     to_libraryroot [1]  + library_internal_path [2] + resource_path [3]
 
 
-So for example a graphics file in the qooxdoo framework might get referenced using the following components 
+So for example a graphics file in the qooxdoo framework might get referenced using the following components
 
-* [1] *"../../qooxdoo-%{version}-sdk/framework/"* 
+* [1] *"../../qooxdoo-%{version}-sdk/framework/"*
 * [2] *"source/resource/"*
 * [3] *"qx/static/blank.gif"*
 
-to produce the final URI 
+to produce the final URI
 *"../../qooxdoo-%{version}-sdk/framework/source/resource/qx/static/ blank.gif"*.
 
 These general parts have the following meaning:
@@ -502,7 +570,7 @@ Specifying a "library" key in your config.json
 
 You can specify ``library`` keys in your own config in these ways:
 
-* You either define a local job which either shaddows or "extends" an imported job, and provide this local job with a ``library`` key. Or,
+* You either define a local job which either shadows or "extends" an imported job, and provide this local job with a ``library`` key. Or,
 * You define a local ``"libraries"`` job and provide it with a ``library`` key. This job will be used automatically by most of the standard jobs (source, build, etc.), and thus your listed libraries will be used in multiple jobs (not just one as above).
 
 .. _pages/tool/generator/generator_config_articles#packages_key:
@@ -529,7 +597,7 @@ b) Any class that is in the master list that is never listed in one of the  part
 
    *"The parts' include keys are a filter for all classes in the general include  key."*
 
-   Or, to put both aspects in a single statement: The classes in the final app are  exactly those in the **intersection** of the classes referenced through the general *include* key and all the classes referenced by the *include* keys of the parts. Currently, the application developer has to make sure that they match, ie. that the classes specified through the parts together sum up to the global class list!
+   Or, to put both aspects in a single statement: The classes in the final app are exactly those in the **intersection** of the classes referenced through the general *include* key and all the classes referenced by the *include* keys of the parts. Currently, the application developer has to make sure that they match, i.e. that the classes specified through the parts together sum up to the global class list!
 
    There is another caveat that concerns the relation between *include*'s of  different parts:
 
@@ -582,9 +650,9 @@ Practically, there are two steps involved in using external jobs:
   * You can either invoke them directly from the command line, passing them as arguments to the generator.
   * Or you define local jobs that :ref:`extend <pages/tool/generator/generator_config_ref#extend>` them.
 
-In the former case the only way to influence the behaviour of the external job is through macros: The external job has to parameterize its workings with macro references, you have to know them and provide values for them that are suitable for your environment (A typical example would be output paths that you need to customize). Your values will take precendence over any values that might be defined in the external config. But this also means you will have to know the job, know the macros it uses, provide values for them (e.g. in the global :ref:`let <pages/tool/generator/generator_config_ref#let_top-level>` of your config), resolve conflicts if other jobs happen to use the same macros, and so forth. 
+In the former case the only way to influence the behaviour of the external job is through macros: The external job has to parameterize its workings with macro references, you have to know them and provide values for them that are suitable for your environment (A typical example would be output paths that you need to customize). Your values will take precedence over any values that might be defined in the external config. But this also means you will have to know the job, know the macros it uses, provide values for them (e.g. in the global :ref:`let <pages/tool/generator/generator_config_ref#let_top-level>` of your config), resolve conflicts if other jobs happen to use the same macros, and so forth.
 
-In the latter case, you have more control over the settings of the external job that you are actually using. Here as well, you can provide macro definitions that parameterize the behaviour of the job you are extending. But you can also supply more job keys that will either shaddow the keys of the same name in the external job, or will be extended by them. In any case you will have more control over the effects of the external job.
+In the latter case, you have more control over the settings of the external job that you are actually using. Here as well, you can provide macro definitions that parameterize the behaviour of the job you are extending. But you can also supply more job keys that will either shadow the keys of the same name in the external job, or will be extended by them. In any case you will have more control over the effects of the external job.
 
 Add-ins use exactly these mechanisms to provide their functionality to other applications (in the sense as 'make test' or 'make api' did it in the old system). Consequently, to support this in the new system, the add-in applications (or more precisely: their job configuration) have to expose certain keys and use certain macros that can both be overridden by the using application. The next sections describe these build interfaces for the various add-in apps. But first more practical detail about the outlined ...
 
@@ -599,7 +667,7 @@ In order to include an add-in feature in an existing app, you first have to ``in
 
     "include" : [{"path": "../apiviewer/config.json"}]
 
-The include key on this level takes an array of maps. Each map specifies one configuration file to include. The only mandator key therein is the file path to the external config file (see :ref:`here <pages/tool/generator/generator_config_ref#include_top-level>` for all the gory details). A config can only include what the external config is willing to :ref:`export <pages/tool/generator/generator_config_ref#export>`. Among those jobs the importing config can select (through the ``import`` key) or reject (through the ``block`` key) certain jobs. The resulting list of external job definitions will be added to the local jobs map.
+The include key on this level takes an array of maps. Each map specifies one configuration file to include. The only mandatory key therein is the file path to the external config file (see :ref:`here <pages/tool/generator/generator_config_ref#include_top-level>` for all the gory details). A config can only include what the external config is willing to :ref:`export <pages/tool/generator/generator_config_ref#export>`. Among those jobs the importing config can select (through the ``import`` key) or reject (through the ``block`` key) certain jobs. The resulting list of external job definitions will be added to the local jobs map.
 
 If you want to fine-tune the behaviour of such an imported job, you define a local job that extends it. Imported jobs are referenced like any job in the current config, either by their plain name (the default), or, if you specify the ``as`` key in the include, by a composite name ``<as_value>::<original_name>``. Suppose you used an ``"as" : "apiconf"`` in your include, and you wanted to extend the Apiviewer's ``build-script`` job, this could look like this:
 
@@ -649,14 +717,6 @@ The ``library`` key has to at least add the entry for the current application, s
 
 So in short, the ``ROOT``, ``BUILD_PATH``, ``API_INCLUDE`` and ``API_EXCLUDE`` macros define the interface between the apiviewer's "run" job and the local config.
 
-.. _pages/tool/generator/generator_config_articles#optimize_key:
-
-"optimize" Key
-==============
-
-The *optimize* key is a subkey of the :ref:`compile-options key<pages/tool/generator/generator_config_ref#compile-options>`. It allows you to tailor the forms of code optimization that is applied to the Javascript code when the *build* version is created. The best way to set this key is by setting the :doc:`OPTIMIZE macro </pages/tool/generator/generator_config_macros>` in your config's global *let* section. The individual optimization categories are described in their own :doc:`manual section </pages/tool/generator/generator_optimizations>`.
-
-
 .. _pages/tool/generator/generator_config_articles#environment_key:
 
 "environment" Key
@@ -683,7 +743,7 @@ The above section mentions the optimization for a single build output, where for
       "baz" : true
     }
 
-The envrionment set for producing the first build output would be ``{foo:13, bar:"hugo", baz:true}``, the set for the second ``{foo:26, bar:"hugo", baz:true}``. 
+The environment set for producing the first build output would be ``{foo:13, bar:"hugo", baz:true}``, the set for the second ``{foo:26, bar:"hugo", baz:true}``.
 
 For configurations with multiple keys with lists as values, the process is repeated for any possible combination of values. E.g.
 
@@ -712,7 +772,7 @@ The cure is to hint to the generator to create different output files during pro
 
 ::
 
-    "build-script" : 
+    "build-script" :
     {
       "environment" : {
         "myapp.foo" : ["bar", "baz"]
@@ -724,7 +784,7 @@ The cure is to hint to the generator to create different output files during pro
       }
     }
 
-This will two output files in the *build/script* path, ``myapp_bar.js`` and ``myapp_baz.js``. 
+This will two output files in the *build/script* path, ``myapp_bar.js`` and ``myapp_baz.js``.
 
 .. _pages/tool/generator/generator_config_articles#browser-specific_builds:
 

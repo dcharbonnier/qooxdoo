@@ -8,7 +8,7 @@ qooxdoo ships with two transport methods, interfaced by ``qx.io.request.Xhr`` an
 
 * Choose ``Xhr`` whenever you can. ``Xhr`` offers true HTTP client functionality and exposes metadata associated with HTTP requests. It is agnostic of the data interchange format and does not make any specific demands on the backend.
 
-* If you are making cross-origin requests and need to support all popular browsers and/or the target server is not configured to accept cross-origin request (``Access-Control-Allow-Origin`` header), you will need to use ``Jsonp``. Only JSON is supported as data interchange format and the server needs to to wrap responses in a JavaScript function call.
+* If you are making cross-origin requests and need to support all popular browsers and/or the target server is not configured to accept cross-origin request (``Access-Control-Allow-Origin`` header), you will need to use ``Jsonp``. Only JSON is supported as data interchange format and the server needs to wrap responses in a JavaScript function call.
 
 ``Xhr`` and ``Jsonp`` share a common interface. ``AbstractRequest`` defines the lowest common denominator of both transport methods.
 
@@ -94,7 +94,7 @@ There are two ways to handle authentication. The lower-level approach is to manu
 Data binding
 ============
 
-The request’s response can be bound to a widget, model or any other object using data binding. This feature is provided by the ``changeResponse`` event, fired on change of the (parsed) response.
+The request's response can be bound to a widget, model or any other object using data binding. This feature is provided by the ``changeResponse`` event, fired on change of the (parsed) response.
 
 ::
 
@@ -136,9 +136,9 @@ Response
 Accepting
 ---------
 
-Some servers send distinct *representations* of the same resource depending on the content type accepted. For instance, a server may respond with either a JSON, XML or a HTML representation while requesting the *same* URL. By default, requests accept every content type. In effect, the server will respond with it’s default representation. If the server has no default representation, it may respond with the status code ``406`` (Not Acceptable).
+Some servers send distinct *representations* of the same resource depending on the content type accepted. For instance, a server may respond with either a JSON, XML or a HTML representation while requesting the *same* URL. By default, requests accept every content type. In effect, the server will respond with it's default representation. If the server has no default representation, it may respond with the status code ``406`` (Not Acceptable).
 
-In order to choose a representation, set the accepted response content type with ``setAccept()``. It is a good practice to always set the preferred representation to guard against possible changes of the server’s default behavior.
+In order to choose a representation, set the accepted response content type with ``setAccept()``. It is a good practice to always set the preferred representation to guard against possible changes of the server's default behavior.
 
 For more details, see `Accept header <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1>`_ in the HTTP 1.1 specification.
 

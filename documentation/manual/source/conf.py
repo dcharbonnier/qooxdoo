@@ -22,7 +22,12 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.todo', 'sphinx.ext.coverage', 'sphinx.ext.ifconfig']
+extensions = [
+ 'sphinx.ext.todo',
+ 'sphinx.ext.coverage',
+ 'sphinx.ext.ifconfig',
+ #'sphinxcontrib.spelling',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -38,7 +43,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'qooxdoo'
-copyright = u'2011-2012, ' + project + ' developers'
+copyright = u'2011-2013, ' + project + ' developers'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -273,7 +278,7 @@ import re
 try:
     from sphinx.search import SearchLanguage
     if hasattr(SearchLanguage, '_word_re'):
-        SearchLanguage._word_re = re.compile(r'[\w.-]+\w', re.UNICODE)
+        SearchLanguage._word_re = re.compile(r'[\w.@#\-]+\w', re.UNICODE)
 except ImportError:
     # sphinx <= v1.0.8 has no package 'search'
     pass

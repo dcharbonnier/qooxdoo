@@ -28,8 +28,6 @@
 
 /**
  * The classic qooxdoo decoration theme.
- *
- * @asset(qx/decoration/Classic/*)
  */
 qx.Theme.define("qx.theme.classic.Decoration",
 {
@@ -323,7 +321,7 @@ qx.Theme.define("qx.theme.classic.Decoration",
         shadowBlurRadius : 3,
         shadowColor : "shadow"
       }
-    },  
+    },
 
 
     "menu-separator" :

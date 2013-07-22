@@ -8,17 +8,13 @@
         "cache",
         "distclean",
         "info",
-        "log-dependencies"
+        "log-dependencies",
+        "validate-config"
       ]
     }
   ],
 
   "default-job" : "build",
-
-  "config-warnings" :
-  {
-    "job-shadowing" : ["distclean"]
-  },
 
   "let" :
   {
@@ -44,19 +40,16 @@
         "qx.bom.Storage"
       ],
 
-      "exclude" : [
-        "qx.event.GlobalError"
-      ],
-
       "environment" :
       {
-        "qx.version"     : "${QOOXDOO_VERSION}",
-        "qx.revision"    : "${QOOXDOO_REVISION}",
-        "qx.debug" : false,
-        "qx.aspects" : false,
+        "json" : true,
+        "qx.version"  : "${QOOXDOO_VERSION}",
+        "qx.revision" : "${QOOXDOO_REVISION}",
+        "qx.debug"    : false,
+        "qx.aspects"  : false,
         "qx.globalErrorHandling" : false,
-        "qx.theme" : null,
-        "qx.export" : {"storage" : "qx.bom.Storage"}
+        "qx.theme"    : null,
+        "qx.export"   : {"storage" : "qx.bom.Storage"}
       },
 
       "compile-options" :
@@ -79,7 +72,7 @@
 
     "build-min" :
     {
-      "extend" : ["storage-common"],
+      "extend" : ["build"],
 
       "compile-options" :
       {
@@ -90,18 +83,15 @@
         "code" :
         {
           "format"   : false,
-          "optimize" : [ "variants", "basecalls", "strings", "privates", "variables", "whitespace"],
-          "except"   : []
+          "optimize" : [ "basecalls", "strings", "privates", "variables", "whitespace" ]
         }
       },
-
-      "compile" : { "type" : "build" }
     },
 
 
     "build" :
     {
-      "extend" : ["build-min"],
+      "extend" : ["storage-common"],
 
       "compile-options" :
       {
@@ -112,9 +102,12 @@
         "code" :
         {
           "format"   : true,
-          "=optimize" : [ "variants", "static" ]
+          "optimize" : [ "variants", "statics" ],
+          "except"   : []
         }
-      }
+      },
+
+      "compile" : { "type" : "build" }
     },
 
 
@@ -180,7 +173,7 @@
 
     "build-require" :
     {
-      "extend" : ["build-require-min"],
+      "extend" : ["build"],
 
       "compile-options" :
       {
@@ -188,12 +181,16 @@
         {
           "file" : "${BUILD_PATH}/storage-${QOOXDOO_VERSION}.require.js",
           "loader-template" : "${QOOXDOO_PATH}/tool/data/generator/require.loader.tmpl.js"
-        },
-        "code" :
-        {
-          "format"   : true,
-          "=optimize" : [ "variants", "static" ]
         }
+      }
+    }
+
+    ,"clean" : {
+      "extend" : ["cache"],
+      "clean-files" : {
+        "Cleaning up script directory" : [
+          "${BUILD_PATH}/*"
+        ]
       }
     }
   }

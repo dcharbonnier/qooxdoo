@@ -28,7 +28,9 @@ from misc          import textutil, filetool
 from misc.ExtMap   import ExtMap
 from ecmascript.transform.check      import lint
 from generator     import Context
+from generator.code.HintArgument     import HintArgument
 from generator.runtime.ShellCmd      import ShellCmd
+from ecmascript.frontend.SyntaxException import SyntaxException
 
 def runLint(jobconf, classes):
 
@@ -72,9 +74,7 @@ def runLint(jobconf, classes):
     classesToCheck = list(getFilteredClassList(lib_class_names, opts.include_patts, opts.exclude_patts))
     opts.library_classes  = lib_class_names
     opts.class_namespaces = [x[:x.rfind(".")] for x in opts.library_classes if x.find(".")>-1]
-    # the next requires that the config keys and option attributes be identical (modulo "-"_")
-    for option, value in lintJob.get("lint-check").items():
-        setattr(opts, option.replace("-","_"), value)
+    opts = add_config_lintopts(opts, lintJob)
     lint_classes((classes[name] for name in classesToCheck), opts)
     console.outdent()
 
@@ -88,8 +88,24 @@ def lint_classes(classesObj, opts):
     console = Context.console
     for classObj in classesObj:
         console.debug("Checking %s" % classObj.id)
-        lint_check(classObj, opts)
-        warns = lint_check(classObj, opts)
+        try:
+            warns = lint_check(classObj, opts)
+        except SyntaxException, e:
+            console.error(e)
+            continue
+
+        ##
+        # @deprecated {3.0} deprecation support for #ignore
+        hash_ignores = classObj.getHints('ignoreDeps')
+        hash_ignores = map(HintArgument, hash_ignores)
+        warns_ = warns[:]
+        warns = []
+        for warn in warns_:
+            if (hasattr(warn, 'name') and
+                warn.name in hash_ignores):
+                continue
+            warns.append(warn)
+
         for warn in warns:
             console.warn("%s (%d, %d): %s" % (classObj.id, warn.line, warn.column, 
                 warn.msg % tuple(warn.args)))
@@ -116,10 +132,21 @@ def lint_comptime_opts():
     opts.ignore_unused_variables = True
     # override from config
     jobConf = Context.jobconf
-    for option, value in jobConf.get("lint-check", {}).items():
-        setattr(opts, option.replace("-","_"), value)
+    opts = add_config_lintopts(opts, jobConf)
     return do_check, opts
         
+##
+# Add/override attributes of <optsObj> from config.
+# Requires that the config keys and option attributes be identical (modulo "-"_")
+def add_config_lintopts(optsObj, jobConf):
+    for option, value in jobConf.get("lint-check", {}).items():
+        opts_name = option.replace("-","_")
+        new_val = value
+        old_val = getattr(optsObj, opts_name, ())  # use tuple as undef
+        if isinstance(old_val, types.ListType):    # e.g. allowed-globals
+            new_val = old_val + value
+        setattr(optsObj, opts_name, new_val)
+    return optsObj
 
 
 def runMigration(jobconf, libs):

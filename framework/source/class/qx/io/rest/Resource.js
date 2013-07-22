@@ -132,6 +132,9 @@ qx.Class.define("qx.io.rest.Resource",
    * <pre class="javascript">
    * { get: {method: "GET", url: "/photos/{id}", check: { id: /\d+/ }} }
    * </pre>
+   *
+   * @see qx.bom.rest
+   * @see qx.io.rest
    */
   construct: function(description)
   {
@@ -251,7 +254,7 @@ qx.Class.define("qx.io.rest.Resource",
       // inject different request implementation
       resource.setRequestFactory(this._getRequest);
 
-      // inject different request request handling
+      // inject different request handling
       resource.setRequestHandler({
           onsuccess: {
             callback: function(req, action) {
@@ -403,7 +406,7 @@ qx.Class.define("qx.io.rest.Resource",
      * @param action {String} Action to invoke.
      * @param params {Map} Map of parameters inserted into URL when a matching
      *  positional parameter is found.
-     * @param data {Map|Array|String} Data to be send as part of the request.
+     * @param data {Map|String} Data to be send as part of the request.
      *  See {@link qx.io.request.AbstractRequest#requestData}.
      * @return {Number} Id of the action's invocation.
      */

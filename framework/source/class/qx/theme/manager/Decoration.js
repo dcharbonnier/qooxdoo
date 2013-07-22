@@ -32,6 +32,8 @@ qx.Class.define("qx.theme.manager.Decoration",
   construct : function() {
     this.base(arguments);
     this.__rules = [];
+    this.__legacyIe = (qx.core.Environment.get("engine.name") == "mshtml" &&
+      qx.core.Environment.get("browser.documentmode") < 9);
   },
 
 
@@ -66,6 +68,7 @@ qx.Class.define("qx.theme.manager.Decoration",
   {
     __dynamic : null,
     __rules : null,
+    __legacyIe : false,
 
 
     /**
@@ -91,18 +94,21 @@ qx.Class.define("qx.theme.manager.Decoration",
     addCssClass : function(value) {
       var sheet = qx.ui.style.Stylesheet.getInstance();
 
-      var instance;
-      if (qx.lang.Type.isString(value)) {
-        instance = this.resolve(value);
-      } else {
-        instance = value;
-      }
+      var instance = value;
 
       value = this.getCssClassName(value);
       var selector = "." + value;
 
       if (sheet.hasRule(selector)) {
         return value;
+      }
+
+      if (qx.lang.Type.isString(instance)) {
+        instance = this.resolve(instance);
+      }
+
+      if (!instance) {
+        throw new Error("Unable to resolve decorator '" + value + "'.");
       }
 
       // create and add a CSS rule
@@ -114,11 +120,15 @@ qx.Class.define("qx.theme.manager.Decoration",
         if (qx.Bootstrap.isObject(styles[key])) {
           var innerCss = "";
           var innerStyles = styles[key];
+          var inner = false;
           for (var innerKey in innerStyles) {
+            inner = true;
             innerCss += innerKey + ":" + innerStyles[innerKey] + ";";
           }
-          this.__rules.push(selector + key);
-          sheet.addRule(selector + key, innerCss);
+          var innerSelector = this.__legacyIe ? selector :
+            selector + (inner ? ":" : "");
+          this.__rules.push(innerSelector + key);
+          sheet.addRule(innerSelector + key, innerCss);
           continue;
         }
         css += key + ":" + styles[key] + ";";

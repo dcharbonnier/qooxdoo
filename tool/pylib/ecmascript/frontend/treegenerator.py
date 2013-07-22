@@ -519,7 +519,7 @@ def symbol(id_, bind_left=0):
         s.type     = id_  # compat with Node.type
         s.id       = id_
         s.value    = None
-        s.bind_left      = bind_left
+        s.bind_left = bind_left
         symbol_table[id_] = s
         globals()[s.__name__] = s  # ALERT: this is a devious hack to make Pickle pickle the symbol classes.
                                    # To unpickle, it is necessary to have this module loaded, so the classes
@@ -667,9 +667,9 @@ def prepostfix(id_, bp):  # pre-/post-fix operators (++, --)
         operator = self.get("value")
         operand = self.children[0].toJS(opts)
         if self.get("left", 0) == "true":
-            r = [operator, operand]
+            r = [' ', operator, operand]
         else:
-            r = [operand, operator]
+            r = [operand, operator, ' ']
         return u''.join(r)
     symbol(id_).toJS = toJS
 
@@ -686,7 +686,7 @@ def prepostfix(id_, bp):  # pre-/post-fix operators (++, --)
 def advance(id_=None):
     global token
     if id_ and token.id != id_:
-        raise SyntaxException("Expected %r (pos %r)" % (id_, (token.get("line"),token.get("column"))))
+        raise SyntaxException("Syntax error: Expected %r (pos %r)" % (id_, (token.get("line"),token.get("column"))))
     if token.id != "eof":
         token = next()
 
@@ -726,8 +726,6 @@ prepostfix("++", 140); prepostfix("--", 140)  # pre/post increment (unary)
 prefix("~", 130); prefix("!", 130)
 #prefix("+", 130); prefix("-", 130)  # higher than infix position! handled in preinfix.pfix()
 prefix_v("delete", 130); prefix_v("typeof", 130); prefix_v("void", 130)
-
-prefix("/",  130)  # regexp
 
 infix("*",  120); infix("/", 120); infix("%", 120)
 
@@ -804,29 +802,9 @@ def toListG(self):
     yield self
 
 
-@method(symbol("/"))   # regexp literals
-def pfix(self):
-    # problem: "/".ifix() and "/".pfix() return similar ASTs, e.g. with "/" as root
-    # and 2 childs; it is not clear from this AST whether it is division or literal regexp,
-    # and the types of the childs have to be inspected to decide this.
-
-    rexp = ""
-    while True:
-        rexp += token.get("value")      # accumulate token strings
-        if rexp.endswith("/"):   # check for end of regexp
-            # make sure "/" is not escaped, ie. preceded by an odd number of "\"
-            if not is_last_escaped(rexp):
-                rexp = rexp[:-1] # remove closing "/"
-                break
-        advance()
-    advance()  # this might be either advance("/") or advance("*/")
-    s       = (symbol_table["constant"])()  # create a symbol object for the regexp
-    s.value = rexp
-    self.childappend(s)
-    if token.id == "identifier":   # pick up regexp modifiers
-        self.childappend(token)
-        advance()
-    return self
+#@method(symbol("/"))   # regexp literals - already detected by the Tokenizer
+#def pfix(self):
+#    pass
 
 
 # ternary op ?:
@@ -1020,7 +998,7 @@ def ifix(self, left):
     advance("]")
     return accessor
 
-@method(symbol("["))             # "[1, 2, 3]"
+@method(symbol("["))             # arrays, "[1, 2, 3]"
 def pfix(self):
     arr = symbol("array")()
     self.patch(arr)
@@ -1037,7 +1015,7 @@ def pfix(self):
         elif token.id == ",":  # elision
             arr.childappend(symbol("(empty)")())
         else:
-            arr.childappend(expression())
+            arr.childappend(expression())  # future: expression(symbol(",").bind_left +1)
         if token.id != ",":
             break
         else:
@@ -1101,18 +1079,22 @@ def pfix(self):
                     raise SyntaxException("Illegal dangling comma in map (pos %r)" % ((token.get("line"),token.get("column")),))
                 break
             is_after_comma = 0
-            # key
-            keyname = expression()
             map_item = symbol("keyvalue")(token.get("line"), token.get("column"))
-            # the <keyname> node is not entered into the ast, but resolved into <keyvalue>
             mmap.childappend(map_item)
+            # key
+            keyname = token
+            assert (keyname.type=='identifier' or
+                (keyname.type=='constant' and keyname.get('constantType','') in ('number','string'))
+                ), "Illegal map key: %s" % keyname.get('value')
+            advance()
+            # the <keyname> node is not entered into the ast, but resolved into <keyvalue>
             map_item.set("key", keyname.get("value"))
             quote_type = keyname.get("detail", False)
             map_item.set("quote", quote_type if quote_type else '')
             map_item.comments = keyname.comments
             advance(":")
             # value
-            keyval = expression()
+            keyval = expression()  # future: expression(symbol(",").bind_left +1)
             val = symbol("value")(token.get("line"), token.get("column"))
             val.childappend(keyval)
             map_item.childappend(val)  # <value> is a child of <keyvalue>
@@ -1222,7 +1204,7 @@ def pfix(self):
         opt_name = token
         advance()
     # params
-    assert token.id == "("
+    assert token.id == "(", "Function definition requires parameter list"
     params = symbol("params")()
     token.patch(params)
     self.childappend(params)
@@ -2128,7 +2110,6 @@ def argument_list(list):
         advance(",")
 
 
-
 # - Output/Packer methods for AST nodes ----------------------------------------
 
 # 'opening'/'closing' methods for output generation.
@@ -2260,9 +2241,15 @@ class TreeGenerator(object):
         next   = iter(tokenStream).next
         token  = next()
         if expr:
-            return expression()
+            entry_rule = expression
         else:
-            return statements()
+            entry_rule = statements
+        try:
+            res = entry_rule()
+        except AssertionError, e:
+            #raise
+            raiseSyntaxException("Syntax error%s" % ((": %s" % e.args[0]) if len(e.args) else ''), token)
+        return res
 
 
 # - Interface -----------------------------------------------------------------

@@ -36,7 +36,6 @@
  * Collection of helper methods operating on functions.
  *
  * @ignore(qx.core.Object)
- * @ignore(qx.event.GlobalError.*)
  * @require(qx.lang.Array)
  */
 qx.Bootstrap.define("qx.lang.Function",
@@ -336,7 +335,7 @@ qx.Bootstrap.define("qx.lang.Function",
         {
           // Directly execute, but force first parameter to be the event object.
           return func.call(self||this, event||window.event);
-        }
+        };
       }
       else
       {

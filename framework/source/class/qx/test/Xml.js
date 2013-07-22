@@ -66,7 +66,7 @@ qx.Class.define("qx.test.Xml",
       this.assertEquals('rss', doc.documentElement.tagName);
       this.assertEquals(0, doc.documentElement.childNodes.length);
 
-      var doc = qx.xml.Document.create("http://www.w3.org/1999/xhtml/", "html");
+      doc = qx.xml.Document.create("http://www.w3.org/1999/xhtml/", "html");
       this.assertEquals('http://www.w3.org/1999/xhtml/', doc.documentElement.namespaceURI);
       this.assertEquals('html', doc.documentElement.tagName);
       this.assertEquals(0, doc.documentElement.childNodes.length);

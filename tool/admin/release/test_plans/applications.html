@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
   <title>Application Test Matrix</title>
   <style type="text/css">
     th {
@@ -40,72 +40,83 @@
   <script type="text/javascript" src="utils.js"></script>
 </head>
 <body
- onload="adjustVersionStrings(); autonumbering(); minitests([7,9]);">
-<div> <em>$Rev$</em>
-</div>
+ onload="adjustVersionStrings(); autonumbering(); minitests([4,7,10,13]); colorNA();">
+<div> <em>$Rev$</em> </div>
 <div align="center"><b>qooxdoo <span name="versstring">$(qxversion)</span></b></div>
 <table border="1" cellpadding="2" cellspacing="0">
   <thead> <tr>
     <th rowspan="4" colspan="2">Application Tests</th>
-    <td colspan="8" rowspan="1" style="vertical-align: top;">Platform</td>
+    <td colspan="10" rowspan="1" style="vertical-align: top;">Platform</td>
   </tr>
   <tr class="platforms">
     <td><b>IE8</b><br>
-XP</td>
+Win7</td>
     <td><b>IE9</b><br>
 Win7</td>
     <td><b>IE10</b><br>
 Win8<br>
     </td>
     <td><b>Chrome Stable</b><br>
+Win7</td>
+    <td><span style="font-weight: bold;">Chrome dev</span><br>
 OSX</td>
     <td><span style="font-weight: bold;">Safari</span><br>
 OSX</td>
     <td><span style="font-weight: bold;">FF Stable</span><br>
+OSX</td>
+    <td><span style="font-weight: bold;">FF Aurora</span><br>
 Win7</td>
-    <td style="vertical-align: top;"><span style="font-weight: bold;">FF
-3.6</span><br style="font-weight: bold;">
-XP<br>
-    </td>
     <td><b>Opera Stable</b><br>
-Linux<br>
+Win7<br>
     </td>
+    <td><span style="font-weight: bold;">Opera 12</span></td>
   </tr>
   <tr class="platforms">
     <td style="vertical-align: top;">Full tests</td>
-    <td style="vertical-align: top;">Full tests</td>
-    <td style="vertical-align: top;">Full tests</td>
-    <td style="vertical-align: top;">Full tests</td>
     <td style="vertical-align: top;"><br>
     </td>
     <td style="vertical-align: top;">Full tests</td>
-    <td style="vertical-align: top;"><br>
+    <td style="vertical-align: top;">Full tests</td>
+    <td><br>
+    </td>
+    <td style="vertical-align: top;">Full tests<br>
     </td>
     <td style="vertical-align: top;">Full tests</td>
+    <td><br>
+    </td>
+    <td style="vertical-align: top;">Full tests</td>
+    <td><br>
+    </td>
   </tr>
   <tr class="platforms">
     <td>DW<br>
     </td>
-    <td>TH<br>
-    </td>
-    <td>CZ<br>
-    </td>
-    <td>MW<br>
+    <td><br>
     </td>
     <td>MW<br>
     </td>
     <td>AS<br>
     </td>
-    <td style="vertical-align: top;">DW<br>
+    <td><br>
     </td>
     <td>RS<br>
+    </td>
+    <td>CZ<br>
+    </td>
+    <td><br>
+    </td>
+    <td>TH<br>
+    </td>
+    <td><br>
     </td>
   </tr>
   </thead><!-- Don't worry about the line numbers - they will be auto-adjusted. Just make sure to use the 'name="number"' attribute -->
   <tbody>
     <tr>
       <th name="number">1</th>
-      <th colspan="9">API Viewer</th>
+      <th colspan="10">API Viewer</th>
+      <td><br>
+      </td>
     </tr>
     <tr>
       <td name="number" width="2%">1.1</td>
@@ -122,7 +133,11 @@ Linux<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -142,7 +157,11 @@ Linux<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -162,7 +181,11 @@ Linux<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -182,7 +205,11 @@ Linux<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -203,7 +230,11 @@ Linux<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -225,7 +256,11 @@ Linux<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -245,7 +280,11 @@ Linux<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -265,14 +304,18 @@ Linux<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
     </tr>
     <tr>
       <th name="number">2</th>
-      <th colspan="9">Test Runner - Framework Tests<br>
+      <th rowspan="1" colspan="11">Test Runner - Framework Tests<br>
       </th>
     </tr>
     <tr class="mini">
@@ -290,7 +333,11 @@ Linux<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -310,7 +357,11 @@ Linux<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -331,7 +382,11 @@ Linux<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -351,7 +406,11 @@ Linux<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -372,7 +431,11 @@ requires failing test)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -389,11 +452,15 @@ requires failing test)</td>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -411,11 +478,15 @@ requires failing test)</td>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -435,14 +506,18 @@ requires failing test)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
     </tr>
     <tr>
       <th name="number">2</th>
-      <th colspan="9">Test Runner - Component Tests<br>
+      <th rowspan="1" colspan="11">Test Runner - Component Tests<br>
       </th>
     </tr>
     <tr>
@@ -462,7 +537,11 @@ requires failing test)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -482,7 +561,11 @@ requires failing test)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -502,7 +585,11 @@ requires failing test)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -524,7 +611,11 @@ other success)<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -544,7 +635,11 @@ other success)<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -564,14 +659,18 @@ other success)<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
     </tr>
     <tr>
       <th name="number">3</th>
-      <th colspan="9">Demo Browser</th>
+      <th rowspan="1" colspan="11">Demo Browser</th>
     </tr>
     <tr class="mini">
       <td name="number" width="2%">3.1</td>
@@ -590,7 +689,11 @@ by Widgetbrowser)<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -610,7 +713,11 @@ by Widgetbrowser)<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -630,7 +737,11 @@ by Widgetbrowser)<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -650,7 +761,11 @@ by Widgetbrowser)<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -670,7 +785,11 @@ by Widgetbrowser)<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -690,7 +809,11 @@ by Widgetbrowser)<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -707,7 +830,11 @@ by Widgetbrowser)<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -727,7 +854,11 @@ by Widgetbrowser)<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -744,11 +875,15 @@ and the api works</td>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -768,7 +903,11 @@ and the api works</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -788,14 +927,18 @@ and the api works</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
     </tr>
     <tr>
       <th name="number">4</th>
-      <th colspan="9">Feed Reader - Desktop<br>
+      <th rowspan="1" colspan="11">Feed Reader - Desktop<br>
       </th>
     </tr>
     <tr class="mini">
@@ -813,7 +956,11 @@ and the api works</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -833,7 +980,11 @@ and the api works</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -854,7 +1005,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -874,7 +1029,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -895,7 +1054,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -915,7 +1078,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -935,7 +1102,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -951,11 +1122,15 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -975,14 +1150,18 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
     </tr>
     <tr>
       <th name="number">5</th>
-      <th colspan="9">Feed Reader - Website</th>
+      <th rowspan="1" colspan="11">Feed Reader - Website</th>
     </tr>
     <tr class="mini">
       <td name="number" width="2%">5.1</td>
@@ -999,7 +1178,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1019,7 +1202,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1039,14 +1226,18 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
     </tr>
     <tr>
       <th name="number">5</th>
-      <th colspan="9">Todo</th>
+      <th rowspan="1" colspan="11">Todo</th>
     </tr>
     <tr class="mini">
       <td name="number" width="2%">5.1</td>
@@ -1063,7 +1254,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1083,7 +1278,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1103,7 +1302,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1123,14 +1326,18 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
     </tr>
     <tr>
       <th name="number">5</th>
-      <th colspan="9">Tutorial</th>
+      <th rowspan="1" colspan="11">Tutorial</th>
     </tr>
     <tr class="mini">
       <td name="number" width="2%">5.1</td>
@@ -1147,7 +1354,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1167,7 +1378,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1187,7 +1402,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1207,7 +1426,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1227,7 +1450,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1247,7 +1474,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1265,8 +1496,13 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
       <td>N/A</td>
-      <td>N/A</td>
+      <td>N/A<br>
+      </td>
     </tr>
     <tr class="mini">
       <td name="number" width="2%">5.1</td>
@@ -1282,14 +1518,18 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
     </tr>
     <tr>
       <th name="number">5</th>
-      <th colspan="9">Playground</th>
+      <th rowspan="1" colspan="11">Playground</th>
     </tr>
     <tr class="mini">
       <td name="number" width="2%">5.1</td>
@@ -1306,7 +1546,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1325,7 +1569,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1345,7 +1593,11 @@ http://www.theregister.co.uk/headlines.atom)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1364,13 +1616,17 @@ code should be discarded<br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
       </td>
     </tr>
     <tr>
@@ -1385,13 +1641,17 @@ Firefox)<br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;">N/A<br>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
       </td>
       <td style="vertical-align: top;">N/A</td>
+      <td><br>
+      </td>
     </tr>
     <tr>
       <td name="number" width="2%">6.6</td>
@@ -1408,7 +1668,11 @@ Firefox)<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1428,7 +1692,11 @@ Firefox)<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1449,7 +1717,11 @@ is in the URL)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1470,7 +1742,11 @@ previous step)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1487,11 +1763,15 @@ previous step)</td>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1508,11 +1788,15 @@ previous step)</td>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1528,11 +1812,15 @@ previous step)</td>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1549,11 +1837,15 @@ previous step)</td>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1573,7 +1865,11 @@ previous step)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1593,14 +1889,18 @@ previous step)</td>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
     </tr>
     <tr>
       <th name="number">6</th>
-      <th colspan="9">Inspector - Standalone App<br>
+      <th rowspan="1" colspan="11">Inspector - Standalone App<br>
       </th>
     </tr>
     <tr class="mini">
@@ -1611,12 +1911,16 @@ previous step)</td>
       <td>N/A </td>
       <td>N/A </td>
       <td>N/A </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;">N/A </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;">N/A<br>
+      <td><br>
       </td>
       <td>N/A </td>
+      <td><br>
+      </td>
     </tr>
     <tr>
       <td name="number" width="2%">6.2</td>
@@ -1626,11 +1930,16 @@ previous step)</td>
       <td>N/A </td>
       <td>N/A</td>
       <td>N/A </td>
-      <td style="vertical-align: top;">N/A </td>
       <td><br>
       </td>
       <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
       <td>N/A </td>
+      <td><br>
+      </td>
     </tr>
     <tr>
       <td name="number" width="2%">6.3</td>
@@ -1640,11 +1949,16 @@ previous step)</td>
       <td>N/A </td>
       <td>N/A </td>
       <td>N/A </td>
-      <td style="vertical-align: top;">N/A </td>
       <td><br>
       </td>
       <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
       <td>N/A </td>
+      <td><br>
+      </td>
     </tr>
     <tr>
       <td name="number" width="2%">6.4</td>
@@ -1654,11 +1968,16 @@ previous step)</td>
       <td>N/A </td>
       <td>N/A </td>
       <td>N/A </td>
-      <td style="vertical-align: top;">N/A </td>
       <td><br>
       </td>
       <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
       <td>N/A </td>
+      <td><br>
+      </td>
     </tr>
     <tr>
       <td name="number" width="2%">6.5</td>
@@ -1668,27 +1987,39 @@ previous step)</td>
       <td>N/A </td>
       <td>N/A </td>
       <td>N/A </td>
-      <td style="vertical-align: top;">N/A </td>
       <td><br>
       </td>
       <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
       <td>N/A </td>
+      <td><br>
+      </td>
     </tr>
     <tr>
       <td name="number" width="2%">6.6</td>
-      <td>Selenium window works (s.
-http://manual.qooxdoo.org/<span name="versstring">$(qxversion)</span>/pages/application/inspector_selenium.html)
-(Standalone App)</td>
+      <td>Selenium window works (s. http://manual.qooxdoo.org/<span
+ name="versstring">$(qxversion)</span>/pages/application/inspector_selenium.html)
+(Standalone
+
+App)</td>
       <td><br>
       </td>
       <td>N/A </td>
       <td>N/A </td>
       <td>N/A </td>
-      <td style="vertical-align: top;">N/A </td>
       <td><br>
       </td>
       <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
       <td>N/A </td>
+      <td><br>
+      </td>
     </tr>
     <tr>
       <td name="number" width="2%">6.11</td>
@@ -1698,15 +2029,20 @@ http://manual.qooxdoo.org/<span name="versstring">$(qxversion)</span>/pages/appl
       <td>N/A </td>
       <td>N/A </td>
       <td>N/A </td>
-      <td style="vertical-align: top;">N/A </td>
       <td><br>
       </td>
       <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
       <td>N/A </td>
+      <td><br>
+      </td>
     </tr>
     <tr>
       <th name="number">6</th>
-      <th colspan="9">Inspector - Inline App<br>
+      <th rowspan="1" colspan="11">Inspector - Inline App<br>
       </th>
     </tr>
     <tr>
@@ -1718,9 +2054,14 @@ App scrolled)</td>
       </td>
       <td>N/A </td>
       <td>N/A </td>
+      <td><br>
+      </td>
       <td>N/A </td>
       <td>N/A </td>
-      <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
       <td><br>
       </td>
     </tr>
@@ -1732,9 +2073,14 @@ App scrolled)</td>
       </td>
       <td>N/A </td>
       <td>N/A </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;">N/A </td>
       <td>N/A </td>
-      <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
       <td><br>
       </td>
     </tr>
@@ -1746,31 +2092,43 @@ App scrolled)</td>
       </td>
       <td>N/A </td>
       <td>N/A </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;">N/A </td>
       <td>N/A </td>
-      <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
       <td><br>
       </td>
     </tr>
     <tr>
       <td name="number" width="2%">6.10</td>
-      <td>Selenium window works (s.
-http://manual.qooxdoo.org/<span name="versstring">$(qxversion)</span>/pages/application/inspector_selenium.html)
-(Inline App)</td>
+      <td>Selenium window works (s. http://manual.qooxdoo.org/<span
+ name="versstring">$(qxversion)</span>/pages/application/inspector_selenium.html)
+(Inline
+
+App)</td>
       <td>N/A </td>
       <td><br>
       </td>
       <td>N/A </td>
       <td>N/A </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;">N/A </td>
       <td>N/A </td>
-      <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
       <td><br>
       </td>
     </tr>
     <tr>
       <th name="number">6</th>
-      <th colspan="9">Inspector - Mobile App<br>
+      <th rowspan="1" colspan="11">Inspector - Mobile App<br>
       </th>
     </tr>
     <tr class="mini">
@@ -1782,10 +2140,15 @@ http://manual.qooxdoo.org/<span name="versstring">$(qxversion)</span>/pages/appl
       </td>
       <td style="vertical-align: top;"><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;">N/A </td>
       <td style="vertical-align: top;">N/A </td>
-      <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;">N/A</td>
+      <td>N/A<br>
+      </td>
     </tr>
     <tr>
       <td name="number" width="2%">6.12</td>
@@ -1796,10 +2159,15 @@ http://manual.qooxdoo.org/<span name="versstring">$(qxversion)</span>/pages/appl
       </td>
       <td style="vertical-align: top;"><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;">N/A </td>
       <td style="vertical-align: top;">N/A </td>
-      <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;">N/A</td>
+      <td><br>
+      </td>
     </tr>
     <tr>
       <td name="number" width="2%">6.13</td>
@@ -1810,30 +2178,41 @@ http://manual.qooxdoo.org/<span name="versstring">$(qxversion)</span>/pages/appl
       </td>
       <td style="vertical-align: top;"><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;">N/A </td>
       <td style="vertical-align: top;">N/A </td>
-      <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;">N/A</td>
+      <td><br>
+      </td>
     </tr>
     <tr>
       <td name="number" width="2%">6.14</td>
-      <td>Selenium window works (s.
-http://manual.qooxdoo.org/<span name="versstring">$(qxversion)</span>/pages/application/inspector_selenium.html)
-(Mobile App)</td>
+      <td>Selenium window works (s. http://manual.qooxdoo.org/<span
+ name="versstring">$(qxversion)</span>/pages/application/inspector_selenium.html)
+(Mobile
+
+App)</td>
+      <td style="vertical-align: top;">N/A</td>
       <td style="vertical-align: top;">N/A</td>
       <td style="vertical-align: top;">N/A</td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;">N/A </td>
       <td style="vertical-align: top;">N/A </td>
-      <td style="vertical-align: top;">N/A </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;">N/A</td>
+      <td><br>
+      </td>
     </tr>
     <tr>
       <th name="number">8</th>
-      <th colspan="9">Showcase</th>
+      <th rowspan="1" colspan="11">Showcase</th>
     </tr>
     <tr class="mini">
       <td name="number" width="2%">8.1</td>
@@ -1846,11 +2225,15 @@ http://manual.qooxdoo.org/<span name="versstring">$(qxversion)</span>/pages/appl
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1866,11 +2249,15 @@ http://manual.qooxdoo.org/<span name="versstring">$(qxversion)</span>/pages/appl
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1886,18 +2273,22 @@ http://manual.qooxdoo.org/<span name="versstring">$(qxversion)</span>/pages/appl
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
     </tr>
     <tr>
       <th name="number">9 </th>
-      <th colspan="9">Widget Browser<br>
+      <th rowspan="1" colspan="11">Widget Browser<br>
       </th>
     </tr>
     <tr class="mini">
@@ -1914,11 +2305,15 @@ themes)<br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -1937,7 +2332,7 @@ effect (all themes)<br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
@@ -1945,10 +2340,14 @@ effect (all themes)<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
     </tr>
     <tr>
       <th name="number">10 </th>
-      <th colspan="9">Feature Config Editor<br>
+      <th rowspan="1" colspan="11">Feature Config Editor<br>
       </th>
     </tr>
     <tr>
@@ -1965,6 +2364,26 @@ by double clicking, by dragging and by using the right arrow button<br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
+      <td><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;" name="number">10.1<br>
+      </td>
+      <td style="vertical-align: top;">Check the 'Available Features'
+filter (should apply to feature names while typing) </td>
+      <td style="vertical-align: top;"><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
@@ -1973,25 +2392,13 @@ by double clicking, by dragging and by using the right arrow button<br>
       </td>
       <td><br>
       </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;" name="number">10.1<br>
-      </td>
-      <td style="vertical-align: top;">Check the 'Available Features' filter (should apply to feature names while typing)
-      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
-      </td>
-      <td style="vertical-align: top;"><br>
-      </td>
-      <td style="vertical-align: top;"><br>
-      </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2009,11 +2416,15 @@ clicking the left arrow button and by pressing Del<br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2031,11 +2442,15 @@ in the list: JSON view must auto-update after field loses focus<br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2054,7 +2469,7 @@ Table must display a new column after importing<br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
@@ -2062,10 +2477,14 @@ Table must display a new column after importing<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
     </tr>
 <!-- Manual --> <tr>
       <th name="number">13</th>
-      <th colspan="9">Manual</th>
+      <th rowspan="1" colspan="11">Manual</th>
     </tr>
     <tr class="mini">
       <td name="number" width="2%">13.1</td>
@@ -2078,11 +2497,15 @@ Table must display a new column after importing<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2098,11 +2521,15 @@ Table must display a new column after importing<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2118,11 +2545,15 @@ Table must display a new column after importing<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2139,11 +2570,15 @@ results)</td>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2160,18 +2595,22 @@ results)</td>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
     </tr>
 <!-- WEBSITE API --> <tr>
       <th name="number">14</th>
-      <th colspan="9">Website API Viewer</th>
+      <th rowspan="1" colspan="11">Website API Viewer</th>
     </tr>
     <tr class="mini">
       <td name="number" width="2%">13.1</td>
@@ -2184,13 +2623,17 @@ results)</td>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
       </td>
     </tr>
     <tr class="mini">
@@ -2205,13 +2648,17 @@ means method is missing)</td>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
       </td>
     </tr>
     <tr class="mini">
@@ -2226,11 +2673,15 @@ means method is missing)</td>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2247,13 +2698,17 @@ in the animation module<br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
       </td>
     </tr>
     <tr class="mini">
@@ -2269,13 +2724,17 @@ parameters work<br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
       </td>
     </tr>
     <tr class="mini">
@@ -2291,18 +2750,22 @@ parameters work<br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
+      </td>
+      <td><br>
       </td>
     </tr>
 <!-- WEBSITE TESTS --> <tr>
       <th name="number">15</th>
-      <th colspan="9">Website Tests (Portable TR)</th>
+      <th rowspan="1" colspan="11">Website Tests (Portable TR)</th>
     </tr>
     <tr class="mini">
       <td name="number" width="2%">13.1</td>
@@ -2317,11 +2780,15 @@ parameters work<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2338,18 +2805,22 @@ parameters work<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
     </tr>
 <!-- TUTORIAL TESTS --> <tr>
       <th name="number">15</th>
-      <th colspan="9">Tutorial Samples</th>
+      <th rowspan="1" colspan="11">Tutorial Samples</th>
     </tr>
     <tr>
       <td name="number" width="2%">13.1</td>
@@ -2362,13 +2833,17 @@ parameters work<br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
-      </td>
       <td><br>
       </td>
       <td style="vertical-align: top;"><br>
       </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
       <td>N/A<br>
+      </td>
+      <td><br>
       </td>
     </tr>
     <tr>
@@ -2383,11 +2858,15 @@ parameters work<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2404,11 +2883,15 @@ parameters work<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2425,11 +2908,15 @@ parameters work<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2446,11 +2933,15 @@ parameters work<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2467,11 +2958,15 @@ parameters work<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2488,11 +2983,15 @@ parameters work<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2509,11 +3008,15 @@ parameters work<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2530,11 +3033,15 @@ parameters work<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2551,11 +3058,15 @@ parameters work<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2572,11 +3083,15 @@ parameters work<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
@@ -2593,25 +3108,27 @@ parameters work<br>
       </td>
       <td><br>
       </td>
+      <td><br>
+      </td>
       <td style="vertical-align: top;"><br>
       </td>
       <td><br>
       </td>
-      <td style="vertical-align: top;"><br>
+      <td><br>
+      </td>
+      <td><br>
       </td>
       <td><br>
       </td>
     </tr>
   </tbody>
 </table>
-<div>
-Legend: <img
+<div> Legend: <img
  src="http://resources.qooxdoo.org/images/icons/dialog-apply.22.png">
 &nbsp;Ok &nbsp;&nbsp;&nbsp; (<img
  src="http://resources.qooxdoo.org/images/icons/dialog-apply.22.png">)
 &nbsp;Mainly Ok &nbsp;&nbsp;&nbsp; <img
  src="http://resources.qooxdoo.org/images/icons/edit-delete.22.png">
-&nbsp;Not Ok
-</div>
+&nbsp;Not Ok </div>
 </body>
 </html>

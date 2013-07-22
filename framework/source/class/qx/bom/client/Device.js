@@ -100,7 +100,7 @@ qx.Bootstrap.define("qx.bom.client.Device",
      * @return {Boolean} Flag which indicates whether it is a mobile device.
      */
     detectMobileDevice : function(userAgentString){
-        return /android.+mobile|ip(hone|od)|bada\/|blackberry|maemo|opera m(ob|in)i|fennec|NetFront|phone|psp|symbian|IEMobile|windows (ce|phone)|xda/i.test(userAgentString);
+      return /android.+mobile|ip(hone|od)|bada\/|blackberry|BB10|maemo|opera m(ob|in)i|fennec|NetFront|phone|psp|symbian|IEMobile|windows (ce|phone)|xda/i.test(userAgentString);
     },
 
 
@@ -110,10 +110,10 @@ qx.Bootstrap.define("qx.bom.client.Device",
      * @return {Boolean} Flag which indicates whether it is a tablet device.
      */
     detectTabletDevice : function(userAgentString){
-       var isIE10Tablet = (/MSIE 10/i.test(userAgentString)) && (/ARM/i.test(userAgentString)) && !(/windows phone/i.test(userAgentString));
-       var isCommonTablet = (!(/Fennec|HTC.Magic|Nexus|android.+mobile|Tablet PC/i.test(userAgentString)) && (/Android|ipad|tablet|playbook|silk|kindle|psp/i.test(userAgentString)));
+      var isIE10Tablet = (/MSIE 10/i.test(userAgentString)) && (/ARM/i.test(userAgentString)) && !(/windows phone/i.test(userAgentString));
+      var isCommonTablet = (!(/Fennec|HTC.Magic|Nexus|android.+mobile|Tablet PC/i.test(userAgentString)) && (/Android|ipad|tablet|playbook|silk|kindle|psp/i.test(userAgentString)));
 
-       return  isIE10Tablet || isCommonTablet;
+      return  isIE10Tablet || isCommonTablet;
     },
 
 
@@ -128,13 +128,24 @@ qx.Bootstrap.define("qx.bom.client.Device",
       }
 
       return 1;
-    }
+    },
 
+
+    /**
+     * Detects if either touch events or pointer events are supported.
+     * Additionally it checks if touch is enabled for pointer events.
+     *
+     * @return {Boolean} <code>true</code>, if the device supports touch
+     */
+    getTouch : function() {
+      return ("ontouchstart" in window) || window.navigator.msMaxTouchPoints > 1;
+    }
   },
 
 
   defer : function(statics) {
       qx.core.Environment.add("device.name", statics.getName);
+      qx.core.Environment.add("device.touch", statics.getTouch);
       qx.core.Environment.add("device.type", statics.getType);
       qx.core.Environment.add("device.pixelRatio", statics.getDevicePixelRatio);
   }

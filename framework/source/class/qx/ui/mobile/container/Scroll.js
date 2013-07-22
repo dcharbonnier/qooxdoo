@@ -44,20 +44,20 @@ qx.Class.define("qx.ui.mobile.container.Scroll",
 {
   extend : qx.ui.mobile.container.Composite,
 
-  
+
   /*
   *****************************************************************************
      CONSTRUCTOR
   *****************************************************************************
   */
- 
+
   /**
   * @param scrollProperties {Object} A map with scroll properties which are passed to the scrolling container (may contain iScroll properties).
   */
   construct : function(scrollProperties)
   {
     this.base(arguments);
-    
+
     if(scrollProperties) {
       this._scrollProperties = scrollProperties;
     }
@@ -75,8 +75,8 @@ qx.Class.define("qx.ui.mobile.container.Scroll",
     /** Fired when the user scrolls to the end of scroll area. */
     pageEnd : "qx.event.type.Event"
   },
-  
-  
+
+
   /*
   *****************************************************************************
      PROPERTIES
@@ -101,8 +101,8 @@ qx.Class.define("qx.ui.mobile.container.Scroll",
   members :
   {
     _scrollProperties : null,
-    
-  
+
+
     // overridden
     _createContainerElement : function()
     {
@@ -123,10 +123,6 @@ qx.Class.define("qx.ui.mobile.container.Scroll",
 
       var scrollContentElement = this._getScrollContentElement();
 
-      qx.bom.Element.addListener(contentElement,"iscrollpageend",function() {
-        this.fireEvent("pageEnd");
-      }, this);
-
       return scrollContentElement || contentElement;
     },
 
@@ -144,7 +140,7 @@ qx.Class.define("qx.ui.mobile.container.Scroll",
 
 
     /**
-     * Scrolls the wrapper contents to the x/y coordinates in a given period.
+     * Scrolls the wrapper contents to the x/y coordinates in a given time.
      *
      * @param x {Integer} X coordinate to scroll to.
      * @param y {Integer} Y coordinate to scroll to.
@@ -162,7 +158,7 @@ qx.Class.define("qx.ui.mobile.container.Scroll",
       * period.
       *
       * @param elementId {String} the elementId, the scroll container should scroll to.
-      * @param time {Integer} Time slice in which scrolling should
+      * @param time {Integer?0} Time slice in which scrolling should
       *              be done (in seconds).
       *
       */

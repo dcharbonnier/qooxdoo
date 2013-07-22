@@ -24,14 +24,42 @@
 qx.Mixin.define("qx.ui.mobile.container.MNativeScroll",
 {
 
-  /*
-  *****************************************************************************
-     MEMBERS
-  *****************************************************************************
-  */
+
+  construct : function()
+  {
+    this.addCssClass("native");
+    if(qx.core.Environment.get("os.name") == "ios") {
+      this.addListener("touchstart", this._onTouchStart, this);
+    }
+  },
+
 
   members :
   {
+    /**
+     * Handler for "touchstart" event.
+     * Prevents "rubber-banding" effect of page.
+     * @param evt {qx.event.type.Touch} The touch event.
+     */
+    _onTouchStart : function(evt) {
+      var parentContentElementHeight = this.getLayoutParent().getContentElement().offsetHeight;
+      var contentElementHeight = this.getContentElement().scrollHeight;
+
+      // If scroll container is scrollable
+      if (contentElementHeight > parentContentElementHeight) {
+        var scrollTop = this.getContentElement().scrollTop;
+        var maxScrollTop = contentElementHeight - parentContentElementHeight;
+        if (scrollTop == 0) {
+          this.getContentElement().scrollTop = 1;
+        } else if (scrollTop == maxScrollTop) {
+          this.getContentElement().scrollTop = maxScrollTop - 1;
+        }
+      } else {
+        evt.preventDefault();
+      }
+    },
+
+
     /**
      * Mixin method. Creates the scroll element.
      *
@@ -59,12 +87,11 @@ qx.Mixin.define("qx.ui.mobile.container.MNativeScroll",
     *
     * @param x {Integer} X coordinate to scroll to.
     * @param y {Integer} Y coordinate to scroll to.
-    * @param time {Integer} Time slice in which scrolling should
-    *              be done.
+    * @param time {Integer} is always <code>0</code> for this mixin.
     */
-    _scrollTo : function(x, y, time)
-    {
-      scrollTo(x,y);
+    _scrollTo : function(x, y, time) {
+      this.getContentElement().scrollLeft = x;
+      this.getContentElement().scrollTop = y;
     },
 
 
@@ -78,7 +105,11 @@ qx.Mixin.define("qx.ui.mobile.container.MNativeScroll",
     */
     _scrollToElement : function(elementId, time)
     {
-      // TODO
+      var targetElement = document.getElementById(elementId);
+      var offsetParent = qx.bom.element.Location.getOffsetParent(targetElement);
+      var location = qx.bom.element.Location.getRelative(offsetParent, targetElement, "scroll", "scroll");
+
+      this._scrollTo(Math.abs(location.left), Math.abs(location.top), time);
     }
   }
 });

@@ -35,6 +35,8 @@
  * @use(qx.ui.core.EventHandler)
  * @use(qx.event.handler.DragDrop)
  * @asset(qx/static/blank.gif)
+ *
+ * @ignore(qx.ui.root.Inline)
  */
 qx.Class.define("qx.ui.core.Widget",
 {
@@ -169,7 +171,10 @@ qx.Class.define("qx.ui.core.Widget",
     touchcancel : "qx.event.type.Touch",
 
     /** Fired when a finger taps on the screen. */
-    tap : "qx.event.type.Touch",
+    tap : "qx.event.type.Tap",
+
+    /** Fired when a finger holds on the screen. */
+    longtap : "qx.event.type.Tap",
 
     /** Fired when a finger swipes over the screen. */
     swipe : "qx.event.type.Touch",
@@ -1566,11 +1571,18 @@ qx.Class.define("qx.ui.core.Widget",
         el.setAttribute("qxClass", this.classname);
       }
 
-      el.setStyles({
-        "position": "absolute",
+      var styles = {
         "zIndex": 10,
         "boxSizing": "border-box"
-      });
+      };
+
+      if (!qx.ui.root.Inline ||
+        !(this instanceof qx.ui.root.Inline))
+      {
+        styles.position = "absolute";
+      }
+
+      el.setStyles(styles);
 
       return el;
     },
@@ -3022,8 +3034,7 @@ qx.Class.define("qx.ui.core.Widget",
     // property apply
     _applyDraggable : function(value, old)
     {
-      var hasTouch = qx.core.Environment.get("event.touch") || qx.core.Environment.get("event.mspointer");
-      if (hasTouch && qx.core.Environment.get("qx.emulatemouse")) {
+      if (qx.event.handler.MouseEmulation.ON) {
         return;
       }
       if (!this.isEnabled() && value === true) {
@@ -3441,6 +3452,42 @@ qx.Class.define("qx.ui.core.Widget",
 
 
     /**
+     * Release the child control by ID and decouple the
+     * child from the parent. This method does not dispose the child control.
+     *
+     * @param id {String} ID of the child control
+     * @return {qx.ui.core.Widget} The released control
+     */
+    _releaseChildControl : function(id)
+    {
+      var control = this.getChildControl(id, false);
+      if (!control) {
+        throw new Error("Unsupported control: " + id);
+      }
+
+      // remove connection to parent
+      delete control.$$subcontrol;
+      delete control.$$subparent;
+
+      // remove state forwarding
+      var states = this.__states;
+      var forward = this._forwardStates;
+
+      if (states && forward && control instanceof qx.ui.core.Widget) {
+        for (var state in states) {
+          if (forward[state]) {
+            control.removeState(state);
+          }
+        }
+      }
+
+      delete this.__childControls[id];
+
+      return control;
+    },
+
+
+    /**
      * Force the creation of the given child control by ID.
      *
      * Do not override this method! Override {@link #_createChildControlImpl}
@@ -3459,12 +3506,18 @@ qx.Class.define("qx.ui.core.Widget",
       }
 
       var pos = id.indexOf("#");
-      if (pos == -1) {
-        var control = this._createChildControlImpl(id);
-      } else {
-        var control = this._createChildControlImpl(
-          id.substring(0, pos), id.substring(pos + 1, id.length)
-        );
+      try {
+        if (pos == -1) {
+          var control = this._createChildControlImpl(id);
+        } else {
+          var control = this._createChildControlImpl(
+            id.substring(0, pos), id.substring(pos + 1, id.length)
+          );
+        }
+      } catch(exc) {
+        exc.message = "Exception while creating child control '" + id +
+        "' of widget " + this.toString() + ": " + exc.message;
+        throw exc;
       }
 
       if (!control) {

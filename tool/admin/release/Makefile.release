@@ -49,7 +49,7 @@ CMD_RST2HTML = $(CMD_NICE) rst2html.py
 CMD_ZIP_CREATE = $(CMD_ZIP) -rq
 CMD_ANY2UNIX = | xargs $(CMD_PYTHON) tool/pylib/misc/textutil.py --command any2Unix
 CMD_MKEXEC = $(CMD_NICE) chmod a+rx
-CMD_SCSS = $(PATH_TOOL_BIN)/scss.py 
+CMD_SCSS = $(PATH_TOOL_BIN)/scss.py
 CMD_SCSS_OPTS = -C -o
 
 ifeq ($(DO_RELEASE),)
@@ -82,7 +82,8 @@ RELEASE_SDK = release/temp/sdk/qooxdoo-$(FRAMEWORK_VERSION)-sdk
 
 APPLICATIONS = tutorial todo feedreader mobileshowcase playground showcase widgetbrowser featureconfigeditor github demobrowser
 COMPONENTS = apiviewer testrunner inspector storage server website
-FRAMEWORK_TARGETS = api test test-mobile
+WEBSITE_MODULES = core animation blocker cookie dataset dev io matchmedia messaging placeholder placement rest storage template transform util
+FRAMEWORK_TARGETS = api test test-mobile dependencies
 TUTORIALS = mobiletweets tweets website
 
 
@@ -133,7 +134,7 @@ release-sdk-svn-collect:
 	@# libs
 	@for COMPONENT in `echo server website`; do \
 		if [ "$$COMPONENT" == "website" ]; then \
-			$(CMD_SYNC_OFFLINE) component/standalone/$$COMPONENT/script/q-$(FRAMEWORK_VERSION)*.js $(RELEASE_SDK)/component/standalone/$$COMPONENT/script; \
+			$(CMD_SYNC_OFFLINE) component/standalone/$$COMPONENT/script/q-*$(FRAMEWORK_VERSION)*.js $(RELEASE_SDK)/component/standalone/$$COMPONENT/script; \
 			$(CMD_SYNC_OFFLINE) component/standalone/$$COMPONENT/api/* $(RELEASE_SDK)/component/standalone/$$COMPONENT/api; \
 		else \
 			$(CMD_SYNC_OFFLINE) component/standalone/$$COMPONENT/script/* $(RELEASE_SDK)/component/standalone/$$COMPONENT/script; \
@@ -142,6 +143,8 @@ release-sdk-svn-collect:
 
 	@echo "  * Synchronizing framework..."
 	@$(CMD_SYNC_OFFLINE) framework/api/* $(RELEASE_SDK)/framework/api
+	@$(CMD_MKDIR) $(RELEASE_SDK)/framework/source/script
+	@$(CMD_SYNC_OFFLINE) framework/source/script/dependencies.json $(RELEASE_SDK)/framework/source/script/dependencies.json
 
 	@echo "  * Synchronizing tools..."
 	@$(CMD_REMOVE) $(RELEASE_SDK)/tool/admin/
@@ -200,7 +203,7 @@ info-website:
 website: info-website exec-website-build
 
 exec-website-build:
-	@time ( cd component/standalone/website && $(CMD_GENERATOR) build,build-min ) || exit 1
+	@time ( cd component/standalone/website && $(CMD_GENERATOR) build,build-min,build-module-all,build-module-all-min ) || exit 1
 
 
 ################################################################################
@@ -449,6 +452,8 @@ build-components:
 		elif [ "$$COMPONENT" = "website" ]; then \
 			( cd component/standalone/$$COMPONENT && $(CMD_GENERATOR) build ) || exit 1; \
 			( cd component/standalone/$$COMPONENT && $(CMD_GENERATOR) build-min ) || exit 1; \
+			( cd component/standalone/$$COMPONENT && $(CMD_GENERATOR) build-module-all ) || exit 1; \
+			( cd component/standalone/$$COMPONENT && $(CMD_GENERATOR) build-module-all-min ) || exit 1; \
 			( cd component/standalone/$$COMPONENT && $(CMD_GENERATOR) api ) || exit 1; \
       ( cd component/standalone/$$COMPONENT && $(CMD_GENERATOR) test ) || exit 1; \
 		elif [ "$$COMPONENT" = "server" ]; then \
@@ -506,6 +511,22 @@ tutorials-build:
 	done; \
 	echo '</ul></body></html>' >> component/tutorials/index.html;
 
+tutorials-publish:
+	@echo "  * Syncing tutorials..."
+	@for TUTORIAL in $(TUTORIALS); do \
+		if [ "$$TUTORIAL" = "tweets" ]; then \
+			TUTDIR="component/tutorials/$$TUTORIAL"; \
+			for STEP in `ls $$TUTDIR`; do \
+				F="$$TUTDIR/$$STEP"; \
+				if [ -d $$F ]; then \
+					if [ "$$STEP" = "step4.5" ]; then \
+						echo "    - $$TUTORIAL $$STEP..."; \
+						$(CMD_SYNC_ONLINE) $$F/build/* $(STAGING_HOST):/var/www/qooxdoo/demo/$(FRAMEWORK_VERSION)/$${TUTORIAL}_$${STEP} || exit 1; \
+					fi; \
+				fi; \
+			done; \
+		fi; \
+	done;
 
 ################################################################################
 # RESOURCE TARGETS
@@ -616,6 +637,8 @@ publish-build-components:
 	@( cd component/standalone/website && $(CMD_GENERATOR) build ) || exit 1
 	@( cd component/standalone/website && $(CMD_GENERATOR) api ) || exit 1
 	@( cd component/standalone/website && $(CMD_GENERATOR) build-min ) || exit 1
+	@( cd component/standalone/website && $(CMD_GENERATOR) build-module-all ) || exit 1
+	@( cd component/standalone/website && $(CMD_GENERATOR) build-module-all-min ) || exit 1
 	@( cd component/standalone/website && $(CMD_GENERATOR) test ) || exit 1
 	@( cd component/standalone/server && $(CMD_GENERATOR) build ) || exit 1
 	@( cd component/standalone/server && $(CMD_GENERATOR) build-min ) || exit 1
@@ -660,6 +683,12 @@ check-components:
 			[ -s $$F ] || ( echo "Missing $$F; run 'make publish-build' first!"; exit 1 ); \
 			F="component/standalone/$$TARGET/script/q-$(FRAMEWORK_VERSION).min.js"; \
 			[ -s $$F ] || ( echo "Missing $$F; run 'make publish-build' first!"; exit 1 ); \
+			for MODULE in $(WEBSITE_MODULES); do \
+				F="component/standalone/$$TARGET/script/q-$$MODULE-$(FRAMEWORK_VERSION).js"; \
+				[ -s $$F ] || ( echo "Missing $$F; run 'make publish-build' first!"; exit 1 ); \
+				F="component/standalone/$$TARGET/script/q-$$MODULE-$(FRAMEWORK_VERSION).min.js"; \
+				[ -s $$F ] || ( echo "Missing $$F; run 'make publish-build' first!"; exit 1 ); \
+			done \
 		elif [ "$$TARGET" = "server" ]; then \
 			F="component/standalone/$$TARGET/script/qx-oo-$(FRAMEWORK_VERSION).min.js"; \
 			[ -s $$F ] || ( echo "Missing $$F; run 'make publish-build' first!"; exit 1 ); \
@@ -670,7 +699,13 @@ check-components:
 
 check-framework:
 	@for TARGET in $(FRAMEWORK_TARGETS); do \
-		F="framework/$$TARGET/script"; [ -d $$F ] || ( echo "Missing $$F; run 'make publish-build' first!"; exit 1 ); \
+		if [ "$$TARGET" = "dependencies" ]; then \
+			F="framework/source/script/dependencies.json"; \
+			[ -s $$F ] || ( echo "Missing $$F; run 'make publish-build' first!"; exit 1 ); \
+		else \
+			F="framework/$$TARGET/script"; \
+			[ -d $$F ] || ( echo "Missing $$F; run 'make publish-build' first!"; exit 1 ); \
+		fi; \
 	done
 
 publish-index:
@@ -735,8 +770,12 @@ publish-apps:
 			echo "    - $$COMPONENT..."; \
 			$(CMD_SYNC_ONLINE) component/standalone/$$COMPONENT/script/q-$(FRAMEWORK_VERSION).js $(STAGING_HOST):/var/www/qooxdoo/demo/$(FRAMEWORK_VERSION)/framework || exit 1; \
 			$(CMD_SYNC_ONLINE) component/standalone/$$COMPONENT/script/q-$(FRAMEWORK_VERSION).min.js $(STAGING_HOST):/var/www/qooxdoo/demo/$(FRAMEWORK_VERSION)/framework || exit 1; \
+			for MODULE in $(WEBSITE_MODULES); do \
+				$(CMD_SYNC_ONLINE) component/standalone/$$COMPONENT/script/q-$$MODULE-$(FRAMEWORK_VERSION).js $(STAGING_HOST):/var/www/qooxdoo/demo/$(FRAMEWORK_VERSION)/framework || exit 1; \
+				$(CMD_SYNC_ONLINE) component/standalone/$$COMPONENT/script/q-$$MODULE-$(FRAMEWORK_VERSION).min.js $(STAGING_HOST):/var/www/qooxdoo/demo/$(FRAMEWORK_VERSION)/framework || exit 1; \
+			done; \
 			$(CMD_SYNC_ONLINE) component/standalone/$$COMPONENT/api/* $(STAGING_HOST):/var/www/qooxdoo/demo/$(FRAMEWORK_VERSION)/$$COMPONENT-api || exit 1; \
-      $(CMD_SYNC_ONLINE) component/standalone/$$COMPONENT/test/* $(STAGING_HOST):/var/www/qooxdoo/demo/$(FRAMEWORK_VERSION)/$$COMPONENT-tests || exit 1; \
+			$(CMD_SYNC_ONLINE) component/standalone/$$COMPONENT/test/* $(STAGING_HOST):/var/www/qooxdoo/demo/$(FRAMEWORK_VERSION)/$$COMPONENT-tests || exit 1; \
 		elif [ "$$COMPONENT" = "server" ]; then \
 			$(CMD_SYNC_ONLINE) component/standalone/$$COMPONENT/script/qx-oo-$(FRAMEWORK_VERSION).js $(STAGING_HOST):/var/www/qooxdoo/demo/$(FRAMEWORK_VERSION)/framework || exit 1; \
 			$(CMD_SYNC_ONLINE) component/standalone/$$COMPONENT/script/qx-oo-$(FRAMEWORK_VERSION).min.js $(STAGING_HOST):/var/www/qooxdoo/demo/$(FRAMEWORK_VERSION)/framework || exit 1; \
@@ -751,7 +790,7 @@ publish-backup:
 	@echo "  * Backing up devel version on server; this will take some time..."
 	@ssh $(STAGING_HOST) "$(CMD_SYNC_BACKUP) /var/www/qooxdoo/demo/devel /var/www/qooxdoo/demo/0.0.devel_backlog/"
 
-publish-staging: publish-check publish-backup publish-index publish-apps resources-publish manual-publish
+publish-staging: publish-check publish-backup publish-index publish-apps tutorials-publish resources-publish manual-publish
 
 publish: publish-staging publish-production
 

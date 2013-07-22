@@ -23,7 +23,7 @@
 # AST checking, for unknown globals etc.
 ##
 
-import os, sys, re, types
+import os, sys, re, types, itertools
 from collections import defaultdict
 from ecmascript.frontend import treeutil, lang, Comment
 from ecmascript.frontend import tree, treegenerator
@@ -50,6 +50,8 @@ class LintChecker(treeutil.NodeVisitor):
         # we can run the basic scope checks as with function nodes
         if not self.opts.ignore_undefined_globals:
             self.unknown_globals(node.scope)
+        if not self.opts.ignore_shadowing_locals:
+            self.locals_shadowing_globals(node.scope)
         self.function_unused_vars(node)
         if not self.opts.ignore_deprecated_symbols:
             self.function_used_deprecated(node)
@@ -89,6 +91,8 @@ class LintChecker(treeutil.NodeVisitor):
         #print "visiting", node.type
         if not self.opts.ignore_undefined_globals:
             self.unknown_globals(node.scope)
+        if not self.opts.ignore_shadowing_locals:
+            self.locals_shadowing_globals(node.scope)
         self.function_unused_vars(node)  # self.opts are applied in the function
         if not self.opts.ignore_deprecated_symbols:
             self.function_used_deprecated(node)
@@ -131,6 +135,7 @@ class LintChecker(treeutil.NodeVisitor):
                         ok = self.is_name_lint_filtered(full_name, at_hints, "ignoreDeprecated")
                 if not ok:
                     issue = warn("Deprecated global symbol used: '%s'" % full_name, self.file_name, var_node)
+                    issue.name = full_name  # @deprecated {3.0} to filter against #ignore later
                     self.issues.append(issue)
 
     def unknown_globals(self, scope):
@@ -147,7 +152,7 @@ class LintChecker(treeutil.NodeVisitor):
             if key not in self.opts.allowed_globals])
         # - from known classes and namespaces
         global_nodes = dict([(key,nodes) for (key,nodes) in global_nodes.items()
-            if not extension_match_in(key, self.known_globals_bases,self.opts.class_namespaces)]) # known classes (classList + their namespaces)
+            if not extension_match_in(key, self.known_globals_bases, self.opts.class_namespaces)]) # known classes (classList + their namespaces)
         # - from built-ins
         new_keys = gs.globals_filter_by_builtins(global_nodes.keys())
         global_nodes = dict([(key,nodes) for (key,nodes) in global_nodes.items()
@@ -160,7 +165,30 @@ class LintChecker(treeutil.NodeVisitor):
         for key, nodes in global_nodes.items():
             for node in nodes:
                 issue = warn("Unknown global symbol used: '%s'" % key, self.file_name, node)
+                issue.name = key # @deprecated {3.0} to filter against #ignore later
                 self.issues.append(issue)
+
+
+    def locals_shadowing_globals(self, scope):
+        result = []
+        # collect scope's locals
+        local_nodes = dict(scope.locals().items())
+        # - match known top-level library symbols
+        known_qx_names = set([x.split('.')[0] for x in self.opts.library_classes]) # includes q, qxWeb
+        r = [key for key in local_nodes.keys() if key in known_qx_names]
+        result.extend(r)
+
+        # - match built-ins -- currently disabled
+        #free_names = gs.globals_filter_by_builtins(local_nodes.keys())
+        #r = [key for key in local_nodes.keys() if key not in free_names]
+        #result.extend(r)
+
+        # warn what we have
+        for key, scopeVar in local_nodes.items():
+            if key in result:
+                for node in scopeVar.occurrences():
+                    issue = warn("Local var shadowing a library symbol: '%s'" % key, self.file_name, node)
+                    self.issues.append(issue)
 
 
     def function_unused_vars(self, funcnode):
@@ -224,7 +252,7 @@ class LintChecker(treeutil.NodeVisitor):
         for id_, var_node in scope_node.vars.items():
             if self.multiple_var_decls(var_node):
                 issue = warn("Multiple declarations of variable: '%s' (%r)" % (
-                    id_, [n.get("line",-1) for n in var_node.decl]), self.file_name, None)
+                    id_, [n.get("line",-1) for n in var_node.decl]), self.file_name, var_node.decl[0])
                 self.issues.append(issue)
 
     def multiple_var_decls(self, scopeVar):
@@ -476,31 +504,27 @@ def warn(msg, fname, node):
 
 ##
 # Get the JSDoc comments in a nested dict structure
-def get_at_hints(node, at_hints=None):
-    if at_hints is None:
-        at_hints = defaultdict(dict)
-    commentsArray = Comment.parseNode(node, process_txt=False)  # searches comment "around" this node
-    for commentAttributes in commentsArray:
-        for entry in commentAttributes:
-             # {'arguments': ['a', 'b'],
-             #  'category': u'lint',
-             #  'functor': u'ignoreReferenceField',
-             #  'text': u'<p>ignoreReferenceField(a,b)</p>'
-             # }
-            cat = entry['category']
+def get_at_hints(node):
+    at_hints = defaultdict(dict)
+    for hint in jshints.find_hints_upward(node):
+        for cat in hint.hints:
+            entry = hint.hints[cat]
             if cat=='lint':
-                functor = entry['functor']
-                if functor not in at_hints[cat]:
-                    at_hints[cat][functor] = set()
-                at_hints[cat][functor].update(entry['arguments']) 
+                for functor in entry:
+                    if functor not in at_hints[cat]:
+                        at_hints[cat][functor] = set()
+                    # TODO: consumers are not yet prepared to handle HintArgument()s
+                    # use the next to raise a helpful exception
+                    # at_hints[cat][functor].update(entry[functor]) 
+                    s = set([x.source for x in entry[functor]])
+                    at_hints[cat][functor].update(s)
             elif cat=="ignore":
                 if cat not in at_hints:
                     at_hints[cat] = set()
-                at_hints[cat].update(entry['arguments'])
-    # include @hints of parent scopes
-    scope = scopes.find_enclosing(node)
-    if scope:
-        at_hints = get_at_hints(scope.node, at_hints)
+                # dito, s.above
+                s = set([x.source for x in entry[None]])
+                at_hints[cat].update(s)
+        
     return at_hints
 
 
@@ -520,6 +544,7 @@ def defaultOptions():
     opts.ignore_reference_fields = False
     opts.ignore_undeclared_privates = False
     opts.ignore_undefined_globals = False
+    opts.ignore_shadowing_locals = False
     opts.ignore_unused_parameter = True
     opts.ignore_unused_variables = False
     opts.warn_unknown_jsdoc_keys = False
@@ -544,8 +569,8 @@ def extension_match_in(name, name_list, name_spaces):
         for class_name in name_list:
             if (name.startswith(class_name) and 
                     re.search(r'^%s\b' % re.escape(class_name), name)): 
-                        # re.escape for e.g. the '$' in 'qx.$$'
-                        # '\b' so that 'mylib.Foo' doesn't match 'mylib.FooBar'
+                    # re.escape for e.g. the '$' in 'qx.$$'
+                    # '\b' so that 'mylib.Foo' doesn't match 'mylib.FooBar'
                 if len(class_name) > len(res_name): # take the longest match (?!)
                     res_name = class_name
                     ## compute the 'attribute' suffix

@@ -2,7 +2,7 @@
 
 Table
 *****
-The table package contains classes that allow you to build up virtual tables for showing data in a grid like view. 
+The table package contains classes that allow you to build up virtual tables for showing data in a grid like view.
 
 .. _pages/widget/table#preview_image:
 
@@ -27,19 +27,19 @@ Features
 --------
 
 ================================================ ======
-   Column Feature                                 Description 
+   Column Feature                                 Description
 ================================================ ======
-Display grid data                                 Takes an array containing an array for each row. The data in the row can be of almost any type. 
-                                                  
-Set custom header                                 Pre-built header renderer for icons and lables. Can be easily extended to supply a custom header cell renderer.
-                                                  
-Column sorting                                    Built-in sorting accesable to the user by a click on the table header.
-                                                  
+Display grid data                                 Takes an array containing an array for each row. The data in the row can be of almost any type.
+
+Set custom header                                 Pre-built header renderer for icons and labels. Can be easily extended to supply a custom header cell renderer.
+
+Column sorting                                    Built-in sorting accessible to the user by a click on the table header.
+
 Reorganizing of columns                           Columns can be reorganized by the user via Drag&Drop.
-                                                  
+
 Change the visibility of columns                  A special column visibility menu is included. It offers the user a way to show / hide single columns.
 
-Contet menu support                               The table supports content menus for each cell.
+Content menu support                               The table supports content menus for each cell.
 
 Meta Columns                                      You can define one or more column which have a separate scrolling if any. E.g. you could have the first column always visible, while the other columns scroll out of view.
 
@@ -47,11 +47,11 @@ Resizable columns                                 The user can resize each colum
 ================================================ ======
 
 ================================================ ======
-   Row Feature                                     
+   Row Feature
 ================================================ ======
 Render for different kinds of data types          Special renderer for boolean, dates, HTML content, numbers, passwords and strings.
 
-Conditional rendering for individual table cells  A conditional rendere is available which can render the data in different ways dependent on the content, like applying a red text colors to negative numbers.
+Conditional rendering for individual table cells  A conditional renderer is available which can render the data in different ways dependent on the content, like applying a red text colors to negative numbers.
 
 Row filtering                                     Filtering for specific data can be done with a filter method.
 
@@ -63,7 +63,7 @@ Highlight color for hovered row                   The currently hovered row can 
 
 
 ================================================ ======
-   General Feature                                 
+   General Feature
 ================================================ ======
 Capable of remote data gathering                  A remote data model can fetch data from the server. It fetches only the current visible data which means not the whole data needs to be transfered to the client on startup.
 
@@ -84,27 +84,27 @@ Examples
 
 Simple
 ^^^^^^
-The most simple table can be build in five lines of code, as you cen see in this example::
+The most simple table can be build in five lines of code, as you can see in this example::
 
     // table model
     var tableModel = new qx.ui.table.model.Simple();
     tableModel.setColumns(["ID", "A number"]);
     tableModel.setData([[1, 12.23],[3, 849759438750],[2, -2]]);
-    
+
     // table
     var table = new qx.ui.table.Table(tableModel);
     this.getRoot().add(table);
 
-One of the importat parts of the table is the table model. The first line creates a simple table model. In the second and third line, we configure the table model with some column names and data. With that model, we can create a table and add it to our application, as the example shows in the last two lines.
+One of the important parts of the table is the table model. The first line creates a simple table model. In the second and third line, we configure the table model with some column names and data. With that model, we can create a table and add it to our application, as the example shows in the last two lines.
 
 Editable Column
 ^^^^^^^^^^^^^^^
 
-Making for example the second column of our simple example editable can be done in one line:: 
+Making for example the second column of our simple example editable can be done in one line::
 
     // make second column editable
     tableModel.setColumnEditable(1, true);
-    
+
 The first parameter here is the column (column numbering starts with 0), and the second one is to change the editable state.
 
 Sorting

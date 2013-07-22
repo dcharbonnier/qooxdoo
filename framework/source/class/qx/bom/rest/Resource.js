@@ -131,6 +131,9 @@ qx.Bootstrap.define("qx.bom.rest.Resource",
    * <pre class="javascript">
    * { get: {method: "GET", url: "/photos/{id}", check: { id: /\d+/ }} }
    * </pre>
+   *
+   * @see qx.bom.rest
+   * @see qx.io.rest
    */
   construct: function(description)
   {
@@ -489,7 +492,7 @@ qx.Bootstrap.define("qx.bom.rest.Resource",
      * @param action {String} Action to invoke.
      * @param params {Map} Map of parameters inserted into URL when a matching
      *  positional parameter is found.
-     * @param data {Map|Array|String} Data to be send as part of the request.
+     * @param data {Map|String} Data to be send as part of the request.
      *  See {@link qx.bom.request.SimpleXhr#getRequestData}.
      *  See {@link qx.io.request.AbstractRequest#requestData}.
      * @return {Number} Id of the action's invocation.
@@ -604,8 +607,15 @@ qx.Bootstrap.define("qx.bom.rest.Resource",
      * @param data {Map} Data.
      */
     __configureRequest: function(req, config, data) {
-      req.setMethod(config.method);
       req.setUrl(config.url);
+
+      if (!req.setMethod && config.method !== "GET") {
+        throw new Error("Request (" + req.classname + ") doesn't support other HTTP methods than 'GET'");
+      }
+
+      if (req.setMethod) {
+        req.setMethod(config.method);
+      }
 
       if (data) {
         req.setRequestData(data);
@@ -623,7 +633,7 @@ qx.Bootstrap.define("qx.bom.rest.Resource",
       if (data) {
         var contentType = req.getRequestHeader("Content-Type");
 
-        if (qx.util.Request.methodAllowsRequestBody(req.getMethod())) {
+        if (req.getMethod && qx.util.Request.methodAllowsRequestBody(req.getMethod())) {
           if ((/application\/.*\+?json/).test(contentType)) {
             data = qx.lang.Json.stringify(data);
             req.setRequestData(data);

@@ -8,7 +8,8 @@ Generator Configuration File
 Overview
 ========
 
-The configuration file that drives the generator adheres to the `JSON specification <http://json.org/>`_. It has the following general structure:
+The configuration file that drives the generator adheres to the `JSON
+specification <http://json.org/>`_. It has the following general structure:
 
 ::
 
@@ -24,28 +25,27 @@ The configuration file that drives the generator adheres to the `JSON specificat
     }
   }
 
-The job names ``job1``, ..., ``jobN`` are freely chooseable names but must form a valid key. JavaScript-style comments (``/*...*/`` and ``//...``) are permissible but only in rather robust places, like after a comma or directly after opening or before closing parentheses, but e.g. not between a key and its value.
+The top-level keys ``name``, ``include`` and ``jobs`` are pre-defined, the only
+mandatory being *jobs*. Jobs are the core of each configuration file (much like
+targets in a Makefile). The job names ``job1``, ..., ``jobN`` are freely
+chooseable names but must form a valid key. JavaScript-style comments
+(``/*...*/`` and ``//...``) are allowed.
 
-Quick links:
-
-* :doc:`generator_config_ref`
-* :doc:`generator_config_macros`
-* :doc:`Configuration Detail Articles <generator_config_articles>`
-* :doc:`Implementation Background Information <generator_config_background>`
 
 .. _pages/tool/generator/generator_config#example:
 
 Example
 =======
 
-Here is an example of a minimal config file that defines a single job to create the source version of an application:
+Here is an example of a minimal config file that defines a single job to create
+the source version of an application:
 
 ::
 
   {
     "jobs" :
     {
-      "source" : 
+      "source" :
       {
         "let" :
         {
@@ -65,7 +65,7 @@ Here is an example of a minimal config file that defines a single job to create 
 
         "compile-options" :
         {
-          "paths" :  
+          "paths" :
             {
               "file" : "./source/script/${APPLICATION}.js"
             }
@@ -78,7 +78,7 @@ Here is an example of a minimal config file that defines a single job to create 
           "qx.log.Logger" : ["qx.log.appender.Native"]
         },
 
-        "environment" : 
+        "environment" :
         {
           "qx.application" : "${APPLICATION}.Application"
         },
@@ -96,16 +96,27 @@ Here is an example of a minimal config file that defines a single job to create 
 Syntax
 ======
 
-Apart from the general Json rules, you can place '=' in front of job and key names, to indicate that this feature should prevail as specified when configs get merged. See :ref:`here <pages/tool/generator/generator_config_articles#job_shadowing_and_partial_overriding>` for more details on that. The config system also allows the use of *macros*, details of which can be found :ref:`here <pages/tool/generator/generator_config_articles#let_key>`. If you use keys outside those listed here in your configuration, you will be warned about them, and they will be ignored in the processing.
+The basic syntax of the configuration files is JSON, but on top of that a
+`schema <https://github.com/qooxdoo/qooxdoo/blob/%{release_tag}/tool/data/config/config_schema.json>`__
+further restricts which keys and values can appear in which locations in the
+structure, see further for details. Additionally to the described keys you can
+place ``=`` in front of job and key names, to indicate that this feature should
+prevail as specified when configs get merged. See :ref:`a special section
+<pages/tool/generator/generator_config_articles#job_shadowing_and_partial_overriding>`
+for more details on that. The config system also allows the use of *macros*,
+details of which can again be found :ref:`in a dedicated section
+<pages/tool/generator/generator_config_articles#let_key>`. If you use keys
+outside those listed here in your configuration, you will be warned about them,
+and they will be ignored in the processing.
 
 .. _pages/tool/generator/generator_config#valid_job_keys:
 
 Valid Job Keys
 ==============
 
-The value of each job is a map where the keys are **not** freely chooseable, but are predefined. 
+As mentioned before jobs are the main contents in any configuration file. Each job has a name which is freely chooseable. Its value is a map where the keys are **not** freely chooseable, but are predefined.
 
-Keys can be grouped into several categories:
+Those job keys (i.e. keys used in a job definition) can be grouped into several categories:
 
 * ``structure-changing`` - Keys that influence the configuration itself, e.g. the contents or structure of jobs, the job queue, or the config file as a whole (e.g. *extend, include (top-level), run*).
 * ``actions`` - Keys that if present trigger a certain action in the generator, which usually results in some output (e.g. *compile, api, localize*).
@@ -119,42 +130,52 @@ First, here is an overview table, to list all possible keys in a job (if the key
   :widths: 30 70
 
   * - **Action Keys**
-    - **Description**                                                      
+    - **Description**
   * - api
-    - Triggers the generation of a custom Apiviewer application.               
+    - Triggers the generation of a custom Apiviewer application.
   * - clean-files
-    - Delete files and directories from the file system.                       
+    - Delete files and directories from the file system.
   * - collect-environment-info
-    - Prints various infos about the qooxdoo environment (version etc.)
+    - Prints various info about the qooxdoo environment (version etc.)
   * - combine-images
-    - Triggers creation of a combined image file that contains various images.  
+    - Triggers creation of a combined image file that contains various images.
   * - compile
-    - Triggers the generation of a source or build version of the app.                 
+    - Triggers the generation of a source or build version of the app.
   * - copy-files
-    - Triggers files/directories to be copied.                                 
+    - Triggers files/directories to be copied.
   * - copy-resources
-    - Triggers the copying of resources.                                       
+    - Triggers the copying of resources.
   * - fix-files
-    - Fix white space in source files.                                         
+    - Fix white space in source files.
   * - lint-check
-    - Check source code with a lint-like utility.                              
+    - Check source code with a lint-like utility.
   * - migrate-files
-    - Migrate source code to the current qooxdoo version.                      
+    - Migrate source code to the current qooxdoo version.
   * - pretty-print
-    - Format source files.                                                     
+    - Format source files.
   * - provider
     - Collects classes, resources and dependency info in a directory tree.
   * - shell
-    - Triggers the execution of one or more external command(s).                          
+    - Triggers the execution of one or more external command(s).
   * - simulate
     - Triggers the execution of a suite of integration tests.
   * - slice-images
-    - Triggers cutting images into regions.                                    
+    - Triggers cutting images into regions.
   * - translate
-    - Triggers updating of .po files.                                          
+    - Triggers updating of .po files.
+  * - validation-config
+    - Validate a configuration file.
+  * - validation-manifest
+    - Validate the Manifest.json.
+  * - watch-files
+    - Execute a job when some files change.
+  * - web-server
+    - Start a mini web-server to serve the current app.
+  * - web-server-config
+    - Generate a configuration snippet (e.g. for Apache), for the current app.
 
-  * - 
-    - 
+  * -
+    -
 
   * - **Structure-changing Keys**
     - **Description**
@@ -176,55 +197,57 @@ First, here is an overview table, to list all possible keys in a job (if the key
   * - run
     - Define a list of jobs to run.
 
-  * -  
-    -  
+  * -
+    -
 
   * - **Input/Output-setting Keys**
-    - **Description**                                      
+    - **Description**
+  * - add-css
+    - Include arbitrary CSS URIs to be loaded by the app.
   * - add-script
-    - Includes aritrary URIs to be loaded by the app.
+    - Includes arbitrary script URIs to be loaded by the app.
   * - asset-let
     - Defines macros that will be replaced in @asset hints.
   * - compile-options
-    - Various options that taylor the *compile* action.
+    - Various options that tailor the *compile* action.
   * - dependencies
-    - Fine-tune dependency processing.                         
+    - Fine-tune dependency processing.
   * - exclude
-    - Exclude classes from processing of the job.              
+    - Exclude classes from processing of the job.
   * - include
-    - Include classes to be processed in the job.              
+    - Include classes to be processed in the job.
   * - library
-    - Define libraries to be taken into account for this job.  
+    - Define libraries to be taken into account for this job.
   * - packages
-    - Define packages for this app.                            
+    - Define packages for this app.
   * - require
-    - Define prerequisite classes (load time).                 
+    - Define prerequisite classes (load time).
   * - environment
     - Define key:value pairs for the app.
   * - use
-    - Define prerequisite classes (run time).                  
+    - Define prerequisite classes (run time).
 
-  * -  
-    -  
+  * -
+    -
 
   * - **Runtime-setting Keys**
     - **Description**
   * - cache
-    - Define the path to the cache directory.  
+    - Define the path to the cache directory.
   * - config-warnings (experimental)
     - Suppress warnings relating to configuration.
   * - log
-    - Tailor log output options.               
+    - Tailor log output options.
 
-  * -  
-    -  
+  * -
+    -
 
   * - **Miscellaneous Keys**
-    - **Description**                               
+    - **Description**
   * - desc
-    - A descriptive string for the job.                 
+    - A descriptive string for the job.
   * - name (top-level)
-    - A descriptive string for the configuration file.  
+    - A descriptive string for the configuration file.
 
 .. _pages/tool/generator/generator_config#listing_of_keys_in_context:
 
@@ -243,13 +266,14 @@ This shows the complete possible contents of the top-level configuration map. Fu
 
 * :ref:`default-job <pages/tool/generator/generator_config_ref#default-job>` The name of a job to be run as default, i.e. when invoking the generator without job arguments.
 
-* :ref:`config-warnings <pages/tool/generator/generator_config_ref#config-warnings>` *(experimental)* Suppress warnings from configuration aspects which you know are ok.
+* :ref:`config-warnings <pages/tool/generator/generator_config_ref#config-warnings>` *(experimental)* Suppress warnings about configuration aspects which you know are ok.
 
 * :ref:`jobs <pages/tool/generator/generator_config_ref#jobs>` Map of jobs. Each key is the name of a job.
 
   * **<jobname>** Each job's value is a map describing the job. The describing map can have any number of the following keys:
 
-    * :ref:`add-script <pages/tool/generator/generator_config_ref#api>` A list of URIs that will be loaded first thing when the app starts.
+    * :ref:`add-css <pages/tool/generator/generator_config_ref#add-css>` A list of CSS URIs that will be loaded first thing before the app starts.
+    * :ref:`add-script <pages/tool/generator/generator_config_ref#add-script>` A list of URIs that will be loaded first thing before the app starts.
     * :ref:`api <pages/tool/generator/generator_config_ref#api>` Triggers the generation of a custom Apiviewer application.
     * :ref:`asset-let <pages/tool/generator/generator_config_ref#asset-let>` Defines macros that will be replaced in @asset hints in source files. (See special section on the :ref:`"asset-let" key <pages/tool/generator/generator_config_articles#asset-let_key>`).
     * :ref:`cache <pages/tool/generator/generator_config_ref#cache>` Define the path to cache directories, most importantly to the compile cache. (See special section on the :ref:`pages/tool/generator/generator_config_articles#cache_key` key).
@@ -281,6 +305,17 @@ This shows the complete possible contents of the top-level configuration map. Fu
     * :ref:`shell <pages/tool/generator/generator_config_ref#shell>` Triggers the execution of one or more external command(s).
     * :ref:`simulate <pages/tool/generator/generator_config_ref#simulate>` Triggers the execution of a GUI test (simulated interaction) suite.
     * :ref:`slice-images <pages/tool/generator/generator_config_ref#slice-images>` Triggers cutting images into regions.
-    * :ref:`translate <pages/tool/generator/generator_config_ref#translate>` Re-)generate .po files from source classes.
-    * :ref:`use <pages/tool/generator/generator_config_ref#use>` Define prerequisite classes needed at run time. Takes a map, where the keys are class names and the values lists of prerequisite classes.
+    * :ref:`translate <pages/tool/generator/generator_config_ref#translate>` (Re-)generate .po files from source classes.
+    * :ref:`pages/tool/generator/generator_config_ref#use` Define prerequisite classes needed at run time. Takes a map, where the keys are class names and the values lists of prerequisite classes.
+    * :ref:`pages/tool/generator/generator_config_ref#validation-config`
+      Validate a given configuration file against the configuration schema.
+    * :ref:`pages/tool/generator/generator_config_ref#validation-manifest`
+      Validate the Manifest.json against the manifest schema.
+    * :ref:`pages/tool/generator/generator_config_ref#watch-files` Execute an
+      action when some files on disk change.
+    * :ref:`pages/tool/generator/generator_config_ref#web-server` Start a simple
+      web server that serves the current application (default: source version).
+    * :ref:`pages/tool/generator/generator_config_ref#web-server-config`
+      Generate a small configuration file that can be used to export the current
+      application (source version) through a pre-installed web server, like Apache.
 

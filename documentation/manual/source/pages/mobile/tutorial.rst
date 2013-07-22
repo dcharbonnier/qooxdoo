@@ -7,6 +7,8 @@ In this tutorial you will learn how to create a simple tweets app with the `qoox
 
 `Twitter <http://twitter.com>`_ itself made its authorization scheme more complex, as it starts requiring OAuth even to read public tweets. For this basic tutorial it would be too complex to handle such advanced authorization. If your are interested in OAuth, check out how you could handle that in a qooxdoo app by looking at the `Github demo <http://demo.qooxdoo.org/%{version}/demobrowser/#data~Github.html>`_.
 
+We use a mock for the identica service to be sure this tutorial always works.
+
 The app that is to be created in this tutorial should display all
 tweets of a certain user. When a tweet is selected, the details of the
 tweet should be shown. You can find the code of the tutorial `here`_.
@@ -236,15 +238,17 @@ your mobile applications as well. Extend the ``members`` section of the
 ::
 
         __loadTweets : function() {
-          // Public identica Tweets API
-          var url = "http://identi.ca/api/statuses/user_timeline/" + this.getUsername() + ".json";
+          // Mocked Identica Tweets API
           // Create a new JSONP store instance with the given url
-          var store = new qx.data.store.Jsonp(url);
+          var self = this;
+          var url = "http://demo.qooxdoo.org/" + qx.core.Environment.get("qx.version") + "/tweets_step4.5/resource/tweets/service.js";
+
+          var store = new qx.data.store.Jsonp();
+          store.setCallbackName("callback");
+          store.setUrl(url);
+
           // Use data binding to bind the "model" property of the store to the "tweets" property
           store.bind("model", this, "tweets");
-          store.addListener("error", function(evt) {
-            // you can add error handling here, e.g. display a dialog or navigate back to the input page
-          }, this);
         }
 
 In the ``__loadTweets`` method we create a new `JSONP`_ store which will
@@ -317,9 +321,9 @@ the ``_initialize`` method:
     input.setRequired(true);
     form.add(input, "Username");
 
-    // Add the form to the content of the page, using the SinglePlaceholder to render
+    // Add the form to the content of the page, using the Single to render
     // the form.
-    this.getContent().add(new qx.ui.mobile.form.renderer.SinglePlaceholder(form));
+    this.getContent().add(new qx.ui.mobile.form.renderer.Single(form));
 
 First we add an instance of ``qx.ui.mobile.form.Title`` to the content
 of the page. To an instance of ``qx.ui.mobile.form.Form``, a
@@ -388,8 +392,7 @@ First we have to add the following ``_initialize`` method to the members section
             // set the data of the model
             item.setTitle(value.getText());
             // we use the dataFormat instance to format the data value of the identica API
-            item.setSubtitle(value.getUser().getName() + ", " 
-                + dateFormat.format(new Date(value.getCreated_at())));
+            item.setSubtitle(dateFormat.format(new Date(value.getCreated_at())));
             item.setImage(value.getUser().getProfile_image_url());
             // we have more data to display, show an arrow
             item.setShowArrow(true);

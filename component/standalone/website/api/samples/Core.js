@@ -1,20 +1,8 @@
 addSample("q", function() {
-  q("#myId"); // containing the element with the id 'myId'
-});
-
-addSample("q", function() {
-  q(".myClass"); // finds all elements with the class 'myClass'
-});
-
-addSample("q", function() {
-  q("li"); // finds all 'li' elements
-});
-
-addSample("q", function() {
-  q(":header"); // finds all header elements (h1 to h6)
-});
-
-addSample("q", function() {
+  q("#myId");         // containing the element with the id 'myId'
+  q(".myClass");      // finds all elements with the class 'myClass'
+  q("li");            // finds all 'li' elements
+  q(":header");       // finds all header elements (h1 to h6)
   q("#list :header"); // finds all header elements in the element with the id 'list'
 });
 
@@ -64,6 +52,31 @@ addSample("q.define", function() {
     }
   });
 });
+
+addSample("q.define", {javascript :function() {
+  // base class
+  var Dog = q.define({
+    members : {
+      bark : function() {
+        console.log("wuff");
+      }
+    }
+  });
+
+  // extended class
+  var Dachshund = q.define({
+    extend : Dog,
+    members : {
+      bark : function() {
+        this.base(arguments); // call 'bark' of Dog
+        console.log("wuuuuuuff");
+      }
+    }
+  });
+  // create an instance
+  var myDog = new Dachshund();
+  myDog.bark();
+}, executable: true});
 
 addSample(".concat", {
   html: ['<ul>',

@@ -10,7 +10,7 @@ The aim of the component is to facade all the browser differences concerning the
 Formatting across multiple paragraphs
 =====================================
 
-Every formatting infos like *underline*, *bold*, *text color*, *text size* etc. are transferred to the new paragraph. It is likely that the user expects to write on with the same configuration/modifications he applied to the former paragraph.
+Every formatting info like *underline*, *bold*, *text color*, *text size* etc. are transferred to the new paragraph. It is likely that the user expects to write on with the same configuration/modifications he applied to the former paragraph.
 
 .. _pages/ui_html_editing/paragraph_handling#alignment:
 
@@ -104,7 +104,7 @@ The following string is applied with the "insertHtml" command
 Phase 4: Cleanup
 """"""""""""""""
 
-* Gecko inserts a ``p`` element on his own even if we intercept. This element gets removed afterwards by selecting this paragragph and inserting an empty DIV element at the selection
+* Gecko inserts a ``p`` element on his own even if we intercept. This element gets removed afterwards by selecting this paragraph and inserting an empty DIV element at the selection
 * the ID of the empty ``span`` is removed (Gecko will remove an empty ``span`` then automatically)
 * if an empty paragraph is detected it will be removed to avoid rendering problems
 

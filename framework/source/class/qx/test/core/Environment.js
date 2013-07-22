@@ -363,6 +363,7 @@ qx.Class.define("qx.test.core.Environment",
       this.assertBoolean(qx.core.Environment.get("html.element.textcontent"));
       this.assertBoolean(qx.core.Environment.get("html.image.naturaldimensions"));
       this.assertBoolean(qx.core.Environment.get("html.history.state"));
+      this.assertString(qx.core.Environment.get("html.selection"));
     },
 
     testXml : function()
@@ -423,6 +424,7 @@ qx.Class.define("qx.test.core.Environment",
       this.assert(typeof radialGradient == "string" || radialGradient === null);
       this.assertBoolean(qx.core.Environment.get("css.gradient.legacywebkit"));
       this.assertBoolean(qx.core.Environment.get("css.alphaimageloaderneeded"));
+      this.assertBoolean(qx.core.Environment.get("css.pointerevents"));
     },
 
     testPhoneGap : function() {
@@ -432,7 +434,6 @@ qx.Class.define("qx.test.core.Environment",
 
     testEvent : function() {
       this.assertBoolean(qx.core.Environment.get("event.touch"));
-      this.assertBoolean(qx.core.Environment.get("event.pointer"));
       this.assertBoolean(qx.core.Environment.get("event.help"));
       this.assertBoolean(qx.core.Environment.get("event.hashchange"));
     },
@@ -502,10 +503,11 @@ qx.Class.define("qx.test.core.Environment",
     },
 
 
-    testAnimationAndTransform : function() {
+    testAnimationTransformTransition : function() {
       // smoke test... make sure the method is doing something
       qx.core.Environment.get("css.animation");
       qx.core.Environment.get("css.transform");
+      qx.core.Environment.get("css.transition");
 
       // 3d transform support
       this.assertBoolean(qx.core.Environment.get("css.transform.3d"));

@@ -147,8 +147,11 @@ qx.Class.define("apiviewer.ui.ClassViewer",
       },
 
       qxGitBranch : function(node) {
-        return qx.core.Environment.get("qx.revision") ?
-          qx.core.Environment.get("qx.revision").split(":")[1] : "master";
+        return qx.core.Environment.get("qx.revision") ? // e.g. "master:47ac02f"
+          qx.core.Environment.get("qx.revision").split(":")[1] :
+          qx.core.Environment.get("qx.version") ? // e.g. "2.1.2"
+            "release_" + qx.core.Environment.get("qx.version").replace(/\./g,"_") :
+            "master";
       }
     },
 
@@ -232,8 +235,8 @@ qx.Class.define("apiviewer.ui.ClassViewer",
      * Returns the source view URI for a doc node. This is determined by getting
      * the value for the "sourceViewUri" key from the library that contains the
      * item represented by the node. Placeholders of the form %{key} in the URI
-     * are then resolved by applying the rules defined in the
-     * @link{#SOURCE_VIEW_MACROS} map.
+     * are then resolved by applying the rules defined in the SOURCE_VIEW_MACROS
+     * map.
      *
      * @param node {apiviewer.dao.Node} the documentation node for the title
      * @return {String|null} Source view URI or <code>null</code> if it couldn't

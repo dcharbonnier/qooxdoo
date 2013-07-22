@@ -49,7 +49,7 @@ qx.Mixin.define("qx.ui.core.scroll.MWheelHandling",
 
       // y case
       if (scrollbarY) {
-        if (qx.core.Environment.get("event.touch") && qx.core.Environment.get("qx.emulatemouse")) {
+        if (qx.event.handler.MouseEmulation.ON) {
           scrollbarY.scrollBy(parseInt(deltaY));
         } else {
           var steps = parseInt(deltaY);
@@ -71,7 +71,7 @@ qx.Mixin.define("qx.ui.core.scroll.MWheelHandling",
 
       // x case
       if (scrollbarX) {
-        if (qx.core.Environment.get("event.touch") && qx.core.Environment.get("qx.emulatemouse")) {
+        if (qx.event.handler.MouseEmulation.ON) {
           scrollbarX.scrollBySteps(deltaX);
         } else {
           var steps = parseInt(deltaX);
@@ -90,7 +90,9 @@ qx.Mixin.define("qx.ui.core.scroll.MWheelHandling",
       }
 
       // pass the event to the parent if both scrollbars are at the end
-      if (!endY || !endX) {
+      if ((!endY && deltaX === 0) ||
+          (!endX && deltaY === 0) ||
+          ((!endX || !endY ) && deltaX !== 0 && deltaY !== 0)) {
         // Stop bubbling and native event only if a scrollbar is visible
         e.stop();
       }

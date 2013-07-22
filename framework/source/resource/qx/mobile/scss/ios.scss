@@ -5,6 +5,8 @@
 // iOS theme for qx.Mobile
 //
 
+$application-font: Helvetica;
+
 $ios-button-bordercolor: #2d3f57;
 $ios-button-backgroundcolor: #50709a;
 $ios-button-gradient-stop-1: #7c97bb;
@@ -21,7 +23,7 @@ $ios-button-active-gradient-stop-4: #3e5779;
 
 $shadow-color: black;
 
-$dialog-border-color: #c7d1e3;
+$dialog-border-color: #c7d1e3; 
 $button-border-color: #B4B4B4;
 
 // NavigationBar
@@ -59,15 +61,15 @@ $collapsible-active-arrow-color: white;
 @import "basic/selectbox";
 @import "basic/slider"; 
 @import "basic/spinner"; 
-@import "basic/togglebutton"; 
+@import "basic/togglebutton";
+@import "basic/radiobutton";
 @import "basic/toolbar";
 @import "basic/navigation";
 @import "basic/carousel";
 @import "basic/picker";
 
-@import "ios/radiobutton";
 @import "ios/main";
 @import "ios/navigationbar";
 @import "ios/tabbar";
 
-@import "color/ios"; 
+@import "ios/ios"; 

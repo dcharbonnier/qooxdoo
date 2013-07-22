@@ -51,7 +51,8 @@
     "QOOXDOO_PATH" : "${REL_QOOXDOO_PATH}",
     "LOCALES"      : [ "en" ],
     "CACHE"        : "${Cache}",
-    "MOBILE_THEME" : "ios",  // valid: "ios" | "android" | "custom"
+    "MOBILE_THEME" : "custom",  // valid: "ios" | "android" | "custom"
+    "MOBILE_THEME_PATH" : "$${APPLICATION_PATH}/css/$${MOBILE_THEME}.css",
     "CSS_COMB_URI" : "./resource/$${APPLICATION_PATH}/css/$${MOBILE_THEME}-style-min.css",
     "CSS_COMBINED" : "$${BUILD_PATH}/$${CSS_COMB_URI}",
     "ROOT"         : ".",
@@ -72,7 +73,7 @@
     ]
   },
 
-  // You only need to edit the remainder of this file, if you want to customize
+  // You only need to edit the reminder of this file, if you want to customize
   // specific jobs, or add own job definitions.
 
   "jobs" :
@@ -100,14 +101,9 @@
         "$${APPLICATION}.Application"
       ],
 
-      "asset-let" : {
-        "qx.mobile.platform" : [ "$${MOBILE_THEME}" ]
-      },
-
       "environment" :
       {
         "qx.mobile.emulatetouch" : true,
-        "qx.mobile.nativescroll" : false,
         "qx.theme" : "$${MOBILE_THEME}"
         /* Remove following inline comment if you want to optimize code for webkit browsers.
          Attention: if webkit engine optimization is enabled, mobile app will not be
@@ -120,7 +116,7 @@
     {
       "extend" : ["mobile-common"],
       "add-css" : [
-        { "uri" : "../$${QOOXDOO_PATH}/framework/source/resource/qx/mobile/css/$${MOBILE_THEME}.css" },
+        { "uri" : "./resource/$${MOBILE_THEME_PATH}" },
         { "uri" : "./resource/$${APPLICATION_CSS}" }
       ]
     },
@@ -129,26 +125,21 @@
     {
       "extend" : ["mobile-common"],
       "add-css" : [
-        { "uri" : "../$${QOOXDOO_PATH}/framework/source/resource/qx/mobile/css/$${MOBILE_THEME}.css" },
+        { "uri" : "./resource/$${MOBILE_THEME_PATH}" },
         { "uri" : "./resource/$${APPLICATION_CSS}" }
       ]
     },
 
-
     "build" :
     {
-      "asset-let" : {
-        "qx.mobile.platform" : [ "$${MOBILE_THEME}" ]
-      },
       "=run" : ["build-resources", "build-files", "build-script", "minify-css"]
     },
-
 
     "build-script" :
     {
       "extend" : ["mobile-common"],
       "add-css" : [
-        { "uri" : "./resource/qx/mobile/css/$${MOBILE_THEME}.css" },
+        { "uri" : "./resource/$${MOBILE_THEME_PATH}" },
         { "uri" : "./resource/$${APPLICATION_CSS}" }
       ]
     },
@@ -166,11 +157,8 @@
         "$${APPLICATION}.test.*",
         "$${APPLICATION}.simulation.*"
       ],
-      "asset-let" : {
-        "qx.mobile.platform" : [ "$${MOBILE_THEME}" ]
-      },
       "add-css" : [
-        { "uri" : "../$${QOOXDOO_PATH}/framework/source/resource/qx/mobile/css/$${MOBILE_THEME}.css" },
+        { "uri" : "./resource/$${MOBILE_THEME_PATH}" },
         { "uri" : "./resource/$${APPLICATION_CSS}" }
       ]
     },
@@ -188,7 +176,7 @@
       {
         "command" :
         [
-          "$${CATCMD} $${QOOXDOO_PATH}/framework/source/resource/qx/mobile/css/$${MOBILE_THEME}/$${MOBILE_THEME}.css $${ROOT}/source/resource/$${APPLICATION_CSS} | $${QOOXDOO_PATH}/tool/bin/cssmin.py > $${CSS_COMBINED}"
+          "$${CATCMD} $${ROOT}/source/resource/$${MOBILE_THEME_PATH} $${ROOT}/source/resource/$${APPLICATION_CSS} | $${QOOXDOO_PATH}/tool/bin/cssmin.py > $${CSS_COMBINED}"
         ]
       }
     },
@@ -208,10 +196,11 @@
         "command" :
         [
           "$${MKDIRCMD} $${BUILD_PATH}/resource/$${APPLICATION}/css",
-          "$${CATCMD} $${ROOT}/source/resource/$${APPLICATION_CSS} | $${CSSMIN_CMD} > $${BUILD_PATH}/resource/$${APPLICATION_CSS}"
+          "$${CATCMD} $${ROOT}/source/resource/$${MOBILE_THEME_PATH} $${ROOT}/source/resource/$${APPLICATION_CSS} | $${CSSMIN_CMD} > $${BUILD_PATH}/resource/$${APPLICATION_CSS}"
         ]
       }
     },
+
 
     "watch-scss" :
     {
@@ -222,7 +211,7 @@
         "paths"    : ["source/resource/$${APPLICATION_PATH}/scss"],
         "command" :
         {
-          "line"  : "$${PYTHON_CMD} $${QOOXDOO_PATH}/tool/bin/scss.py source/resource/$${APPLICATION_PATH}/scss/styles.scss -o source/resource/$${APPLICATION_PATH}/css/styles.css --load-path=source/resource/$${APPLICATION_PATH}/scss,$${QOOXDOO_PATH}/framework/source/resource/qx/mobile/scss",
+          "line"  : "$${PYTHON_CMD} $${QOOXDOO_PATH}/tool/bin/scss.py source/resource/$${APPLICATION_PATH}/scss/custom.scss -o source/resource/$${APPLICATION_PATH}/css/custom.css --load-path=source/resource/$${APPLICATION_PATH}/scss,$${QOOXDOO_PATH}/framework/source/resource/qx/mobile/scss",
           "exec-on-startup" : true,
           "per-file" : false
         }

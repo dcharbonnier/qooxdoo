@@ -866,12 +866,13 @@ qx.Class.define("qx.ui.table.pane.Scroller",
       } else if (delta < 0 && delta > -1) {
         delta = -1;
       }
-      if (qx.core.Environment.get("event.touch") && qx.core.Environment.get("qx.emulatemouse")) {
+      if (qx.event.handler.MouseEmulation.ON) {
         this.__verScrollBar.scrollBy(delta);
       } else {
         this.__verScrollBar.scrollBySteps(delta);
       }
 
+      var scrolled = delta != 0 && !this.__isAtEdge(this.__verScrollBar, delta);
 
       // horizontal scrolling
       delta = e.getWheelDelta("x");
@@ -881,7 +882,7 @@ qx.Class.define("qx.ui.table.pane.Scroller",
       } else if (delta < 0 && delta > -1) {
         delta = -1;
       }
-      if (qx.core.Environment.get("event.touch") && qx.core.Environment.get("qx.emulatemouse")) {
+      if (qx.event.handler.MouseEmulation.ON) {
         this.__horScrollBar.scrollBy(delta);
       } else {
         this.__horScrollBar.scrollBySteps(delta);
@@ -892,14 +893,24 @@ qx.Class.define("qx.ui.table.pane.Scroller",
         this._focusCellAtPagePos(this.__lastMousePageX, this.__lastMousePageY);
       }
 
-      var position = this.__verScrollBar.getPosition();
-      var max = this.__verScrollBar.getMaximum();
-      // pass the event to the parent if the scrollbar is at an edge
-      if (delta < 0 && position <= 0 || delta > 0 && position >= max) {
-        return;
-      }
+      scrolled = scrolled || (delta != 0 && !this.__isAtEdge(this.__horScrollBar, delta));
 
-      e.stop();
+      // pass the event to the parent if the scrollbar is at an edge
+      if (scrolled) {
+        e.stop();
+      }
+    },
+
+
+    /**
+     * Checks if the table has been scrolled.
+     * @param scrollBar {qx.ui.core.scroll.IScrollBar} The scrollbar to check
+     * @param delta {Number} The scroll delta.
+     * @return {Boolean} <code>true</code>, if the scrolling is a the edge
+     */
+    __isAtEdge : function(scrollBar, delta) {
+      var position = scrollBar.getPosition();
+      return (delta < 0 && position <= 0) || (delta > 0 && position >= scrollBar.getMaximum());
     },
 
 

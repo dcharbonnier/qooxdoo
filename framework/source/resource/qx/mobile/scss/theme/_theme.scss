@@ -20,7 +20,7 @@ body {
   color:  $application-text-color;
 }
 
-h2 {
+.form-title {
   color: $group-title-text-color;
   font-weight:normal;
   font-size:16px;
@@ -115,7 +115,7 @@ $scGradientVerticalOffset:15px;
 // INPUT FIELDS
 //
 
-input[type="text"]:not(.selectbox), input[type="password"], input[type="number"], textarea {
+.text-field:not(.selectbox), .password-field, .number-field, .text-area {
   border: $border-thickness solid $input-border-color;
   color:  $input-text-color;
   @include border-radius($input-border-radius);
@@ -125,11 +125,11 @@ input.invalid {
   border: $border-thickness solid $input-invalid-border-color !important;
 }
 
-input, textarea { 
+input, .text-area { 
   font-family: $application-font; 
 }
 
-.scroll-container textarea {
+.scroll-container .text-area {
   @include border-radius(0);
   border:2px solid transparent;
   background:none;
@@ -168,40 +168,37 @@ input, textarea {
 // LIST
 //
 
-ul {
+.list {
   @include border-radius($list-border-radius);
   border: $border-thickness solid $list-border-color;
-  background-color:$list-background-color;
+  background-color: $list-background-color;
 }
 
-ul li {
+.list .list-item {
   position:relative;
-  color:  $list-title-text-color;
+  color: $list-title-text-color;
+}
+
+.list-item + .list-item {
   border-top: $border-thickness solid $list-border-color;
 }
 
-li:first-child:not(.formRowGroupFirstItem), li:first-child a {
-  @include border-radius-top($list-border-radius);
-}
-
-li:last-child, li:last-child a {
+.list-item:last-child, .list-item:last-child a {
   @include border-radius-bottom($list-border-radius);
 }
 
-ul li .subtitle {
+.list .list-item .subtitle {
   color: $list-subtitle-text-color;
 }
 
-ul li.active * {
+.list .list-item.active * {
   color: $list-active-text-color;
 }
 
-ul li.arrow:after {
-  content:'';
+.list .list-item.arrow:after {
+  content:"";
   @include transform(rotate(45deg));
   @include transform-origin(50% 50%);
-
-  -webkit-font-smoothing: antialiased;
 
   border-top: $list-arrow-size solid $list-arrow-color;
   border-right: $list-arrow-size solid $list-arrow-color;
@@ -210,28 +207,36 @@ ul li.arrow:after {
   height: $list-arrow-size*2;
   position: absolute;
   right:15px;
-  
   top: 50%;
-  margin-top:-1.5*($list-arrow-size);
+  margin-top: -1.5*($list-arrow-size);
 }
 
-ul li.arrow.active:after {
+.list .list-item.arrow.active:after {
   border-color: $list-active-arrow-color;
 }
 
-ul li.active {
+.list .list-item.active {
   @include gradient-vertical(lighten($list-active-background-color, 20%), $list-active-background-color);
+}
+
+.list-item:first-child, .list-item:first-child a {
+  @include border-radius-top($list-border-radius);
+}
+
+.list-item:last-child, .list-item:last-child a {
+  @include border-radius-bottom($list-border-radius);
 }
 
 //
 // FORM RENDERING
 //
 
-.formSeparationRow {
-  background-color: $form-background-color;
+.form-separation-row {
+  background-color: $list-border-color;
+  height: 1px; 
 }
 
-.formRowGroupTitle {
+.form-row-group-title {
   color: $form-title-text-color;
   font-weight:normal;
   font-size:16px;
@@ -239,15 +244,15 @@ ul li.active {
   margin-bottom:10px;
   border:none;
   padding-bottom:0px;
-}
+} 
 
-.formRowContent, .formElementError{
+.form-row-content, .form-element-error {
   background-color: $form-background-color;
   border-left:1px solid $form-border-color;
   border-right:1px solid $form-border-color;
 }
 
-.formRowGroupFirstItem {
+.form-row-group-first {
   background-color: $form-background-color;
 
   border-left:1px solid $form-border-color;
@@ -261,7 +266,7 @@ ul li.active {
   top:2px;
 }
 
-.formRowGroupLastItem {
+.form-row-group-last {
   background-color: $form-background-color;
   border-top:0px transparent;
   border-left:1px solid $form-border-color;
@@ -275,8 +280,8 @@ ul li.active {
   top:-2px;
 }
 
-.formRowGroupTitle:nth-child(n+2) {
-   margin-top:20px;
+.form-row-group-title:nth-child(n+2) {
+  margin-top:20px;
 }
 
 //
@@ -494,46 +499,36 @@ $arrow-size: 12px;
 // CHECKBOX
 //
 
-.checkbox:before {
-  @include gradient-vertical (darken($checkbox-background-inner-color,10%), lighten($checkbox-background-inner-color,10%));
-
-  @include border-radius($checkbox-border-radius);
-}
-
 .checkbox {
   position:relative;
-  @include border-radius($checkbox-border-radius*3);
   border:$border-thickness solid $checkbox-border-color;
 
   box-sizing:border-box;
   background-color: #929292;
-
-  @include gradient-vertical(lighten($checkbox-background-color, 20%), darken($checkbox-background-color, 20%));
+  
+  @include border-radius($checkbox-border-radius * 3);
+  @include gradient-vertical($checkbox-background-color, $checkbox-background-color-2);
 }
 
 .checkbox:after {
+  display:inline-block;
   opacity: 0;
-  content:"";;
-  position: absolute;
-  width: 11px;
-  height: 6px;
+  content:"";
+  width: 14px;
+  height: 8px; 
   background: 
   transparent;
-  top: 8px;
-  left: 8px;
-  border: 3.5px solid lighten($checkbox-tick-color,10%);
+  border: 4.5px solid $checkbox-tick-color;
+  margin-top: 6px;
   border-top: 0;
   border-right: 0;
 
-  -webkit-font-smoothing: antialiased;
-
   @include transform(rotate(-45deg));
-  @include box-shadow(-1px 1px 1px 0px $checkbox-tick-color);
+  @include box-shadow(-1px 1px 1px 0px rgba(0,0,0,0.3));
 }
 
-
 .checkbox.checked:after {
-    opacity: 1;
+  opacity: 1;
 }
 
 //
@@ -541,38 +536,16 @@ $arrow-size: 12px;
 //
 
 // Border style
-input[type=radio] + label {
-  @include gradient-vertical(lighten($radiobutton-background-color, 20%), darken($radiobutton-background-color, 20%));
-
+.radio {
+  @include gradient-vertical($radiobutton-background-color,$radiobutton-background-color-2);
   border: $border-thickness solid $radiobutton-border-color;
   box-sizing:border-box;
-
-  width: 30px;
-  height: 30px;
 }
-
-
-// Inner Area
-input[type=radio]+ label:before {
-  -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.5), 0px 1px 0px rgba(255,255,255,1);
-  -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.5), 0px 1px 0px rgba(255,255,255,1);
-  box-shadow: inset 0px 1px 1px rgba(0,0,0,0.5), 0px 1px 0px rgba(255,255,255,1);
-
-  @include gradient-vertical (darken($radiobutton-background-inner-color,10%), lighten($radiobutton-background-inner-color,10%));
-}
-
 
 // Color dot
-input[type=radio] + label:after {
+.radio.checked:after {
   background: $radiobutton-dot-color; 
-
-  $dot-dark-color: darken($radiobutton-dot-color, 10%);
-
-  @include gradient-vertical ($radiobutton-dot-color,$dot-dark-color);
-
-  -webkit-box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0,0,0,0.5);
-  -moz-box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0,0,0,0.5);
-  box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0,0,0,0.5);
+  @include box-shadow(1px 1px 1px 0px rgba(0,0,0,0.3));
 }
 
 // 
@@ -618,7 +591,7 @@ input[type=radio] + label:after {
 //
 
 .item-selected {
-  color:  $menu-item-selected-text-color;
+  color: $menu-item-selected-text-color !important;
   @include gradient-vertical(lighten($menu-item-selected-background-color, 20%), $menu-item-selected-background-color);
 }
 
@@ -627,17 +600,15 @@ input[type=radio] + label:after {
 //
 
 .selectbox {
-  color: $selectbox-text-color;
-
+  @include border-radius($selectbox-border-radius); 
   @include gradient-vertical(lighten($selectbox-background-color, 20%), darken($selectbox-background-color, 20%));
   border: $border-thickness solid $selectbox-border-color;
-
-  @include border-radius($selectbox-border-radius); 
+  color: $selectbox-text-color;
 }
 
 .selectbox:active {
-  color:  $selectbox-active-text-color;
   @include gradient-vertical(lighten($selectbox-active-background-color, 20%),$selectbox-active-background-color);
+  color: $selectbox-active-text-color;
 }
 
 // Tick
@@ -646,8 +617,8 @@ input[type=radio] + label:after {
 }
 
 .selectbox-selected {
-  color:$selectbox-item-selected-text-color;
-  @include gradient-vertical(lighten($selectbox-item-selected-background-color, 20%),$selectbox-item-selected-background-color);
+  @include gradient-vertical(lighten($list-active-background-color, 20%), $list-active-background-color);
+  color: $selectbox-item-selected-text-color !important;
 }
 
 //
@@ -686,38 +657,34 @@ $pagination-label-size:8px;
 
 .picker-container {
   background-color: $picker-spinning-wheel-background-color;
+  @include border-radius($picker-spinning-wheel-border-radius);
+}
+
+.picker-slot {
+  @include border-radius($picker-spinning-wheel-border-radius);
 }
 
 .picker-label {
   color:  $picker-spinning-wheel-text-color;
 }
 
-.picker-slot:before {
-  background-color: #888888;
-}
-
 .picker-slot:after {
-  background-color: #888888;
+  background-color: $picker-spinning-wheel-divider-color;
 }
 
 // Spinning Wheel Overlay Gradient
 .picker-container:after {
-  @include gradient-vertical-four(rgba(0,0,0,0.6),rgba(255, 255, 255, 0),rgba(255, 255, 255, 0),rgba(0,0,0,0.6),33%,66%);
+  @include border-radius($picker-spinning-wheel-border-radius);
+  @include gradient-vertical-four($picker-spinning-wheel-overlay-color-1,$picker-spinning-wheel-overlay-color-2,$picker-spinning-wheel-overlay-color-2,$picker-spinning-wheel-overlay-color-1,40%,60%);
 }
 
 // Selected Area Overlay
 .picker-container:before {
-  top: 32px;
-  height: 15px; 
+  top: 35px;
+  height: 23px; 
 
-  background-color:lighten($picker-highlight-color,15%);
-  
-  @include box-shadow(0px 2px 2px rgba(0, 0, 0, 1.0));
-
-  border-top:1px solid black;
-  border-bottom:15px solid $picker-highlight-color;
-
-  opacity:0.4;
+  border-top: 2px solid $picker-highlight-color;
+  border-bottom: 2px solid $picker-highlight-color;
 }
 
 //
@@ -757,7 +724,7 @@ $pagination-label-size:8px;
 }
 
 .drawer.below.left:before, .drawer.below.right:before, .drawer.below.top:before, .drawer.below.bottom:before {
-  content:'';
+  content:"";
   width:100%;
   height:100%;
   position:absolute;
@@ -769,6 +736,3 @@ $pagination-label-size:8px;
   
   @include box-inset-shadow(0px 0px 10px 5px $shadow-color);
 }
-
-
-

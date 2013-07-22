@@ -51,8 +51,8 @@ q.ready(function() {
   });
 
   // load API data of q
-  q.io.xhr("script/qxWeb.json").send().on("loadend", function(xhr) {
-    if (xhr.readyState == 4 && xhr.status >= 200 && xhr.status < 400) {
+  q.io.xhr("script/qxWeb.json").on("loadend", function(xhr) {
+    var handleSuccess = function() {
       var ast = JSON.parse(xhr.responseText);
 
       // constructor
@@ -67,9 +67,13 @@ q.ready(function() {
       loadPolyfills();
       onContentReady();
       attachOnScroll();
+
       if (location.hash) {
         location.href = location.href;
         __lastHashChange = Date.now();
+        // [BUG #7518] initial scroll to hash (again) on first page load
+        // cause sample loading screwed scroll position slightly up
+        fixScrollPosition();
       }
       else {
         // force a scroll event so the topmost module's samples are loaded
@@ -81,14 +85,27 @@ q.ready(function() {
           }
         }, 100);
       }
+    };
 
+    var isFileProtocol = function() {
+      return (location.protocol.indexOf("file") === 0);
+    };
+
+    if (xhr.readyState == 4 && xhr.status >= 200 && xhr.status < 400) {
+      if (q.env.get("engine.name") == "mshtml" && isFileProtocol()) {
+        // postpone data processing in IE when using file protocol
+        // to prevent rendering no module doc at all
+        window.setTimeout(handleSuccess, 0);
+      } else {
+        handleSuccess();
+      }
     } else {
       q("#warning").setStyle("display", "block");
-      if (location.protocol.indexOf("file") == 0) {
+      if (isFileProtocol()) {
         q("#warning em").setHtml("File protocol not supported. Please load the application via HTTP.");
       }
     }
-  });
+  }).send();
 
   var __lastHashChange = null;
   q(window).on("hashchange", function(ev) {
@@ -101,7 +118,7 @@ q.ready(function() {
       norm = norm.split(",");
       norm.forEach(function(name) {
         loading++;
-        q.io.xhr("script/" + name + ".json").send().on("loadend", function(xhr) {
+        q.io.xhr("script/" + name + ".json").on("loadend", function(xhr) {
           loading--;
           if (xhr.readyState == 4 && xhr.status >= 200 && xhr.status < 400) {
             var ast = JSON.parse(xhr.responseText);
@@ -110,7 +127,7 @@ q.ready(function() {
             console && console.warn("Event normalization '" + name + "' could not be loaded.");
           }
           onContentReady();
-        });
+        }).send();
       });
     }
   };
@@ -138,7 +155,7 @@ q.ready(function() {
     polyfillClasses = Object.keys(q.$$qx.lang.normalize);
     for (var clazz in q.$$qx.lang.normalize) {
       loading++;
-      q.io.xhr("script/qx.lang.normalize." + clazz + ".json").send().on("loadend", function(xhr) {
+      q.io.xhr("script/qx.lang.normalize." + clazz + ".json").on("loadend", function(xhr) {
         loading--;
         if (xhr.readyState == 4 && xhr.status >= 200 && xhr.status < 400) {
           var ast = JSON.parse(xhr.responseText);
@@ -147,7 +164,7 @@ q.ready(function() {
           console && console.warn("Polyfill '" + clazz + "' could not be loaded.");
         }
         onContentReady();
-      });
+      }).send();
     }
   };
 
@@ -178,7 +195,7 @@ q.ready(function() {
 
     loadedClasses.push(name);
     loading++;
-    q.io.xhr("script/" + name + ".json").send().on("loadend", function(xhr) {
+    q.io.xhr("script/" + name + ".json").on("loadend", function(xhr) {
       loading--;
       if (xhr.readyState == 4 && xhr.status >= 200 && xhr.status < 400) {
         var ast = JSON.parse(xhr.responseText);
@@ -190,7 +207,7 @@ q.ready(function() {
         );
       }
       onContentReady();
-    });
+    }).send();
   };
 
 
@@ -331,54 +348,56 @@ q.ready(function() {
   };
 
 
-   var renderModule = function(name, data, prefix) {
-     // render module desc
-     var module = q.create("<div class='module'>").appendTo("#content");
-     module.append(q.create("<h1 id='" + name + "'>" + name + "</h1>"));
+  var renderModule = function(name, data, prefix) {
+    // render module desc
+    var module = q.create("<div class='module'>").appendTo("#content");
+    module.append(q.create("<h1 id='" + name + "'>" + name + "</h1>"));
 
-     if (data.superclass) {
-       var newName = data.superclass.split(".");
-       newName = newName[newName.length -1];
-       module.append(q.create(
-         "<div class='extends'><h2>Extends</h2>" +
-         "<a href='#" + newName + "'>" + newName + "</a>" +
-         "</div>"
-       ));
-     }
+    if (data.superclass) {
+      var newName = data.superclass.split(".");
+      newName = newName[newName.length -1];
+      var superClass = IGNORE_TYPES.indexOf(newName) == -1 ?
+        "<a href='#" + newName + "'>" + newName + "</a>" : newName;
+      module.append(q.create(
+        "<div class='extends'><h2>Extends</h2>" +
+        superClass +
+        "</div>"
+      ));
+    }
 
-     if (data.fileName) {
-       addClassDoc(data.fileName, module);
-     } else if (data.desc) {
-       module.append(parse(data.desc));
-     } else if (name == "Core") {
-       module.append(parse(desc));
-     }
+    if (data.fileName) {
+      addClassDoc(data.fileName, module);
+    } else if (data.desc) {
+      module.append(parse(data.desc));
+    } else if (name == "Core") {
+      module.append(parse(desc));
+    }
 
-     if (data.events) {
-       var eventsEl = renderEvents(data.events);
-       if (eventsEl) {
-         module.append(eventsEl);
-       }
-     }
+    if (data.events) {
+      var eventsEl = renderEvents(data.events);
+      if (eventsEl) {
+        module.append(eventsEl);
+      }
+    }
 
-     if (data.types) {
-       var types = JSON.parse(data.types);
-       for (var i=0; i < types.length; i++) {
-         if (types[i] == "*") {
-           types[i] = "all";
-         }
-       }
-       var typesEl = renderTypes(types);
-       module.append(typesEl);
-     }
+    if (data.types) {
+      var types = JSON.parse(data.types);
+      for (var i=0; i < types.length; i++) {
+        if (types[i] == "*") {
+          types[i] = "all";
+        }
+      }
+      var typesEl = renderTypes(types);
+      module.append(typesEl);
+    }
 
-     data["static"].forEach(function(method) {
-       module.append(renderMethod(method, prefix));
-     });
-     data["member"].forEach(function(method) {
-       module.append(renderMethod(method, prefix));
-     });
-   };
+    data["static"].forEach(function(method) {
+      module.append(renderMethod(method, prefix));
+    });
+    data["member"].forEach(function(method) {
+      module.append(renderMethod(method, prefix));
+    });
+  };
 
 
   var renderMethod = function(method, prefix) {
@@ -459,7 +478,7 @@ q.ready(function() {
       return;
     }
     loading++;
-    q.io.xhr("script/" + name + ".json").send().on("loadend", function(xhr) {
+    q.io.xhr("script/" + name + ".json").on("loadend", function(xhr) {
       loading--;
       if (xhr.readyState == 4 && xhr.status >= 200 && xhr.status < 400) {
         var ast = JSON.parse(xhr.responseText);
@@ -485,7 +504,7 @@ q.ready(function() {
         );
       }
       onContentReady();
-    });
+    }).send();
   };
 
 
@@ -618,6 +637,23 @@ q.ready(function() {
     if (useHighlighter) {
       q('pre').forEach(function(el) {hljs.highlightBlock(el);});
     }
+
+    fixInternalLinks();
+  };
+
+  // replace links to qx classes with internal targets, e.g.
+  // #qx.bom.rest.Resource -> #Resource
+  var fixInternalLinks = function() {
+    q("a").forEach(function(lnk) {
+      var href = lnk.getAttribute("href");
+      if (href.indexOf("#qx") === 0) {
+        var target = href.substr(1);
+        var tmp = href.split(".");
+        href = "#" + tmp[tmp.length - 1];
+        lnk.setAttribute("href", href);
+        lnk.innerHTML = lnk.innerHTML.replace(target, href.substr(1));
+      }
+    });
   };
 
   // load sample code as modules are scrolled into view
@@ -743,12 +779,14 @@ q.ready(function() {
     } else if (IGNORE_TYPES.indexOf(type) == -1) {
       var name = type.split(".");
       name = name[name.length -1];
-      return "<a href='#" + name + "'>" + name + "</a>";
+      if (IGNORE_TYPES.indexOf(name) == -1) {
+        return "<a href='#" + name + "'>" + name + "</a>";
+      }
     }
     return type;
   };
 
-  var IGNORE_TYPES = ["qxWeb", "var", "null"];
+  var IGNORE_TYPES = ["qxWeb", "var", "null", "Emitter"];
 
   var MDC_LINKS = {
     "Event" : "https://developer.mozilla.org/en/DOM/event",
@@ -872,7 +910,9 @@ q.ready(function() {
 
     addMethodLinks(jsEl, header.getParents().getAttribute("id"));
 
-    if (useHighlighter && sample.executable) {
+    if (useHighlighter && sample.executable &&
+      q.env.get("engine.name") != "mshtml")
+    {
       createFiddleButton(sample).appendTo(sampleEl);
     }
 
@@ -929,7 +969,8 @@ q.ready(function() {
           var method = q("#" + methodName.replace(/\./g, "\\.").replace(/\$/g, "\\$"));
           if (method.length > 0) {
             var codeEl = q(jsEl).find("code")[0];
-            codeEl.innerHTML = codeEl.innerHTML.replace(new RegExp(methodName + '\\b'),
+            var escapedMethod = methodName.replace(".", "\\.");
+            codeEl.innerHTML = codeEl.innerHTML.replace(new RegExp(escapedMethod + '\\b'),
               '<a href="#' + methodName + '">' + methodName + '</a>');
           }
         }

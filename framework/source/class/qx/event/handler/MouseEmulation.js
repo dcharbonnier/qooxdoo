@@ -49,8 +49,9 @@ qx.Class.define("qx.event.handler.MouseEmulation",
     this.__root = this.__window.document;
 
     // Initialize observers
-    if (qx.core.Environment.get("qx.emulatemouse")) {
+    if (qx.event.handler.MouseEmulation.ON) {
       this._initObserver();
+      document.documentElement.style.msTouchAction = "none";
     }
   },
 
@@ -66,14 +67,21 @@ qx.Class.define("qx.event.handler.MouseEmulation",
       mousedown : 1,
       mouseup : 1,
       mousemove : 1,
-      click : 1
+      click : 1,
+      contextmenu : 1
     },
 
     /** @type {Integer} Which target check to use */
     TARGET_CHECK : qx.event.IEventHandler.TARGET_DOMNODE + qx.event.IEventHandler.TARGET_DOCUMENT + qx.event.IEventHandler.TARGET_WINDOW,
 
     /** @type {Integer} Whether the method "canHandleEvent" must be called */
-    IGNORE_CAN_HANDLE : true
+    IGNORE_CAN_HANDLE : true,
+
+
+    /** @type {Boolean} Flag which indicates if the mouse emulation should be on */
+    ON : qx.core.Environment.get("qx.emulatemouse") &&
+         ((qx.core.Environment.get("event.mspointer") && qx.core.Environment.get("device.touch")) ||
+         (qx.core.Environment.get("event.touch") && qx.core.Environment.get("os.name") !== "win"))
   },
 
 
@@ -214,6 +222,9 @@ qx.Class.define("qx.event.handler.MouseEmulation",
       qx.event.Registration.addListener(this.__root, "touchmove", this.__onTouchMove, this);
       qx.event.Registration.addListener(this.__root, "touchend", this.__onTouchEnd, this);
       qx.event.Registration.addListener(this.__root, "tap", this.__onTap, this);
+      qx.event.Registration.addListener(this.__root, "longtap", this.__onLongTap, this);
+
+      qx.bom.Event.addNativeListener(this.__window, "touchstart", this.__stopScrolling);
     },
 
 
@@ -225,6 +236,19 @@ qx.Class.define("qx.event.handler.MouseEmulation",
       qx.event.Registration.removeListener(this.__root, "touchmove", this.__onTouchMove, this);
       qx.event.Registration.removeListener(this.__root, "touchend", this.__onTouchEnd, this);
       qx.event.Registration.removeListener(this.__root, "tap", this.__onTap, this);
+      qx.event.Registration.removeListener(this.__root, "longtap", this.__onLongTap, this);
+
+      qx.bom.Event.removeNativeListener(this.__window, "touchstart", this.__stopScrolling);
+    },
+
+
+    /**
+     * Handler for the native 'touchstart' on the window which prevents
+     * the native page scrolling.
+     * @param e {qx.event.type.Touch} The qooxdoo touch event.
+     */
+    __stopScrolling : function(e) {
+      e.preventDefault();
     },
 
 
@@ -235,8 +259,11 @@ qx.Class.define("qx.event.handler.MouseEmulation",
     __onTouchStart : function(e) {
       var target = e.getTarget();
       var nativeEvent = this.__getDefaultFakeEvent(target, e.getAllTouches()[0]);
-      if (!this.__fireEvent(nativeEvent, "mousedown", target)) {
-        e.preventDefault();
+      // do not fake mousedown on IE (Mouse Handler can take original event)
+      if (qx.core.Environment.get("event.touch")) {
+        if (!this.__fireEvent(nativeEvent, "mousedown", target)) {
+          e.preventDefault();
+        }
       }
       this.__lastPos = {x: nativeEvent.screenX, y: nativeEvent.screenY};
       this.__startPos = {x: nativeEvent.screenX, y: nativeEvent.screenY};
@@ -251,8 +278,12 @@ qx.Class.define("qx.event.handler.MouseEmulation",
     __onTouchMove : function(e) {
       var target = e.getTarget();
       var nativeEvent = this.__getDefaultFakeEvent(target, e.getChangedTargetTouches()[0]);
-      if (!this.__fireEvent(nativeEvent, "mousemove", target)) {
-        e.preventDefault();
+
+      // do not fake mousemove on IE (Mouse Handler can take original event)
+      if (qx.core.Environment.get("event.touch")) {
+        if (!this.__fireEvent(nativeEvent, "mousemove", target)) {
+          e.preventDefault();
+        }
       }
 
       // calculate the delta for the wheel event
@@ -262,20 +293,24 @@ qx.Class.define("qx.event.handler.MouseEmulation",
       // take a new position. wheel events require the delta to the last event
       this.__lastPos = {x: nativeEvent.screenX, y: nativeEvent.screenY};
 
-      var finger = e.getChangedTargetTouches()[0];
-      this.__fireWheelEvent(deltaX, deltaY, finger, target);
+      // only react on touch events
+      // http://www.w3.org/Submission/pointer-events/#pointerevent-interface
+      if (e.getNativeEvent().pointerType != 4) {
+        var finger = e.getChangedTargetTouches()[0];
+        this.__fireWheelEvent(deltaX, deltaY, finger, target);
 
-      // if we have an old timeout for the current direction, clear it
-      if (this.__impulseTimerId) {
-        clearTimeout(this.__impulseTimerId);
-        this.__impulseTimerId = null;
+        // if we have an old timeout for the current direction, clear it
+        if (this.__impulseTimerId) {
+          clearTimeout(this.__impulseTimerId);
+          this.__impulseTimerId = null;
+        }
+
+        // set up a new timer for the current direction
+        this.__impulseTimerId =
+          setTimeout(qx.lang.Function.bind(function(deltaX, deltaY, finger, target) {
+            this.__handleScrollImpulse(deltaX, deltaY, finger, target);
+          }, this, deltaX, deltaY, finger, target), 100);
       }
-
-      // set up a new timer for the current direction
-      this.__impulseTimerId =
-        setTimeout(qx.lang.Function.bind(function(deltaX, deltaY, finger, target) {
-          this.__handleScrollImpulse(deltaX, deltaY, finger, target);
-        }, this, deltaX, deltaY, finger, target), 100);
     },
 
 
@@ -287,8 +322,11 @@ qx.Class.define("qx.event.handler.MouseEmulation",
       var target = e.getTarget();
       var nativeEvent = this.__getDefaultFakeEvent(target, e.getChangedTargetTouches()[0]);
 
-      if (!this.__fireEvent(nativeEvent, "mouseup", target)) {
-        e.preventDefault();
+      // do not fake mouseup on IE (Mouse Handler can take original event)
+      if (qx.core.Environment.get("event.touch")) {
+        if (!this.__fireEvent(nativeEvent, "mouseup", target)) {
+          e.preventDefault();
+        }
       }
     },
 
@@ -304,6 +342,18 @@ qx.Class.define("qx.event.handler.MouseEmulation",
       if (!this.__hasMoved(nativeEvent)) {
         this.__fireEvent(nativeEvent, "click", target);
       }
+    },
+
+
+    /**
+     * Handler for 'longtap' which converts the longtap event to a contextmenu event.
+     * @param e {qx.event.type.Touch} The qooxdoo touch event.
+     */
+    __onLongTap : function(e) {
+      var target = e.getTarget();
+      var nativeEvent = this.__getDefaultFakeEvent(target, e.getChangedTargetTouches()[0]);
+
+      this.__fireEvent(nativeEvent, "contextmenu", target);
     },
 
 
@@ -344,7 +394,7 @@ qx.Class.define("qx.event.handler.MouseEmulation",
 
   destruct : function()
   {
-    if (qx.core.Environment.get("qx.emulatemouse")) {
+    if (qx.event.handler.MouseEmulation.ON) {
       this._stopObserver();
     }
 
@@ -354,7 +404,7 @@ qx.Class.define("qx.event.handler.MouseEmulation",
 
 
   defer : function(statics) {
-    if (qx.core.Environment.get("qx.emulatemouse")) {
+    if (statics.ON) {
       qx.event.Registration.addHandler(statics);
     }
   }

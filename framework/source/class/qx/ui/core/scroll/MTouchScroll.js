@@ -20,14 +20,14 @@
 
 /**
  * This mixin provides scrolling for scroller widgets.
- * @deprecated{2.2} This mixin is deprecated in favor of the environment setting "qx.emulatemouse".
+ * @deprecated {3.0} This mixin is deprecated in favor of the environment setting "qx.emulatemouse".
  */
 qx.Mixin.define("qx.ui.core.scroll.MTouchScroll",
 {
   construct : function()
   {
     // only apply the deprecated features if the new emulate mouse is disabled.
-    if (!qx.core.Environment.get("qx.emulatemouse")) {
+    if (!qx.event.handler.MouseEmulation.ON) {
       // touch move listener for touch scrolling
       this.addListener("touchmove", this._onTouchMove, this);
 
@@ -59,7 +59,7 @@ qx.Mixin.define("qx.ui.core.scroll.MTouchScroll",
 
     /**
      * Returns true if touch momentum is currently on progress.
-     * @deprecated{2.2} This mixin is deprecated in favor of the environment setting "qx.emulatemouse".
+     * @deprecated {3.0} This mixin is deprecated in favor of the environment setting "qx.emulatemouse".
      * @return {Boolean} true if in momentum
      */
     inTouchMomentum : function()

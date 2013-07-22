@@ -237,7 +237,7 @@ qx.Class.define("qx.ui.form.VirtualComboBox",
       {
         case "textfield" :
           control = new qx.ui.form.TextField();
-          control.setFocusable(false);
+          control.setFocusable(qx.event.handler.MouseEmulation.ON);
           control.addState("inner");
           this._add(control, {flex : 1});
           break;

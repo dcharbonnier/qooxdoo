@@ -47,52 +47,57 @@ qx.Bootstrap.define("feedreader.view.website.Factory",
 
        // handler for the click on either the title or the indicator
        var onClick = function(e) {
+         if (content.__ah && content.__ah.isPlaying()) {
+           return;
+         }
          if (content.getStyle("display") == "none") {
 
            content.setStyle("display", "");
            content.scale([null, 0]);
-           content.animate({
+           content.__ah = content.animate({
              duration: duration,
              origin: "top center",
              keep: 100,
              keyFrames: {
                0: {
-                 "padding-bottom": "0px",
-                 "padding-top": "0px",
+                 "paddingBottom": "0px",
+                 "paddingTop": "0px",
                  "scale": [null, 0],
                  "height": "0px"
                 },
                100: {
-                 "padding-bottom": "10px",
-                 "padding-top": "10px",
+                 "paddingBottom": "10px",
+                 "paddingTop": "10px",
                  "scale": [null, 1],
                  "height": content.getProperty("offsetHeight")-20 + "px"
                 }
              }
-           }).once("animationEnd", function() {
+           });
+           content.__ah.once("animationEnd", function() {
              content.scale(1);
              indicator.setHtml("[-]");
            });
 
          } else {
-           content.animate({
+           content.__ah = content.animate({
              duration: duration,
              origin: "top center",
              keyFrames: {
                0: {
-                 "padding-bottom": "10px",
-                 "padding-top": "10px",
+                 "paddingBottom": "10px",
+                 "paddingTop": "10px",
                  "scale": [null, 1],
                  "height": content.getProperty("offsetHeight")-20 + "px"
                 },
                100: {
-                 "padding-bottom": "0px",
-                 "padding-top": "0px",
+                 "paddingBottom": "0px",
+                 "paddingTop": "0px",
                  "scale": [null, 0],
                  "height": "0px"
                 }
              }
-           }).once("animationEnd", function() {
+           });
+           content.__ah.once("animationEnd", function() {
              this.setStyle("display", "none");
              indicator.setHtml("[+]");
            });

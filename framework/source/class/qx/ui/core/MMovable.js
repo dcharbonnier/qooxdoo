@@ -96,7 +96,7 @@ qx.Mixin.define("qx.ui.core.MMovable",
       widget.addListener("mousemove", this._onMoveMouseMove, this);
       widget.addListener("losecapture", this.__onMoveLoseCapture, this);
 
-      if (qx.core.Environment.get("event.touch") && qx.core.Environment.get("qx.emulatemouse")) {
+      if (qx.event.handler.MouseEmulation.ON) {
         widget.addListener("mousewheel", function(e) {
           e.stopPropagation();
         }, this);
@@ -164,11 +164,11 @@ qx.Mixin.define("qx.ui.core.MMovable",
       var viewportTop = this.__dragTop + mouseTop;
 
       return {
-        viewportLeft : viewportLeft,
-        viewportTop : viewportTop,
+        viewportLeft : parseInt(viewportLeft, 10),
+        viewportTop : parseInt(viewportTop, 10),
 
-        parentLeft : viewportLeft - this.__parentLeft,
-        parentTop : viewportTop - this.__parentTop
+        parentLeft : parseInt(viewportLeft - this.__parentLeft, 10),
+        parentTop : parseInt(viewportTop - this.__parentTop, 10)
       };
     },
 

@@ -72,8 +72,8 @@ qx.Class.define("mobileshowcase.page.Event",
     __touchCircleLeft: null,
     __touchCircleTop: null,
     __touchCount:0,
-    
-    
+
+
     // overridden
     _initialize : function()
     {
@@ -93,6 +93,7 @@ qx.Class.define("mobileshowcase.page.Event",
       containerTouchArea.addCssClass("container-touch-area");
 
       containerTouchArea.addListener("tap", this._onTap, this);
+      containerTouchArea.addListener("longtap", this._onLongTap, this);
       containerTouchArea.addListener("swipe", this._onSwipe, this);
       containerTouchArea.addListener("touchstart", this._onTouch, this);
       containerTouchArea.addListener("touchmove", this._onTouch, this);
@@ -109,10 +110,18 @@ qx.Class.define("mobileshowcase.page.Event",
       this.__gestureTarget.addListener("touchend", this.__onGestureTargetTouchEnd, this);
       this.__gestureTarget.setDraggable(false);
 
+      // If OS is Android 2 remove HTML5 badge logo, because Android is not able to scale and rotate on the same element.
+      var isAndroid2 = (qx.core.Environment.get("os.name") == "android")
+        && (parseInt(qx.core.Environment.get("os.version").charAt(0)) < 4);
+
+      if(isAndroid2) {
+         this.__gestureTarget.exclude();
+      }
+
       container.add(this.__gestureTarget);
 
       // TOUCH VISUALISATION CIRCLES
-      for(var i=0; i<15; i++) {
+      for (var i = 0; i < 15; i++) {
         var touchPoint = new qx.ui.mobile.container.Composite();
         touchPoint.addCssClass("touch");
 
@@ -125,10 +134,14 @@ qx.Class.define("mobileshowcase.page.Event",
       var label = this.__label = new qx.ui.mobile.basic.Label("Touch / Tap / Swipe this area");
       containerTouchArea.add(label);
 
-      var descriptionText = "<b>Testing Touch Events:</b> Touch / Tap / Swipe the area</br>\n\
-      <b>Testing Multi-touch Events:</b> Touch the area with multiple fingers</br>\n\
-      <b>Testing Pinch/Zoom Gesture:</b> Touch HTML5 logo with two fingers</br>\n\
-      <b>Testing OrientationChange Event</b>: Rotate your device / change browser size";
+      var descriptionText = "<b>Testing Touch Events:</b> Touch / Tap / Swipe the area<br />\n\
+      <b>Testing Multi-touch Events:</b> Touch the area with multiple fingers<br />\n\
+      ";
+      if(!isAndroid2) {
+        descriptionText += "<b>Testing Pinch/Zoom Gesture:</b> Touch HTML5 logo with two fingers<br />";
+      }
+      descriptionText += "<b>Testing OrientationChange Event</b>: Rotate your device / change browser size";
+      
       var descriptionLabel = new qx.ui.mobile.basic.Label(descriptionText);
 
       var descriptionGroup = new qx.ui.mobile.form.Group([descriptionLabel]);
@@ -138,15 +151,15 @@ qx.Class.define("mobileshowcase.page.Event",
 
       // Center background gradient, when multiple touches are available.
       qx.bom.element.Style.set(this.__container.getContentElement(),"background","-"+this.__vendorPrefix+"-radial-gradient(50% 50%, cover, #1a82f7, #2F2727)");
-      
+
       // Start rendering
       qx.bom.AnimationFrame.request(this._render, this);
     },
 
-    
+
     __onGestureTargetTouchMove : function(evt) {
       if (qx.core.Environment.get("qx.mobile.nativescroll") == false) {
-          this._getScrollContainer().disable();
+        this._getScrollContainer().disable();
       }
 
       var offset = 256;
@@ -154,7 +167,7 @@ qx.Class.define("mobileshowcase.page.Event",
       var containerElement = this.__showcaseContainer.getContentElement();
       var containerLeft = qx.bom.element.Location.getLeft(containerElement, "padding");
       var containerTop = qx.bom.element.Location.getTop(containerElement, "padding");
-      
+
       if (evt.isMultiTouch())
       {
         this.__currentRotation = Math.round(evt.getRotation()) + Math.round(this.__initialRotation);
@@ -172,7 +185,7 @@ qx.Class.define("mobileshowcase.page.Event",
       else
       {
         var timeSinceMultiTouch = new Date().getTime() - this.__lastMultiTouchEventTime;
-        
+
         if(timeSinceMultiTouch > 500) {
           var touchLeft = evt.getAllTouches()[0].clientX;
           var touchTop = evt.getAllTouches()[0].clientY;
@@ -183,6 +196,8 @@ qx.Class.define("mobileshowcase.page.Event",
       }
 
       qx.bom.AnimationFrame.request(this._render, this);
+
+      evt.preventDefault();
     },
 
 
@@ -204,6 +219,17 @@ qx.Class.define("mobileshowcase.page.Event",
     _onTap : function(evt)
     {
       this.__label.setValue(this.__label.getValue() + " tap");
+    },
+
+
+    /**
+     * Event handler.
+     *
+     * @param evt {qx.event.type.Tap} The tap event.
+     */
+    _onLongTap : function(evt)
+    {
+      this.__label.setValue(this.__label.getValue() + " longtap");
     },
 
 
@@ -234,19 +260,20 @@ qx.Class.define("mobileshowcase.page.Event",
      * Reacts on touch events and updates the event container background and touch markers.
      */
     __updateTouchVisualisation : function(evt) {
-        var containerLeft = qx.bom.element.Location.getLeft(this.__container.getContentElement(), "padding");
-        var containerTop = qx.bom.element.Location.getTop(this.__container.getContentElement(), "padding");
+      var containerLeft = qx.bom.element.Location.getLeft(this.__container.getContentElement(), "padding");
+      var containerTop = qx.bom.element.Location.getTop(this.__container.getContentElement(), "padding");
 
-        var touches = evt.getAllTouches();
+      var touches = evt.getAllTouches();
 
-        this.__touchCount = touches.length;
+      this.__touchCount = touches.length;
 
-        for(var i = 0; i < touches.length; i++) {
-          var touchLeft = touches[i].clientX-containerLeft;
-          var touchTop = touches[i].clientY-containerTop;
-          this.__touchCircleLeft[i] = touchLeft;
-          this.__touchCircleTop[i] = touchTop;
-        }
+      for (var i = 0; i < touches.length; i++) {
+        var touchLeft = touches[i].clientX - containerLeft;
+        var touchTop = touches[i].clientY - containerTop;
+        this.__touchCircleLeft[i] = touchLeft;
+        this.__touchCircleTop[i] = touchTop;
+      }
+
     },
 
 
@@ -267,7 +294,7 @@ qx.Class.define("mobileshowcase.page.Event",
         this.__label.setValue("");
       } else if (type == "touchend") {
         // Remove all touches out of visible area
-        for(var i = 0; i < this.__touchCircleLeft.length; i++) {
+        for (var i = 0; i < this.__touchCircleLeft.length; i++) {
           this.__touchCircleLeft[i] = -1000;
           this.__touchCircleTop[i] = -1000;
         }
@@ -275,7 +302,7 @@ qx.Class.define("mobileshowcase.page.Event",
         // Re-enable iScroll after touchend event
         if (qx.core.Environment.get("qx.mobile.nativescroll") == false) {
           this._getScrollContainer().enable();
-      }
+        }
       }
 
       // Text output of event
@@ -285,6 +312,8 @@ qx.Class.define("mobileshowcase.page.Event",
       this.__lastEventType = evt.getType();
 
       qx.bom.AnimationFrame.request(this._render, this);
+
+      evt.preventDefault();
     },
 
 
@@ -292,14 +321,14 @@ qx.Class.define("mobileshowcase.page.Event",
       // Render HTML5 logo: rotation and scale.
       var gestureTargetElement = this.__gestureTarget.getContentElement();
 
-      var transitionKey = "transform";
-      var transitionValue = "";
-      transitionValue = transitionValue.concat(" translate3d("+(this.__logoLeft)+"px"+","+(this.__logoTop)+"px,0px) ");
-      transitionValue = transitionValue.concat("rotate(" + (this.__currentRotation) + "deg) scale(" + (this.__currentScale) + ")");
-      qx.bom.element.Style.set(gestureTargetElement, transitionKey, transitionValue);
+      var transitionValue = "translate(" + (this.__logoLeft) + "px" + "," + (this.__logoTop) + "px) ";
+      transitionValue = transitionValue + " scale(" + (this.__currentScale) + ")";
+      transitionValue = transitionValue + " rotate(" + (this.__currentRotation) + "deg)";
+
+      qx.bom.element.Style.set(gestureTargetElement, "transform", transitionValue);
 
       // Touch Circle Visualization
-      for(var i = 0; i < this.__touchCircleLeft.length; i++) {
+      for (var i = 0; i < this.__touchCircleLeft.length; i++) {
         var touchPoint = this.__touchPoints[i];
         touchPoint.setTranslateX(this.__touchCircleLeft[i]);
         touchPoint.setTranslateY(this.__touchCircleTop[i]);

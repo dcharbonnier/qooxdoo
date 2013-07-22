@@ -40,10 +40,11 @@ qx.Class.define("qx.ui.mobile.core.Root",
   {
     this.__root = root || document.body;
     this.base(arguments, layout || new qx.ui.mobile.layout.VBox());
-    
+
     this.addCssClass("mobile");
     this.addCssClass(qx.core.Environment.get("os.name"));
-    
+    this.addCssClass("v"+qx.core.Environment.get("os.version").charAt(0));
+
     qx.event.Registration.addListener(window, "orientationchange", this._onOrientationChange, this);
 
     this._onOrientationChange();
@@ -118,8 +119,8 @@ qx.Class.define("qx.ui.mobile.core.Root",
     getHeight : function() {
       return qx.bom.element.Dimension.getHeight(this.__root);
     },
-    
-    
+
+
     /**
      * Event handler. Called when the orientation of the device is changed.
      *
@@ -127,13 +128,13 @@ qx.Class.define("qx.ui.mobile.core.Root",
      */
     _onOrientationChange : function(evt) {
       var isPortrait = null;
-      
+
       if (evt) {
         isPortrait = evt.isPortrait();
       } else {
         isPortrait = qx.bom.Viewport.isPortrait();
       }
-      
+
       if (isPortrait) {
         this.addCssClass("portrait");
         this.removeCssClass("landscape");

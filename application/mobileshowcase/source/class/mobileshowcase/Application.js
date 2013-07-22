@@ -28,9 +28,6 @@
  * This is the main application class for the mobile showcase app.
  *
  * @asset(mobileshowcase/*)
- * @asset(qx/mobile/icon/common/*)
- * @asset(qx/mobile/icon/android/*)
- * @asset(qx/mobile/icon/ios/*)
  */
 qx.Class.define("mobileshowcase.Application",
 {
@@ -116,7 +113,7 @@ qx.Class.define("mobileshowcase.Application",
         canvas,
         themeSwitcher
       ]);
-      
+
       // Initialize the navigation
       var nm = new qx.application.Routing();
       this.setRouting(nm);
@@ -192,7 +189,7 @@ qx.Class.define("mobileshowcase.Application",
       {
         carousel.show();
       },this);
-      
+
       nm.onGet("/drawer", function(data)
       {
         drawer.show();
@@ -207,7 +204,7 @@ qx.Class.define("mobileshowcase.Application",
       {
         maps.show();
       },this);
-      
+
       nm.onGet("/canvas", function(data)
       {
         canvas.show();

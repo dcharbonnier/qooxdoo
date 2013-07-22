@@ -51,7 +51,65 @@
  * @asset(qx/icon/Tango/16/actions/dialog-cancel.png)
  * @asset(qx/icon/Tango/16/actions/dialog-ok.png)
 
- * @asset(qx/decoration/Modern/*)
+ * @asset(qx/decoration/Modern/cursors/*)
+ *
+ * @asset(qx/decoration/Modern/scrollbar/scrollbar-left.png)
+ * @asset(qx/decoration/Modern/scrollbar/scrollbar-right.png)
+ * @asset(qx/decoration/Modern/scrollbar/scrollbar-up.png)
+ * @asset(qx/decoration/Modern/scrollbar/scrollbar-down.png)
+ *
+ * @asset(qx/decoration/Modern/toolbar/toolbar-handle-knob.gif)
+ *
+ * @asset(qx/decoration/Modern/tree/open-selected.png)
+ * @asset(qx/decoration/Modern/tree/closed-selected.png)
+ * @asset(qx/decoration/Modern/tree/open.png)
+ * @asset(qx/decoration/Modern/tree/closed.png)
+ *
+ * @asset(qx/decoration/Modern/form/checked.png)
+ * @asset(qx/decoration/Modern/form/undetermined.png)
+ * @asset(qx/decoration/Modern/form/tooltip-error-arrow-right.png)
+ * @asset(qx/decoration/Modern/form/tooltip-error-arrow.png)
+ *
+ * @asset(qx/decoration/Modern/window/minimize-active-hovered.png)
+ * @asset(qx/decoration/Modern/window/minimize-active.png)
+ * @asset(qx/decoration/Modern/window/minimize-inactive.png)
+ * @asset(qx/decoration/Modern/window/restore-active-hovered.png)
+ * @asset(qx/decoration/Modern/window/restore-active.png)
+ * @asset(qx/decoration/Modern/window/restore-inactive.png)
+ * @asset(qx/decoration/Modern/window/maximize-active-hovered.png)
+ * @asset(qx/decoration/Modern/window/maximize-active.png)
+ * @asset(qx/decoration/Modern/window/maximize-inactive.png)
+ * @asset(qx/decoration/Modern/window/close-active-hovered.png)
+ * @asset(qx/decoration/Modern/window/close-active.png)
+ * @asset(qx/decoration/Modern/window/close-inactive.png)
+ *
+ * @asset(qx/decoration/Modern/splitpane/knob-horizontal.png)
+ * @asset(qx/decoration/Modern/splitpane/knob-vertical.png)
+ *
+ * @asset(qx/decoration/Modern/arrows/down.png)
+ * @asset(qx/decoration/Modern/arrows/up.png)
+ * @asset(qx/decoration/Modern/arrows/right.png)
+ * @asset(qx/decoration/Modern/arrows/left.png)
+ * @asset(qx/decoration/Modern/arrows/rewind.png)
+ * @asset(qx/decoration/Modern/arrows/forward.png)
+ * @asset(qx/decoration/Modern/arrows/up-invert.png)
+ * @asset(qx/decoration/Modern/arrows/down-invert.png)
+ * @asset(qx/decoration/Modern/arrows/right-invert.png)
+ * @asset(qx/decoration/Modern/arrows/up-small.png)
+ * @asset(qx/decoration/Modern/arrows/down-small.png)
+ *
+ * @asset(qx/decoration/Modern/menu/checkbox-invert.gif)
+ * @asset(qx/decoration/Modern/menu/checkbox.gif)
+ * @asset(qx/decoration/Modern/menu/radiobutton-invert.gif)
+ * @asset(qx/decoration/Modern/menu/radiobutton.gif)
+ *
+ * @asset(qx/decoration/Modern/table/select-column-order.png)
+ * @asset(qx/decoration/Modern/table/ascending.png)
+ * @asset(qx/decoration/Modern/table/descending.png)
+ * @asset(qx/decoration/Modern/table/boolean-true.png)
+ * @asset(qx/decoration/Modern/table/boolean-false.png)
+ *
+ * @asset(qx/decoration/Modern/colorselector/*)
  */
 qx.Theme.define("qx.theme.modern.Appearance",
 {
@@ -140,7 +198,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         return {
-          decorator : "popup-css",
+          decorator : "popup",
           backgroundColor : "background-light"
         };
       }
@@ -163,7 +221,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         var decorator, textColor;
-        var padding = [3, 9]; // default padding css-case
+        var padding = [3, 9]; // default padding
 
         if (states.checked && states.focused && !states.inner)
         {
@@ -247,9 +305,6 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         var decorator = states.hovered ? "selected" : undefined;
-        if (decorator) {
-          decorator += "-css";
-        }
         return {
           decorator : decorator,
           textColor : states.hovered ? "text-selected" : undefined
@@ -617,7 +672,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
         return {
           padding : 10,
           margin : 1,
-          decorator : "group-css"
+          decorator : "group"
         };
       }
     },
@@ -718,7 +773,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
         return {
           width     : states.horizontal ? undefined : 16,
           height    : states.horizontal ? 16 : undefined,
-          decorator : (states.horizontal ? "scrollbar-horizontal" : "scrollbar-vertical") + "-css",
+          decorator : (states.horizontal ? "scrollbar-horizontal" : "scrollbar-vertical"),
           padding   : 1
         };
       }
@@ -750,7 +805,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
         }
 
         return {
-          decorator : decorator += "-css",
+          decorator : decorator,
           minHeight : states.horizontal ? undefined : 9,
           minWidth  : states.horizontal ? 9 : undefined,
           padding : undefined,
@@ -908,20 +963,10 @@ qx.Theme.define("qx.theme.modern.Appearance",
 
       style : function(states)
       {
-        var decorator;
-        if (states.dragover) {
-          decorator = states.selected ? "selected-dragover" : "dragover";
-        } else {
-          decorator = states.selected ? "selected" : undefined;
-          if (decorator) {
-            decorator += "-css";
-          }
-        }
-
         return {
           padding   : states.dragover ? [4, 4, 2, 4] : 4,
           textColor : states.selected ? "text-selected" : undefined,
-          decorator : decorator
+          decorator : states.selected ? "selected" : undefined
         };
       }
     },
@@ -1184,10 +1229,6 @@ qx.Theme.define("qx.theme.modern.Appearance",
           }
         }
 
-        if (decorator) {
-          decorator += "-css";
-        }
-
         return {
           zIndex : states.checked ? 10 : 5,
           decorator : decorator,
@@ -1238,7 +1279,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         return {
-          decorator : "toolbar-css",
+          decorator : "toolbar",
           spacing : 2
         };
       }
@@ -1293,10 +1334,6 @@ qx.Theme.define("qx.theme.modern.Appearance",
           decorator = "toolbar-button-checked";
         } else if (states.hovered && !states.disabled) {
           decorator = "toolbar-button-hovered";
-        }
-
-        if (decorator) {
-          decorator += "-css";
         }
 
         return {
@@ -1410,9 +1447,6 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         var decorator = states.selected ? "selected" : undefined;
-        if (decorator) {
-          decorator += "-css";
-        }
 
         return {
           padding    : [ 2, 6 ],
@@ -1674,7 +1708,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
         return {
           textColor: "text-selected",
           backgroundColor : undefined,
-          decorator: "tooltip-error-css",
+          decorator: "tooltip-error",
           font: "bold",
           padding: [3, 4, 4, 4],
           margin: [1, 0, 0, 0],
@@ -1695,8 +1729,8 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         return {
-          decorator : states.showStatusbar ? "window-incl-statusbar-css" :
-            "window-css",
+          decorator : states.showStatusbar ? "window-incl-statusbar" :
+            "window",
           contentPadding : [ 10, 10, 10, 10 ],
           margin : states.maximized ? 0 : [0, 5, 5, 0]
         };
@@ -1709,7 +1743,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       {
         return {
           decorator : states.showStatusbar ?
-            "window-resize-frame-incl-statusbar-css" : "window-resize-frame-css"
+            "window-resize-frame-incl-statusbar" : "window-resize-frame"
         };
       }
     },
@@ -1719,7 +1753,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         return {
-          decorator : "window-pane-css"
+          decorator : "window-pane"
         };
       }
     },
@@ -1730,7 +1764,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       {
         return {
           decorator : (states.active ? "window-captionbar-active" :
-            "window-captionbar-inactive") + "-css",
+            "window-captionbar-inactive"),
           textColor : states.active ? "window-caption-active-text" : "text-gray",
           minHeight : 26,
           paddingRight : 2
@@ -1827,7 +1861,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       {
         return {
           padding   : [ 2, 6 ],
-          decorator : "window-statusbar-css",
+          decorator : "window-statusbar",
           minHeight : 18
         };
       }
@@ -2104,9 +2138,6 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         var decorator = states.disabled ? undefined : states.selected ? "selected" : undefined;
-        if (decorator) {
-          decorator += "-css";
-        }
 
         return {
           textAlign : "center",
@@ -2214,7 +2245,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       {
         var result =
         {
-          decorator : "menu-css",
+          decorator : "menu",
           spacingX : 6,
           spacingY : 1,
           iconColumnWidth : 16,
@@ -2241,9 +2272,6 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         var decorator = states.hovered  ? "selected" : undefined;
-        if (decorator) {
-          decorator += "-css";
-        }
 
         return {
           decorator : decorator,
@@ -2296,9 +2324,6 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         var decorator = states.selected ? "selected" : undefined;
-        if (decorator) {
-          decorator += "-css";
-        }
 
         return {
           decorator : decorator,
@@ -2404,7 +2429,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
      style : function(states)
      {
        return {
-         decorator : "menubar-css"
+         decorator : "menubar"
        };
      }
    },
@@ -2416,9 +2441,6 @@ qx.Theme.define("qx.theme.modern.Appearance",
      style : function(states)
      {
        var decorator = (states.pressed || states.hovered) && !states.disabled ? "selected" : undefined;
-       if (decorator) {
-         decorator += "-css";
-       }
 
        return {
          decorator : decorator,
@@ -2673,7 +2695,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         return {
-          decorator : "table-scroller-header-css",
+          decorator : "table-scroller-header",
           padding   : 3,
           icon      : "decoration/table/select-column-order.png"
         };
@@ -2703,7 +2725,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style : function(states)
       {
         return {
-          decorator : "table-scroller-header-css",
+          decorator : "table-scroller-header",
           textColor : states.disabled ? "text-disabled" : undefined
         };
       }
@@ -2867,7 +2889,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
           minWidth : 40,
           minHeight : 25,
           paddingLeft : 6,
-          decorator : "progressive-table-header-cell-css"
+          decorator : "progressive-table-header-cell"
         };
       }
     },
@@ -2923,7 +2945,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       {
         return {
           padding : 4,
-          decorator : "group-item-css",
+          decorator : "group-item",
           textColor : "groupitem-text",
           font: "bold"
         };
@@ -3043,7 +3065,7 @@ qx.Theme.define("qx.theme.modern.Appearance",
       style: function(states)
       {
         return {
-          decorator: (states.disabled ? "group-item" : "selected") + "-css"
+          decorator: (states.disabled ? "group-item" : "selected")
         };
       }
     }

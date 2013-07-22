@@ -654,19 +654,13 @@ qx.Bootstrap.define("qx.Class",
         return true;
       }
 
-      try
-      {
-        qx.Interface.assertObject(obj, iface);
+      if (qx.Interface.objectImplements(obj, iface)) {
         return true;
       }
-      catch(ex) {}
 
-      try
-      {
-        qx.Interface.assert(clazz, iface, false);
+      if (qx.Interface.classImplements(clazz, iface)) {
         return true;
       }
-      catch(ex) {}
 
       return false;
     },
@@ -887,7 +881,7 @@ qx.Bootstrap.define("qx.Class",
         }
       },
 
-      "default" : function() {}
+      "default" : function(name, config) {}
     }),
 
 
@@ -919,7 +913,7 @@ qx.Bootstrap.define("qx.Class",
         }
       },
 
-      "default" : function() {}
+      "default" : function(clazz) {}
     }),
 
 
@@ -1296,6 +1290,10 @@ qx.Bootstrap.define("qx.Class",
 
           if (patch !== true && proto.hasOwnProperty(key)) {
             throw new Error('Overwriting member "' + key + '" of Class "' + clazz.classname + '" is not allowed!');
+          }
+
+          if (proto[key] != undefined && proto[key].$$propertyMethod) {
+            throw new Error('Overwriting generated property method "' + key + '" of Class "' + clazz.classname + '" is not allowed!');
           }
         }
 

@@ -72,7 +72,14 @@ qx.Class.define("feedreader.view.mobile.ArticlePage",
         this.setTitle(value.getTitle());
         var html = feedreader.ArticleBuilder.createHtml(value);
         this.__article.setHtml(html);
+
+        q("a").forEach(function(item) {
+          item.ontouchend = function(e) {
+            window.open(item.href, "_blank");
+          }
+        });
       }
+       
     }
   }
 });

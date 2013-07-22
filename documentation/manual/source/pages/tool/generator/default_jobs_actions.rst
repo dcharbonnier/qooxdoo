@@ -53,7 +53,7 @@ line arguments to only re-generate the api data for those:
 Beware though that in such a case the tree information provided to the Apiviewer
 (i.e. what you see in the Apiviewer's tree view on the left) is also restricted
 to those classes (augmented by stubs for their ancestors for hierarchy
-resolution). But this should be fine for developing API documenation for
+resolution). But this should be fine for developing API documentation for
 specific classes.
 
 .. _pages/tool/generator/generator_default_jobs#build:
@@ -62,11 +62,48 @@ build
 -----
 Create build version of current application.
 
+.. _pages/tool/generator/generator_default_jobs#build-min:
+
+build-min
+---------
+This job is available in the %{Website} skeleton.
+Create minified build version of current application.
+
+.. _pages/tool/generator/generator_default_jobs#build-module-all:
+
+build-module-all
+----------------
+This job is available in the %{Website} skeleton. Instead of building a single
+all-in-one qx.Website script file (see build_ and build-min_) this will build all
+modules separately (%{Website} splitted in n files).
+
+.. _pages/tool/generator/generator_default_jobs#build-module-all-min:
+
+build-module-all-min
+--------------------
+This job is available in the %{Website} skeleton. Instead of building a single
+all-in-one qx.Website script file (see build_ and build-min_) this will build all
+modules separately (%{Website} splitted in n files) and minified.
+
 .. _pages/tool/generator/generator_default_jobs#clean:
 
 clean
 -----
 Remove local cache and generated .js files (source/build).
+
+.. _pages/tool/generator/generator_default_jobs#dependencies:
+
+dependencies
+------------
+Create dependency information for the current library which is stored as a Json
+file (under *source/script/dependencies.json*). If this file exists and is
+current, the Generator will use its information when following dependencies of
+the classes of the library.
+
+This is particularly interesting for libraries that are used in other
+applications. It allows you to speed up cold-cache builds for the other
+application. (Mind that it doesn't make much sense for the application itself,
+as a *generate.py clean* or *distclean* will also wipe the dependencies Json file).
 
 .. _pages/tool/generator/generator_default_jobs#distclean:
 
@@ -292,7 +329,7 @@ the application into a few files, only leaving your own application classes
 separate.  Having the other class files (framework, libraries, contribs) chunked
 together you get the loading speed of nearly the build version, while at the
 same time retaining the accessibility of your own application files for
-debugging. This makes this job ideal for fast and focussed development of the
+debugging. This makes this job ideal for fast and focused development of the
 application-specific classes.
 
 Only the classes that are actually needed for the application are included, so
@@ -335,26 +372,32 @@ source-server-reload
 Same as `source-server`_, but adds an automatic reload feature. The web server
 watches the loader file of the exported source version (usually
 *source/script/<application>.js*), and triggers an automatic reload of the
-application in the browser if this changes. Can conveniently be used together
-with the `watch`_ job that automatically re-generates the loader file if the
-application classes change. This way, both jobs work hand in hand to reload the
-most up-to-date version of the application in the browser whenever the source
-files change. If the generation fails, e.g. due to a syntax error, the loader is
-not updated and hence the browser not reloaded.
+application in the browser if this changes. You usually want to use this job
+together with the `watch`_ job (running separately) which automatically
+re-generates the loader when the application classes change. This way, both jobs
+work hand in hand to reload the most up-to-date version of the application in
+the browser whenever the source files change. If the generation fails, e.g. due
+to a syntax error, the loader is not updated and hence the browser not reloaded.
+
+Like with *source-server* the server prints at startup the URL to the
+application's index.html. If you want to load the application through the reload
+server it is *important that you use exactly this URL in your browser* (including
+the trailing ".../index.html"). On requesting this URL the reload server will instrument
+the file with information necessary for the reload behavior.
 
 The reload feature can also be used when running the main application from the
 file system (with the *file://* protocol) or over a separate web server like
-Apache. In this case you just have to add the URL of the reload client script in
-the app's ``index.html``. E.g.
+Apache. In this case you just have to manually add the URL of the reload client
+script in the app's ``index.html``, e.g. adding
 
 ::
 
   <script type="text/javascript" src="http://localhost:44161/_active_reload/active_reload.js"/>
 
-assuming that ``44161`` is the port where the source server runs on.
-``/_active_reload/active_reload.js`` is the path to the reload client script.
-You then load the application over you standard web server. Just the reload
-notification is handled over the source server.
+to the header section, assuming that ``44161`` is the port where the source
+server runs on.  */_active_reload/active_reload.js* is the URL path to the reload
+client script.  You then load the application over your standard web server.
+Just the reload notification is handled over the source server.
 
 .. _pages/tool/generator/generator_default_jobs#source-httpd-config:
 
@@ -487,7 +530,7 @@ The *watch* job watches the *source/class* path of your application for changed
 
 When you run the job the process will starting telling you the path it is
 watching, and will continue until you terminate it with Ctrl-C. On \*ix like
-systems you can put the job in the shell’s background with ``&``, in order to
+systems you can put the job in the shell's background with ``&``, in order to
 get your shell prompt back. The job will continue running, and only produce some
 console output when its associate command is being run. In order to terminate it
 you have to bring it to the foreground again and then press Ctrl-C (Or you can
@@ -506,7 +549,7 @@ watch-scss
 *(experimental)*
 
 This job is available in the %{Mobile} skeleton. The *watch-scss* job watches
-SCSS files, and compiles them to CSS once they change (See the article abouth
+SCSS files, and compiles them to CSS once they change (See the article about
 :doc:`mobile theming </pages/mobile/theming>`). The \*.scss files usually reside
 in your application's ``source/resource/<name_space>/mobile/scss`` folder, and
 will be compiled into the ``css`` sibling folder.

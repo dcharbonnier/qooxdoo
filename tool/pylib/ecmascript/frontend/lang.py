@@ -164,10 +164,8 @@ TOKENS = {
     "||" : "OR",
 
     "|" : "BITOR",
-    "^|" : "BITXOR",
+    "^" : "BITXOR",
     "&" : "BITAND",
-
-    "^" : "POWEROF",
 
     "<<" : "LSH",
     ">>" : "RSH",
@@ -247,7 +245,7 @@ RESERVED = {
     "goto": "FUTURE_RESERVED_WORD",
     "private": "FUTURE_RESERVED_WORD",
     "transient": "FUTURE_RESERVED_WORD",
-      # not yet supoprted, should issue a warning
+      # not yet supported, should issue a warning
       #"debugger": "DEBUGGER",
     "implements": "FUTURE_RESERVED_WORD",
     "protected": "FUTURE_RESERVED_WORD",

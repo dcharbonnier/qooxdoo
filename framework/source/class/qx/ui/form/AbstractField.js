@@ -196,6 +196,7 @@ qx.Class.define("qx.ui.form.AbstractField",
     /** Maximal number of characters that can be entered in the TextArea. */
     maxLength :
     {
+      apply : "_applyMaxLength",
       check : "PositiveInteger",
       init : Infinity
     },
@@ -383,7 +384,8 @@ qx.Class.define("qx.ui.form.AbstractField",
       el.addClass("qx-abstract-field");
 
       // IE8 in standard mode needs some extra love here to receive events.
-      if ((qx.core.Environment.get("engine.name") == "mshtml")) {
+      if ((qx.core.Environment.get("engine.name") == "mshtml") &&
+        (qx.core.Environment.get("browser.documentmode") == 8)) {
         el.setStyles({
           backgroundImage: "url(" + qx.util.ResourceManager.getInstance().toUri("qx/static/blank.gif") + ")"
         });
@@ -464,7 +466,16 @@ qx.Class.define("qx.ui.form.AbstractField",
       }
 
       // apply the font to the content element
-      this.getContentElement().setStyles(styles);
+      // IE 8 - 10 (but not 11 Preview) will ignore the lineHeight value
+      // unless it's applied directly.
+      if (qx.core.Environment.get("engine.name") == "mshtml" &&
+        qx.core.Environment.get("browser.documentmode") < 11)
+      {
+        qx.html.Element.flush();
+        this.getContentElement().setStyles(styles, true);
+      } else {
+        this.getContentElement().setStyles(styles);
+      }
 
       // the font will adjust automatically on native placeholders
       if (this.__useQxPlaceholder) {
@@ -499,9 +510,18 @@ qx.Class.define("qx.ui.form.AbstractField",
     },
 
 
+    // property apply
+    _applyMaxLength : function(value, old) {
+      if (value) {
+        this.getContentElement().setAttribute("maxLength", value);
+      } else {
+        this.getContentElement().removeAttribute("maxLength");
+      }
+    },
+
+
     // overridden
-    tabFocus : function()
-    {
+    tabFocus : function() {
       this.base(arguments);
 
       this.selectAllText();
@@ -558,15 +578,6 @@ qx.Class.define("qx.ui.form.AbstractField",
           value = filteredValue;
           this.getContentElement().setValue(value);
         }
-      }
-
-      // check for the max length
-      if (value.length > this.getMaxLength())
-      {
-        fireEvents = false;
-        this.getContentElement().setValue(
-          value.substr(0, this.getMaxLength())
-        );
       }
 
       // fire the events, if necessary
@@ -647,9 +658,6 @@ qx.Class.define("qx.ui.form.AbstractField",
       if (qx.lang.Type.isString(value))
       {
         var elem = this.getContentElement();
-        if (value.length > this.getMaxLength()) {
-          value = value.substr(0, this.getMaxLength());
-        }
         if (elem.getValue() != value)
         {
           var oldValue = elem.getValue();
@@ -1030,5 +1038,7 @@ qx.Class.define("qx.ui.form.AbstractField",
     if (this.__font && this.__webfontListenerId) {
       this.__font.removeListenerById(this.__webfontListenerId);
     }
+
+    this.getContentElement().removeListener("input", this._onHtmlInput, this);
   }
 });
