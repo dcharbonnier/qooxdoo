@@ -795,11 +795,23 @@ qx.Class.define("qx.ui.form.Slider",
      */
     _setKnobPosition : function(position)
     {
+      // Use the DOM Element to prevent unnecessary layout recalculations
       var knob = this.getChildControl("knob");
+      var dec = this.getDecorator();
+      dec = qx.theme.manager.Decoration.getInstance().resolve(dec);
+      var content = knob.getContentElement();
       if (this.__isHorizontal) {
-        knob.setLayoutProperties({left: position});
+        if (dec && dec.getPadding()) {
+          position += dec.getPadding().left;
+        }
+        position += this.getPaddingLeft() || 0;
+        content.setStyle("left", position+"px", true);
       } else {
-        knob.setLayoutProperties({top: position});
+        if (dec && dec.getPadding()) {
+          position += dec.getPadding().top;
+        }
+        position += this.getPaddingTop() || 0;
+        content.setStyle("top", position+"px", true);
       }
     },
 
